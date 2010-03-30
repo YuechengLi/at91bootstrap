@@ -1,7 +1,7 @@
 # Makefile for AT91-Bootstrap libc directory
-DIRS				+= libc
+# DIRS				+= libc
 
-LIBC:=
+LIBC:=$(TOPDIR)/lib/
 
 COBJS-y				+=	$(LIBC)string.o
 COBJS-y				+=	$(LIBC)div0.o
