@@ -14,7 +14,7 @@ ifeq ($(CONFIG_SHELL),)
 $(error GNU Bash is needed to build Bootstrap!)
 endif
 
-BINDIR:=$(TOPDIR)/binaries/
+BINDIR:=$(TOPDIR)/binaries
 
 TOOLCHAIN_DIR=atmel-2009-08-rc2
 
@@ -156,7 +156,7 @@ obj=build/$(BOARDNAME)/
 
 BOOT_NAME=$(BOARDNAME)-$(PROJECT)$(CARD_SUFFIX)boot-$(VERSION)$(REV)
 
-AT91BOOTSTRAP:=$(BINDIR)$(BOOT_NAME).bin
+AT91BOOTSTRAP:=$(BINDIR)/$(BOOT_NAME).bin
 
 ifeq ($(DESTDIR),)
 DESTDIR=install
@@ -185,8 +185,8 @@ RAW_AT91=$(BINDIR)raw-at91
 EXTRA_INSTALL+=$(BINDIR)raw-at91
 endif
 ifeq ($(CONFIG_SX_AT91),y)
-SX_AT91=$(BINDIR)sx-at91
-EXTRA_INSTALL+=$(BINDIR)sx-at91
+SX_AT91=$(BINDIR)/sx-at91
+EXTRA_INSTALL+=$(BINDIR)/sx-at91
 endif
 
 COBJS-y:= $(TOPDIR)/main.o $(TOPDIR)/board/$(BOARDNAME)/$(BOARD).o
@@ -227,7 +227,7 @@ include		driver/driver_cpp.mk
 #    --cref:    add cross reference to map file
 #  -lc 	   : 	tells the linker to tie in newlib
 #  -lgcc   : 	tells the linker to tie in newlib
-LDFLAGS+=-nostartfiles -Map=result/$(BOOT_NAME).map --cref
+LDFLAGS+=-nostartfiles -Map=$(BINDIR)/$(BOOT_NAME).map --cref
 #LDFLAGS+=-lc -lgcc
 LDFLAGS+=-T elf32-littlearm.lds $(GC_SECTIONS) -Ttext $(LINK_ADDR)
 
@@ -245,9 +245,10 @@ PHONY:=all gen_bin
 
 all: gen_bin ChkFilesize
 gen_bin: $(OBJS)
+	$(if $(wildcard $(BINDIR)),,mkdir -p $(BINDIR))
 	@echo "  LD        "$(BOOT_NAME).elf
 	@$(LD) $(LDFLAGS) -n -o $(BOOT_NAME).elf $(OBJS)
-	@$(OBJCOPY) --strip-debug --strip-unneeded $(BOOT_NAME).elf -O binary $(BOOT_NAME).bin
+	@$(OBJCOPY) --strip-debug --strip-unneeded $(BOOT_NAME).elf -O binary $(BINDIR)/$(BOOT_NAME).bin
 
 %.o : %.c
 	@echo "  CC        "$<
@@ -285,11 +286,11 @@ host-utilities:	$(RAW_AT91) $(SX_AT91)
 
 PHONY+=utilities host-utilities
 
-$(BINDIR)raw-at91:	$(BINDIR)
-	$(HOSTCC) -o $(BINDIR)raw-at91 host-utilities/raw-at91.c
+$(BINDIR)/raw-at91:	$(BINDIR)
+	$(HOSTCC) -o $(BINDIR)/raw-at91 host-utilities/raw-at91.c
 
-$(BINDIR)sx-at91:	$(BINDIR)
-	$(HOSTCC) -o $(BINDIR)sx-at91 host-utilities/sx-at91.c
+$(BINDIR)/sx-at91:	$(BINDIR)
+	$(HOSTCC) -o $(BINDIR)/sx-at91 host-utilities/sx-at91.c
 
 rebuild: clean all
 
@@ -297,10 +298,10 @@ ChkFilesize:
 	@( fsize=`stat -c%s $(BOOT_NAME).bin`; \
 	  echo "Size of $(BOOT_NAME).bin is $$fsize bytes"; \
 	  if [ "$$fsize" -gt "$(BOOTSTRAP_MAXSIZE)" ] ; then \
-		echo "*** It's too big to fit into SRAM area."; \
+		echo "[Failed***] It's too big to fit into SRAM area."; \
 		exit 2;\
 	  else \
-	  	echo "It's OK to fit into SRAM area"; \
+	  	echo "[Succeeded] It's OK to fit into SRAM area"; \
 	  fi )
 endif  # HAVE_DOT_CONFIG
 
@@ -353,7 +354,7 @@ distrib: config-clean
 	rm -f .configured
 
 config-clean:
-	make -C config clean
+	make -C config distclean
 	rm -fr config/at91bootstrap-config
 	rm -f  config/.depend
 
@@ -368,7 +369,8 @@ clean:
 		| xargs -0 rm -f
 	rm -fr $(obj)
 
-distclean: clean
+distclean: clean config-clean
+	rm -fr $(BINDIR)
 	rm -fr .config .config.cmd .config.old
 	rm -fr .auto.deps
 	rm -f .installed
