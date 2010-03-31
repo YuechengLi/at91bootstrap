@@ -295,7 +295,7 @@ $(BINDIR)/sx-at91:	$(BINDIR)
 rebuild: clean all
 
 ChkFilesize:
-	@( fsize=`stat -c%s $(BOOT_NAME).bin`; \
+	@( fsize=`stat -c%s $(BINDIR)/$(BOOT_NAME).bin`; \
 	  echo "Size of $(BOOT_NAME).bin is $$fsize bytes"; \
 	  if [ "$$fsize" -gt "$(BOOTSTRAP_MAXSIZE)" ] ; then \
 		echo "[Failed***] It's too big to fit into SRAM area."; \
