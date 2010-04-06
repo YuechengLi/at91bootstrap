@@ -1,7 +1,7 @@
 /* ----------------------------------------------------------------------------
- *         ATMEL Microcontroller Software Support  -  ROUSSET  -
+ *         ATMEL Microcontroller Software Support  -  SHANGHAI  -
  * ----------------------------------------------------------------------------
- * Copyright (c) 2006, Atmel Corporation
+ * Copyright (c) 2010, Atmel Corporation
 
  * All rights reserved.
  *
@@ -25,54 +25,60 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ----------------------------------------------------------------------------
- * File Name           : debug.h
- * Object              :
- * Creation            : ODi Apr 24th 2006
- * ODi Nov 9th         : dstp #3499 "BAUDRATE macro buggy in include/uart.h"
+ * File Name           : dbgu.c
+ * Object              : Operations related to DBGU
+ * Creation            : Hong Apr 6th 2010
  *-----------------------------------------------------------------------------
  */
-#ifndef _DEBUG_H_
-#define _DEBUG_H_
+#include "part.h"
+#include "main.h"
+#include "dbgu.h"
 
-#define	MSG_FAILURE	0
-#define	MSG_SUCCESS	1
-#define MSG_DETECTED	2
-#define MSG_NEWLINE	3
-#define MSG_SPACE	4
-#define MSG_EXCLAMATION 5
-#define MSG_DATAFLASH	6
-#define MSG_TIMEOUT	7
-#define MSG_AT45	8
-#define MSG_DB		9
-#define MSG_INVALID	10
-#define MSG_BOOT	11
-#define MSG_START	12
-#define MSG_FROM	13
-#define MSG_CODE	14
-#define MSG_COMPLETE	15
-#define MSG_BYTES	16
-#define MSG_PROMPT	17
-#define	MSG_DECOMPRESS	18
-#define	MSG_VALID	19
-#define	MSG_LINUX	20
-#define	MSG_TO		21
-#define	MSG_NANDFLASH	22
-#define	MSG_SIZE	23
+/* Write DBGU register */
+static inline void write_dbgu(unsigned int offset, const unsigned int value)
+{
+	writel(value, offset + AT91C_BASE_DBGU);
+}
 
-#define DEBUG_INFO        1
-#define DEBUG_LOUD        2
-#define DEBUG_VERY_LOUD   4
+/* Read DBGU registers */
+static inline unsigned int read_dbgu( unsigned int offset)
+{
+	return readl(offset + AT91C_BASE_DBGU);
+}
 
-#ifdef	CONFIG_DEBUG
+void dbgu_init(unsigned int baudrate)
+{
+	/* Disable interrupts */
+	write_dbgu(US_IDR, -1);
+	/* Reset the receiver and transmitter */
+	write_dbgu(US_CR, AT91C_US_RSTRX | AT91C_US_RSTTX | AT91C_US_RXDIS
+		| AT91C_US_TXDIS);
+	/* Configure the baudrate */
+	write_dbgu(US_BRGR, baudrate);
+	/* Configure USART in Asynchronous mode */
+	write_dbgu(US_MR, AT91C_US_PAR);
+	/* Enable RX and Tx */
+	write_dbgu(US_CR, AT91C_US_RXEN | AT91C_US_TXEN);
+}
 
-#define MAX_BUFFER 128
-extern char dbg_level;
+//*----------------------------------------------------------------------------
+//* \fn    dbg_print
+//* \brief This function is used to send data to DBGU
+//*---------------------------------------------------------------------------*/
+void dbgu_print(const char *ptr)
+{
+	int i = 0;
 
-extern int dbg_log(const char level, const char *fmt_str, ...);
+	while (ptr[i] != '\0') {
+		while ( !(read_dbgu(DBGU_CSR) & AT91C_US_TXRDY) );
+		write_dbgu(DBGU_THR, ptr[i]);
+		i++;
+	}
+}
 
-#else /* CONFIG_DEBUG */
-#define dbg_log(...)
-#endif
-
-#endif /*_DEBUG_H_*/
+char dbgu_getc(void)
+{
+	while (!(read_dbgu(DBGU_CSR) & AT91C_US_RXRDY));
+	return  (char)read_dbgu(DBGU_RHR);
+}
 
