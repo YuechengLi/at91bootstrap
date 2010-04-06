@@ -247,8 +247,8 @@ all: gen_bin ChkFilesize
 gen_bin: $(OBJS)
 	$(if $(wildcard $(BINDIR)),,mkdir -p $(BINDIR))
 	@echo "  LD        "$(BOOT_NAME).elf
-	@$(LD) $(LDFLAGS) -n -o $(BOOT_NAME).elf $(OBJS)
-	@$(OBJCOPY) --strip-debug --strip-unneeded $(BOOT_NAME).elf -O binary $(BINDIR)/$(BOOT_NAME).bin
+	@$(LD) $(LDFLAGS) -n -o $(BINDIR)/$(BOOT_NAME).elf $(OBJS)
+	@$(OBJCOPY) --strip-debug --strip-unneeded $(BINDIR)/$(BOOT_NAME).elf -O binary $(BINDIR)/$(BOOT_NAME).bin
 
 %.o : %.c
 	@echo "  CC        "$<

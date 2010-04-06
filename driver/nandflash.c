@@ -135,9 +135,11 @@ static PSNandInitInfo AT91F_NandReadID(void)
 	NAND_DISABLE_CE();
 
 	uChipID = (bManufacturerID << 8) | bDeviceID;
+#if 0
 	dbg_print("NAND id:");
 	dbg_print_hex(uChipID);
 	dbg_print("\r\n");
+#endif
 	
 	/* Search in NandFlash_InitInfo[] */
 	while (NandFlash_InitInfo[i].uNandID != 0)
@@ -164,7 +166,8 @@ static void AT91F_WriteLarge_BlkAdr(unsigned int Adr)
 /*------------------------------------------------------------------------------*/
 /* \fn    AT91F_WriteSectorAdr							*/
 /* \brief Read a Sector								*/
-/*------------------------------------------------------------------------------*/static void AT91F_WriteSectorAdr(unsigned int Adr)
+/*------------------------------------------------------------------------------*/
+static void AT91F_WriteSectorAdr(unsigned int Adr)
 {
 	AT91F_WriteLarge_BlkAdr(Adr);
 	WRITE_NAND_ADDRESS((Adr >> 16) & 0xFF);
@@ -465,7 +468,7 @@ int load_nandflash(void)
 	SNandInfo sNandInfo;
 	PSNandInitInfo pNandInitInfo;
 	unsigned char *pOutBuffer = (unsigned char*)img_dest;
-	unsigned int blockIdx, badBlock, blockRead, length, sizeToRead, nbSector, newBlock, sectorIdx, blockError, sectorSize;
+	unsigned int blockIdx, badBlock, length, sizeToRead, nbSector, sectorIdx, dataLeft;
 
 	nandflash_hw_init();
 	
@@ -475,10 +478,10 @@ int load_nandflash(void)
 	if (!pNandInitInfo)
  	{
 #ifdef CONFIG_DEBUG	
-	   	dbg_print("\n\r-E- No NandFlash detected !!!\n\r");
+	   	//dbg_print("\n\r-E- No NandFlash detected !!!\n\r");
 #endif
 		return -1;
-    	}
+   	}
 #if	defined(CONFIG_VERBOSE)
 	msg_print(MSG_PROMPT);
 	msg_print_status(MSG_FROM,IMG_ADDRESS);
@@ -493,17 +496,16 @@ int load_nandflash(void)
 	if (!sNandInfo.uDataBusWidth)
 		nandflash_cfg_8bits_dbw_init();
 
-    	/* Initialize the block offset */
-    	blockIdx = img_addr / sNandInfo.uBlockNbData;
+   	/* Initialize the block offset */
+   	blockIdx = img_addr / sNandInfo.uBlockNbData;
 	/* Initialize the number of bad blocks */
-    	badBlock = 0;
-	blockRead = 0;
+   	badBlock = 0;
     
 	length = img_size;
     
 	while (length > 0)
 	{
-        	/* Read a buffer corresponding to a block in the origin file */
+        /* Read a buffer corresponding to a block in the origin file */
 		if (length < sNandInfo.uBlockNbData)
 		{
 			sizeToRead = length;
@@ -514,54 +516,51 @@ int load_nandflash(void)
 		}
 
 		/* Adjust the number of sectors to read */
-        	nbSector = sizeToRead / sNandInfo.uDataNbBytes;
-        	if (sizeToRead % sNandInfo.uDataNbBytes)
+       	nbSector = sizeToRead / sNandInfo.uDataNbBytes;
+       	if (sizeToRead % sNandInfo.uDataNbBytes)
 		{
-            		nbSector++;
-        	}
+			nbSector++;
+       	}
 
-        	newBlock = 1;
 		/* Loop until a valid block has been read */
-		while (newBlock == 1)
+		while (1)
 		{
-			/* Reset the error flag */
-			blockError = 0;
-            
 			/* Read the sectors */
-			for (sectorIdx=0; (sectorIdx < nbSector) && (blockError == 0); sectorIdx++)
+			for (sectorIdx = 0; sectorIdx < nbSector; sectorIdx++)
 			{
-				sectorSize = sizeToRead - (sectorIdx * sNandInfo.uDataNbBytes);
-				if (sectorSize < sNandInfo.uDataNbBytes)
+				dataLeft = sizeToRead - (sectorIdx * sNandInfo.uDataNbBytes);
+				if (dataLeft < sNandInfo.uDataNbBytes)
 				{
-					sectorSize = sizeToRead - (sectorIdx * sNandInfo.uDataNbBytes);
+					dataLeft = sizeToRead - (sectorIdx * sNandInfo.uDataNbBytes);
 				}
 				else
 				{
-					sectorSize = sNandInfo.uDataNbBytes;
+					dataLeft = sNandInfo.uDataNbBytes;
 				}
 
-	                	/* Read the sector */
-        	        	if (AT91F_NandRead(&sNandInfo, blockIdx, sectorIdx, ZONE_DATA, pOutBuffer) == FALSE)
+	            /* Read the sector */
+   	        	if (AT91F_NandRead(&sNandInfo, blockIdx, sectorIdx, ZONE_DATA, (char *)pOutBuffer) == FALSE)
 				{
-					blockError = 1;
+					// Move to next block
+					dbg_log(1, "bad block found!\n\r");
+					break;
 				}
 				else
 				{
 					pOutBuffer+=sNandInfo.uDataNbBytes;
 				}
 			}
-            
-			if (blockError == 0)
-			{
-                		/* If the block is valid exit */
-	                	newBlock = 0;
-        	    	}
+
 			blockIdx++;
+			if (sectorIdx >= nbSector)
+			{
+	       		/* If the block is valid, then  exit the loop */
+               	break;
+   	    	}
 		}
 
-        	/* Decrement length */
-	        length -= sizeToRead;
-		blockRead++;
+       	/* Decrement length */
+        length -= sizeToRead;
 	}
 #if	defined(CONFIG_VERBOSE)
 	msg_print(MSG_SUCCESS);
@@ -571,5 +570,3 @@ int load_nandflash(void)
 }
 #endif
 
-
-	

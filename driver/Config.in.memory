@@ -19,8 +19,6 @@ config CONFIG_DDR2
 	help
 	  Initialize DDR-2 SDRAM controller before copying
 
-
-
 config	ALLOW_DATAFLASH
 	bool
 	default n
@@ -94,11 +92,16 @@ config	CONFIG_NANDFLASH
 	bool "NAND flash"
 	depends on ALLOW_NANDFLASH
 
+
 config	CONFIG_SDCARD
 	bool "SD card"
 	depends on ALLOW_SDCARD
 
 endchoice
+
+config	CONFIG_ENABLE_SW_ECC
+	bool "Support NAND flash software ECC"
+	depends on CONFIG_NANDFLASH
 
 config CONFIG_MEMORY
 	string

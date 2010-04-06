@@ -96,16 +96,19 @@ config CONFIG_LONG_TEST
 	  
 config CONFIG_DEBUG
 	bool "Debug Support"
-	default y
+	default n
 	help
 	  Output Debug messages
-
-config CONFIG_VERBOSE
-	bool "Verbose Output"
-	default y
-	help
-	  Output Information messages
-	  Should not be set for SAM9260 to save code
+choice
+	prompt "Debug Level"
+	depends on CONFIG_DEBUG
+config CONFIG_DEBUG_INFO
+	bool "General debug information"
+config CONFIG_DEBUG_LOUD
+	bool "Loud debug output"
+config CONFIG_DEBUG_VERY_LOUD
+	bool "Even louder debug output"
+endchoice
 
 config CONFIG_HW_INIT
 	bool "Call Hardware Initialization"

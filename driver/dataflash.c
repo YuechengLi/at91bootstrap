@@ -61,6 +61,7 @@ static void msg_df_detect(int i)
 #if	defined(CONFIG_VERBOSE)
 	char * pn;
 #ifdef	CONFIG_DEBUG
+#if 0
 	msg_print(MSG_PROMPT);
 	msg_print(MSG_DATAFLASH);
 	msg_print(MSG_SPACE);
@@ -69,9 +70,12 @@ static void msg_df_detect(int i)
 	dbg_print_hex(i);
 	msg_print(MSG_NEWLINE);
 #endif
+#endif
+#if 0
 	msg_print(MSG_PROMPT);
 	msg_print(MSG_AT45);
 	msg_print(MSG_DB);
+#endif
 	switch(i) {
 		case AT45DB011D:
 			pn = "011D";
@@ -109,9 +113,11 @@ static void msg_df_detect(int i)
 			pn = "????";
 			break;
 	}
+#if 0
 	dbg_print(pn);
 	msg_print_ws(MSG_DETECTED);
 	msg_print(MSG_NEWLINE);
+#endif
 #endif
 }
 
@@ -290,13 +296,17 @@ void df_write(	AT91PS_DF pDf,
 	for(j=0; j < 0x1000;j+=32) {
 		df_continuous_read(pDf, (char *)rxBuffer, 32, j);
 		for(i = 0; i < 32; i+=4) {
+#if 0
 			if(!(i & 4)) dbg_print_hex(i+j);
+#endif
+#if 0
 			if(LONG_VAL(0x200000+i+j) == LONG_VAL(&rxBuffer[i]))
 				msg_print(MSG_SPACE);
 			else
 				msg_print(MSG_EXCLAMATION);
 			dbg_print_hex(LONG_VAL(&rxBuffer[i]));
 			if(i & 4) msg_print(MSG_NEWLINE);
+#endif
 		}
 	}
 }
@@ -322,22 +332,26 @@ static int df_read(
  		/* wait the dataflash ready status */
 		if(df_wait_ready(pDf) != 0) {
 		    	df_continuous_read(pDf, (char *)buffer, SizeToRead, addr);
+#if 0
 			dbg_print(".");
+#endif
 			if(--page_counter <= 0) {
 				page_counter = 32;
-				msg_print(MSG_NEWLINE);
+				//msg_print(MSG_NEWLINE);
 			}
 			size -= SizeToRead;
 			addr += SizeToRead;
 			buffer += SizeToRead;
 		} else {
 			/* We got a timeout */
+#if 0
 #if	defined(CONFIG_VERBOSE)
 			msg_print(MSG_DATAFLASH);
 			msg_print(MSG_SPACE);
 #endif
 			msg_print(MSG_TIMEOUT);
 			msg_print(MSG_NEWLINE);
+#endif
 			return FAILURE;
 		}
  	}
@@ -360,7 +374,7 @@ static int df_download(AT91PS_DF pDf, unsigned int img_addr, unsigned int img_si
 #endif
 	/* read bytes in the dataflash */
 	if(df_read(pDf, img_addr,(unsigned char *)img_dest, img_size) == FAILURE) {
-		msg_print(MSG_FAILURE);
+		//msg_print(MSG_FAILURE);
 		return FAILURE;
 	}
 #if	defined(CONFIG_VERBOSE)
@@ -386,7 +400,7 @@ static int df_probe(AT91PS_DF pDf)
     if ((pResult[1] & 0x1) == 0x1) {
         pDf->dfDescription.binaryPageMode = 1;
 #ifdef CONFIG_VERBOSE
-	dbg_print("> DataFlash in binary mode\n\r");
+	//dbg_print("> DataFlash in binary mode\n\r");
 #endif /* CONFIG_DEBUG */
     } else {
         pDf->dfDescription.binaryPageMode = 0;
@@ -548,15 +562,19 @@ int load_df(unsigned int pcs, unsigned int img_addr, unsigned int img_size, unsi
 #if	defined(CONFIG_APP_CHECK)
 	df_continuous_read(pDf, (char *)rxBuffer, 32, img_addr);
 	df_wait_ready(pDf);
-	msg_print(MSG_PROMPT);
+	//msg_print(MSG_PROMPT);
 	if (df_is_boot_valid((unsigned char*)rxBuffer) == FAILURE) {
+#if 0
 		msg_print(MSG_INVALID);
 		msg_print(MSG_BOOT);
 		msg_print(MSG_NEWLINE);
+#endif
 		return FAILURE;
 	} else {
+#if 0
 		msg_print(MSG_VALID);
 		msg_print(MSG_NEWLINE);
+#endif
 	}
 #endif
 	status = df_download(pDf, img_addr, img_size, img_dest);
