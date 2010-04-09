@@ -33,15 +33,18 @@
 #ifndef _NANDFLASH_H
 #define _NANDFLASH_H
 
+#include "NandSpareScheme.h"
+
 typedef struct SNandInitInfo
 {
-	unsigned short uNandID		; /* Nand Chip ID */
-	unsigned short uNandNbBlocks	;	
-	unsigned int   uNandBlockSize	;
-	unsigned short uNandSectorSize;
-	unsigned char  uNandSpareSize	;
-	unsigned char  uNandBusWidth	;
-	char 	       name[32]		; /* Nand Name */
+	unsigned short         uNandID; /* Nand Chip ID */
+	unsigned short         uNandNbBlocks;	
+	unsigned int           uNandBlockSize;
+	unsigned short         uNandSectorSize;
+	unsigned char          uNandSpareSize;
+	unsigned char          uNandBusWidth;
+	struct NandSpareScheme *pSpareScheme;
+	char 	               name[32]		; /* Nand Name */
 } SNandInitInfo, *PSNandInitInfo;
 
 /* Group all usefull sizes for the nandflash chip */
@@ -51,21 +54,25 @@ typedef struct _NandInfo
 	unsigned int uSpareNbBytes	;	/* Nb of bytes in spare section */
 	unsigned int uSectorNbBytes	;	/* Total nb of bytes in a sector */
 
-	unsigned int uBlockNbSectors	;	/* Nb of sector in a block */
+	unsigned int uNbBlocks		;	/* Nb of blocks in device */
 	unsigned int uBlockNbData	;	/* Nb of DataBytes in a block */
+#if 0
+	unsigned int uBlockNbSectors	;	/* Nb of sector in a block */
 	unsigned int uBlockNbSpares	;	/* Nb of SpareBytes in a block */
 	unsigned int uBlockNbBytes	;	/* Total nb of bytes in a block */
 
-	unsigned int uNbBlocks		;	/* Nb of blocks in device */
 	unsigned int uNbSectors		;	/* Total nb of sectors in device */
+#endif
 	unsigned int uNbData		;	/* Nb of DataBytes in device */
 	unsigned int uNbSpares		;	/* Nb of SpareBytes in device */
 	unsigned int uNbBytes		;	/* Total nb of bytes in device */
+
 	unsigned int uOffset		;
 
 	unsigned int uDataBusWidth	;	/* Data Bus Width (8/16 bits) */
 
 	unsigned int uBadBlockInfoOffset;       /* Bad block info offset in spare zone (in bytes) */ 
+	struct NandSpareScheme *pSpareScheme;
 } SNandInfo, *PSNandInfo;
 
 /* Sector Info Structure */

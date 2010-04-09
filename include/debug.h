@@ -66,7 +66,6 @@
 #ifdef	CONFIG_DEBUG
 
 #define MAX_BUFFER 128
-extern char dbg_level;
 
 extern int dbg_log(const char level, const char *fmt_str, ...);
 

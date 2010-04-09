@@ -250,11 +250,11 @@ gen_bin: $(OBJS)
 	@$(LD) $(LDFLAGS) -n -o $(BINDIR)/$(BOOT_NAME).elf $(OBJS)
 	@$(OBJCOPY) --strip-debug --strip-unneeded $(BINDIR)/$(BOOT_NAME).elf -O binary $(BINDIR)/$(BOOT_NAME).bin
 
-%.o : %.c
+%.o : %.c .config
 	@echo "  CC        "$<
 	@$(CC) $(CPPFLAGS) -c -o $@ $<
 
-%.o : %.S
+%.o : %.S .config
 	@echo "  AS        "$<
 	@$(AS) $(ASFLAGS)  -c -o $@  $<
 

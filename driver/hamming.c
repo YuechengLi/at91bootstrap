@@ -320,10 +320,6 @@ unsigned char Hamming_Verify256x(
     unsigned char error;
     unsigned char result = 0;
 
-#if 0
-    TRACE_DEBUG("Hamming_Verify256x()\n\r");
-#endif
-
     while (size > 0) {
 
         error = Verify256(data, code);

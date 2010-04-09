@@ -112,12 +112,9 @@ void hw_init(void)
 	/* Configure the PIO controller */
 	pio_setup(hw_pio);
 
-//#ifdef CONFIG_DEBUG
 	/* Enable Debug messages on the DBGU */
 	dbgu_init(BAUDRATE(MASTER_CLOCK, 115200));
-
 	dbgu_print("Start AT91Bootstrap...\n\r");
-//#endif /* CONFIG_VERBOSE */
 
 #ifdef CONFIG_DDR2
 	/* Configure DDRAM Controller */
