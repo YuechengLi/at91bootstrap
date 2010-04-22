@@ -20,3 +20,6 @@ COBJS-$(CONFIG_USER_HW_INIT)	+=	$(DRIVERS_SRC)/user_hw_init.o
 
 COBJS-$(CONFIG_ENABLE_SW_ECC) += $(DRIVERS_SRC)/hamming.o
 COBJS-y += $(DRIVERS_SRC)/NandSpareScheme.o
+
+COBJS-$(CONFIG_LOAD_LINUX) += $(DRIVERS_SRC)/linux_loader.o
+

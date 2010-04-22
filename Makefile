@@ -117,7 +117,17 @@ BOOTSTRAP_MAXSIZE := $(strip $(subst ",,$(CONFIG_BOOTSTRAP_MAXSIZE)))
 
 MEMORY := $(strip $(subst ",,$(CONFIG_MEMORY)))
 
-CARD_SUFFIX = $(strip $(subst ",,$(CONFIG_CARD_SUFFIX)))
+CARD_SUFFIX := $(strip $(subst ",,$(CONFIG_CARD_SUFFIX)))
+
+OS_MEM_BANK := $(strip $(subst ",,$(CONFIG_OS_MEM_BANK)))
+
+OS_MEM_SIZE := $(strip $(subst ",,$(CONFIG_OS_MEM_SIZE)))
+
+OS_IMG_SIZE := $(strip $(subst ",,$(CONFIG_OS_IMG_SIZE)))
+
+LINUX_IMG_NAND_OFFSET := $(strip $(subst ",,$(CONFIG_LINUX_IMG_NAND_OFFSET)))
+
+LINUX_KERNEL_ARG_STRING := $(strip $(subst ",,$(CONFIG_LINUX_KERNEL_ARG_STRING)))
 
 # Board definitions
 
@@ -374,6 +384,7 @@ distclean: clean config-clean
 	rm -fr .config .config.cmd .config.old
 	rm -fr .auto.deps
 	rm -f .installed
+	rm -f ..*.tmp
 	rm -f .configured
 
 PHONY+=distrib config-clean clean distclean

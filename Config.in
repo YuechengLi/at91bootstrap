@@ -17,6 +17,38 @@ config CONFIG_PROJECT
 	default "nandflash"	if CONFIG_NANDFLASH
 	default "sdcard"	if CONFIG_SDCARD
 
+menuconfig CONFIG_LOAD_LINUX
+	bool "Support loading Linux directly"
+	depends on CONFIG_NANDFLASH
+	---help---
+	   Load Linux kernel directly from NANDFlash with U-Boot.
+if CONFIG_LOAD_LINUX
+config CONFIG_OS_MEM_BANK
+	string "OS Memory Bank Base Address"
+	default "0x70000000" if CONFIG_AT91SAM9G45EK
+	
+config CONFIG_OS_MEM_SIZE
+	string "OS Memory Bank Size"
+	default "0x4000000"
+	
+config CONFIG_LINUX_KERNEL_ARG_STRING
+	string "Linux kernel parameters"
+	default "mem=64M console=ttyS0,115200 root=/dev/mtdblock1 rw rootfstype=jffs2" if CONFIG_AT91SAM9260EK
+	default "mem=64M console=ttyS0,115200 root=/dev/mtdblock1 rw rootfstype=jffs2" if CONFIG_AT91SAM9261EK
+	default "mem=64M console=ttyS0,115200 root=/dev/mtdblock1 rw rootfstype=jffs2" if CONFIG_AT91SAM9RLEK
+	default "mem=64M console=ttyS0,115200 root=/dev/mtdblock1 rw rootfstype=jffs2" if CONFIG_AT91SAM9263EK
+	default "mem=64M console=ttyS0,115200 mtdparts=atmel_nand:4M(bootstrap),60M(rootfs),-(spare) root=/dev/mtdblock1 rw rootfstype=jffs2" if CONFIG_AT91SAM9G45EK
+	
+config CONFIG_OS_IMG_SIZE
+	string "OS Image Size"
+	default "2621440"
+
+config CONFIG_LINUX_IMG_NAND_OFFSET
+	string "NandFlash offset for Linux kernel(in decimal)"
+	default "2097152"
+
+endif
+
 choice
 	prompt "Load strategy"
 	default CONFIG_LOAD_UBOOT
