@@ -158,5 +158,6 @@ extern void nandflash_cfg_8bits_dbw_init(void);
 //extern int load_nandflash(unsigned int img_addr, unsigned int img_size, unsigned int img_dest);
 extern int load_nandflash(void);
 extern BOOL AT91F_NandEraseBlock0(void);
+extern int read_nandflash(unsigned char *dst, unsigned long offset, int len);
 #endif
 

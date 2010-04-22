@@ -480,23 +480,13 @@ BOOL AT91F_NandRead(PSNandInfo pNandInfo, unsigned int uBlockNb,
 		BOOL ret;
 		unsigned char hamming[48], error;
 
-		ret = AT91F_NandReadSector(pNandInfo, uSectorAddr, pOutBuffer, ZONE_DATA | ZONE_INFO);
-#if 0
-		for (i = 0; i < pNandInfo->uDataNbBytes + pNandInfo->uSpareNbBytes; i++) {
-			dbg_log(1, "%d ", pOutBuffer[i]);
-			if ((i & 0xF) == 0xF)
-				dbg_log(1, "\r\n");
-		}
-#endif
+		ret = AT91F_NandReadSector(pNandInfo, uSectorAddr, pOutBuffer, 
+			ZONE_DATA | ZONE_INFO);
 
 		if (ret != TRUE)
 			return ret;
-		NandSpareScheme_ReadEcc(pNandInfo->pSpareScheme, pOutBuffer + pNandInfo->uDataNbBytes, hamming);
-#if 0
-		for (i = 0; i < 24; i++)
-			dbg_log(1, "%d ", hamming[i]);
-		dbg_log(1, "\r\n\r\n");
-#endif
+		NandSpareScheme_ReadEcc(pNandInfo->pSpareScheme,
+			pOutBuffer + pNandInfo->uDataNbBytes, hamming);
 
 		error = Hamming_Verify256x(pOutBuffer, pNandInfo->uDataNbBytes, hamming);
 		if (error && (error != Hamming_ERROR_SINGLEBIT)) {
@@ -508,11 +498,11 @@ BOOL AT91F_NandRead(PSNandInfo pNandInfo, unsigned int uBlockNb,
 #endif
 }
 
-int load_nandflash(void)
+int read_nandflash(unsigned char *dst, unsigned long offset, int len)
 {
 	SNandInfo sNandInfo;
 	PSNandInitInfo pNandInitInfo;
-	unsigned char *pOutBuffer = (unsigned char*)JUMP_ADDR;
+	unsigned char *pOutBuffer = dst;
 	unsigned int blockIdx, badBlock, length, sizeToRead, nbSector, sectorIdx,
 		dataLeft;
 
@@ -534,11 +524,11 @@ int load_nandflash(void)
 		nandflash_cfg_8bits_dbw_init();
 
    	/* Initialize the block offset */
-   	blockIdx = IMG_ADDRESS / sNandInfo.uBlockNbData;
+   	blockIdx = offset / sNandInfo.uBlockNbData;
 	/* Initialize the number of bad blocks */
    	badBlock = 0;
     
-	length = IMG_SIZE;
+	length = len;
     
 	while (length > 0)
 	{
@@ -591,20 +581,15 @@ int load_nandflash(void)
 			blockIdx++;
 	       	/* The full block is valid, then  exit the loop */
 			if (sectorIdx >= nbSector)
-			{
                	break;
-   	    	}
 		}
 
        	/* Decrement length */
         length -= sizeToRead;
 	}
 
-#if	defined(CONFIG_VERBOSE)
-	msg_print(MSG_SUCCESS);
-	msg_print(MSG_NEWLINE);
-#endif
 	return 0;
 }
-#endif
+
+#endif /* CONFIG_NANDFLASH */
 

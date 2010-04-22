@@ -80,7 +80,9 @@ int main(void)
 
 	/* Load from Nandflash in RAM */
 #ifdef CONFIG_NANDFLASH
-	load_nandflash();
+	//load_nandflash();
+	dbg_log(1, "call read_nandflash\r\n");
+	read_nandflash(JUMP_ADDR, IMG_ADDRESS, IMG_SIZE);
 #endif
 
 	/* Load from Norflash in RAM */
