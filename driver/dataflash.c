@@ -136,12 +136,12 @@ static int df_spi_init(unsigned int pcs, unsigned int spi_csr)
 	writel((1 << AT91C_ID_SPI), PMC_PCER + AT91C_BASE_PMC);
 
 	/* Reset SPI0 */
-        write_spi(SPI_CR, AT91C_SPI_SWRST);
+	write_spi(SPI_CR, AT91C_SPI_SWRST);
 	/* SPI may need two software reset */
 	write_spi(SPI_CR, AT91C_SPI_SWRST);
 
-    	/* Configure SPI0 in Master Mode with No CS selected */
-    	write_spi(SPI_MR, AT91C_SPI_MSTR | AT91C_SPI_MODFDIS | AT91C_SPI_PCS);
+   	/* Configure SPI0 in Master Mode with No CS selected */
+   	write_spi(SPI_MR, AT91C_SPI_MSTR | AT91C_SPI_MODFDIS | AT91C_SPI_PCS);
 
 	switch (pcs)
 	{
