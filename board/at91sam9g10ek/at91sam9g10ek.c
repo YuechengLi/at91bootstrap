@@ -35,6 +35,7 @@
 #include "gpio.h"
 #include "pmc.h"
 #include "rstc.h"
+#include "dbgu.h"
 #include "debug.h"
 #include "memory.h"
 
@@ -68,7 +69,7 @@ void hw_init(void)
 	
 	/* Configure PIOs */
 	const struct pio_desc hw_pio[] = {
-#ifdef CONFIG_VERBOSE
+#ifdef CONFIG_DEBUG
 		{"RXD", AT91C_PIN_PA(9), 0, PIO_DEFAULT, PIO_PERIPH_A},
 		{"TXD", AT91C_PIN_PA(10), 0, PIO_DEFAULT, PIO_PERIPH_A},
 #endif
@@ -103,14 +104,18 @@ void hw_init(void)
 	/* Configure the PIO controller to output PCK0 */
 	pio_setup(hw_pio);
 
+	/* Enable Debug messages on the DBGU */
+	dbgu_init(BAUDRATE(MASTER_CLOCK, 115200));
+	dbgu_print("Start AT91Bootstrap...\n\r");
+
 	/* Configure the EBI Slave Slot Cycle to 64 */
 	writel( (readl((AT91C_BASE_MATRIX + MATRIX_SCFG3)) & ~0xFF) | 0x40, (AT91C_BASE_MATRIX + MATRIX_SCFG3));
 
-#ifdef CONFIG_VERBOSE
+#ifdef CONFIG_DEBUG
 	/* Enable Debug messages on the DBGU */
 	dbg_init(BAUDRATE(MASTER_CLOCK, 115200));
 	header();
-#endif /* CONFIG_VERBOSE */
+#endif /* CONFIG_DEBUG */
 
 	/* Initialize the matrix */
 	writel(readl(AT91C_BASE_MATRIX + MATRIX_SCFG0) | AT91C_MATRIX_DEFMSTR_TYPE_FIXED_DEFMSTR | AT91C_MATRIX_FIXED_DEFMSTR0_ARM926D, AT91C_BASE_MATRIX + MATRIX_SCFG0);
