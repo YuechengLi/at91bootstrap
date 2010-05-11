@@ -41,7 +41,7 @@
 /* PLL initialization is done later in the hw_init() function          */
 /* ******************************************************************* */
 #define MASTER_CLOCK		(132096000)
-#define	TOP_OF_MEMORY		0x301000
+/*#define	TOP_OF_MEMORY		0x301000*/
 #define PLL_LOCK_TIMEOUT	1000000
 
 #define PLLA_SETTINGS	0x202A3F01
