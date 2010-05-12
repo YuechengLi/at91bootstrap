@@ -543,7 +543,7 @@ int load_df(unsigned int pcs, unsigned int img_addr, unsigned int img_size, unsi
 {
 	AT91S_DF sDF;
 	AT91PS_DF pDf = (AT91PS_DF)&sDF;
-	unsigned int rxBuffer[128];
+	unsigned int *rxBuffer = (unsigned int *)img_dest;
 	unsigned int status;
 
 	pDf->bSemaphore = UNLOCKED;
