@@ -248,7 +248,8 @@ char df_send_command (
  	write_spi(SPI_PTCR, AT91C_PDC_RXTEN);				/* PDC Enable Rx */
  	write_spi(SPI_PTCR, AT91C_PDC_TXTEN);				/* PDC Enable Tx */
 
-    	while (df_is_busy(pDataFlash) == LOCKED);
+   	while (df_is_busy(pDataFlash) == LOCKED)
+		;
 
 	return SUCCESS;
 }
@@ -325,19 +326,15 @@ static int df_read(
 	int page_counter;
 
 	page_counter = 32;
-	while (size)
-	{
+	while (size) {
 /*		SizeToRead = (size < AT91C_MAX_PDC_SIZE)? size : AT91C_MAX_PDC_SIZE; */
 		SizeToRead = (size < 0x8400)? size : 0x8400;
  		/* wait the dataflash ready status */
 		if(df_wait_ready(pDf) != 0) {
-		    	df_continuous_read(pDf, (char *)buffer, SizeToRead, addr);
-#if 0
-			dbg_print(".");
-#endif
+
+		   	df_continuous_read(pDf, (char *)buffer, SizeToRead, addr);
 			if(--page_counter <= 0) {
 				page_counter = 32;
-				//msg_print(MSG_NEWLINE);
 			}
 			size -= SizeToRead;
 			addr += SizeToRead;
@@ -507,14 +504,14 @@ static unsigned int df_is_boot_valid(unsigned char *buffer)
 	int i = 3;
  	/* Verify if the 28 first bytes of the sram correspond to ARM vectors
 	   The sixth ARM vector contain the size of the code */
-    	while(i < 28)
-    	{
-		if (i != 23)
-		{
-			if ((buffer[i] != 0xEA) && (buffer[i] != 0xE5) )
-				return FAILURE;
-		}
-		i+=4;
+    	while(i < 28) {
+
+			if (i != 23) {
+
+				if ((buffer[i] != 0xEA) && (buffer[i] != 0xE5) )
+					return FAILURE;
+			}
+			i+=4;
     	}
 	return SUCCESS;
 }
@@ -522,14 +519,14 @@ static unsigned int df_is_boot_valid(unsigned char *buffer)
 
 int burn_df(unsigned int pcs, unsigned int addr, unsigned int size, unsigned int offset)
 {
-    	AT91S_DF sDF;
-    	AT91PS_DF pDf = (AT91PS_DF)&sDF;
-    	pDf->bSemaphore = UNLOCKED;
+    AT91S_DF sDF;
+    AT91PS_DF pDf = (AT91PS_DF)&sDF;
+    pDf->bSemaphore = UNLOCKED;
 
-    	df_spi_init(pcs, DF_CS_SETTINGS);
+    df_spi_init(pcs, DF_CS_SETTINGS);
 
-    	if (df_init(pDf) == FAILURE)
-        	return FAILURE;
+    if (df_init(pDf) == FAILURE)
+       	return FAILURE;
 	df_write(pDf, addr, size, offset);
 	
 	return SUCCESS;
