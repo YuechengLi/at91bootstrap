@@ -36,6 +36,7 @@
 #include "gpio.h"
 #include "pmc.h"
 #include "rstc.h"
+#include "dbgu.h"
 #include "debug.h"
 #include "memory.h"
 
@@ -69,7 +70,7 @@ void hw_init(void)
 	
 	/* Configure PIOs */
 	const struct pio_desc hw_pio[] = {
-#ifdef CONFIG_VERBOSE
+#ifdef CONFIG_DEBUG
 		{"RXD", AT91C_PIN_PB(14), 0, PIO_DEFAULT, PIO_PERIPH_A},
 		{"TXD", AT91C_PIN_PB(15), 0, PIO_DEFAULT, PIO_PERIPH_A},
 #endif
@@ -107,11 +108,11 @@ void hw_init(void)
 	/* Configure the EBI Slave Slot Cycle to 64 */
 	writel( (readl((AT91C_BASE_MATRIX + MATRIX_SCFG3)) & ~0xFF) | 0x40, (AT91C_BASE_MATRIX + MATRIX_SCFG3));
 
-#ifdef CONFIG_VERBOSE
 	/* Enable Debug messages on the DBGU */
-	dbg_init(BAUDRATE(MASTER_CLOCK, 115200));
-	header();
-#endif /* CONFIG_VERBOSE */
+#ifdef CONFIG_DEBUG
+	dbgu_init(BAUDRATE(MASTER_CLOCK, 115200));
+	dbgu_print("Starting AT91Bootstrap...\r\n");
+#endif
 
 #ifdef CONFIG_SDRAM
 	/* Initialize the matrix */
