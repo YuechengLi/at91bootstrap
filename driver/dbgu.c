@@ -70,7 +70,8 @@ void dbgu_print(const char *ptr)
 	int i = 0;
 
 	while (ptr[i] != '\0') {
-		while ( !(read_dbgu(DBGU_CSR) & AT91C_US_TXRDY) );
+		while ( !(read_dbgu(DBGU_CSR) & AT91C_US_TXRDY) )
+			;
 		write_dbgu(DBGU_THR, ptr[i]);
 		i++;
 	}
@@ -78,7 +79,8 @@ void dbgu_print(const char *ptr)
 
 char dbgu_getc(void)
 {
-	while (!(read_dbgu(DBGU_CSR) & AT91C_US_RXRDY));
+	while (!(read_dbgu(DBGU_CSR) & AT91C_US_RXRDY))
+		;
 	return  (char)read_dbgu(DBGU_RHR);
 }
 
