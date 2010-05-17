@@ -85,6 +85,7 @@
 #define READ_NAND16() ((volatile unsigned short)(*(volatile unsigned short *) \
 						(unsigned long)AT91C_SMARTMEDIA_BASE))
 
+#if 0
 static struct SNandInitInfo NandFlash_InitInfo[] = {
 	/* ID    blk    blk_size pg_size spare_size bus_width spare_scheme chip_name */
 	{ 0x2cca, 0x800, 0x20000, 0x800,  0x40,      0x1,     &Spare_2048, "MT29F2G16AAB\0" },	
@@ -95,6 +96,31 @@ static struct SNandInitInfo NandFlash_InitInfo[] = {
 	{ 0x20aa, 0x800, 0x20000, 0x800,  0x40,      0x0,     &Spare_2048, "ST NAND02GR3B\0" },
 	{0,}
 };
+#endif
+
+static inline struct SNandInitInfo *AT91F_GetNandInitInfo(unsigned short chipID)
+{
+	static struct SNandInitInfo info;
+
+	//info.uNandID = chipID;
+	info.uNandNbBlocks = 0x800;
+	info.uNandBlockSize = 0x20000;
+	info.uNandSectorSize = 0x800;
+	info.uNandSpareSize = 0x40;
+	info.uNandBusWidth = 0;
+	info.pSpareScheme = &Spare_2048;
+
+	switch (chipID)
+	{
+		case 0x2cca:
+			info.uNandBusWidth = 0x1;
+			break;
+		default:
+			return 0;
+	}
+
+	return &info;
+}
 
 static void AT91F_NandInit(PSNandInfo pNandInfo, PSNandInitInfo pNandInitInfo)
 {
@@ -152,7 +178,7 @@ static void AT91F_NandInit(PSNandInfo pNandInfo, PSNandInitInfo pNandInitInfo)
 
 static PSNandInitInfo AT91F_NandReadID(void)
 {
-	unsigned int uChipID, i=0;
+	unsigned int uChipID;
 	unsigned char bManufacturerID, bDeviceID;
 	
 	/* Enable chipset */
@@ -171,6 +197,8 @@ static PSNandInitInfo AT91F_NandReadID(void)
 
 	uChipID = (bManufacturerID << 8) | bDeviceID;
 	
+	return AT91F_GetNandInitInfo(uChipID);
+#if 0
 	/* Search in NandFlash_InitInfo[] */
 	while (NandFlash_InitInfo[i].uNandID != 0)
 	{
@@ -181,6 +209,7 @@ static PSNandInitInfo AT91F_NandReadID(void)
 	}
 	
 	return 0;
+#endif
 }
 
 static void AT91F_WriteLarge_BlkAdr(unsigned int Adr)

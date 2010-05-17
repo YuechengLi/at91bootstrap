@@ -37,14 +37,14 @@
 
 typedef struct SNandInitInfo
 {
-	unsigned short         uNandID; /* Nand Chip ID */
+	//unsigned short         uNandID; /* Nand Chip ID */
 	unsigned short         uNandNbBlocks;	
 	unsigned int           uNandBlockSize;
 	unsigned short         uNandSectorSize;
 	unsigned char          uNandSpareSize;
 	unsigned char          uNandBusWidth;
 	struct NandSpareScheme *pSpareScheme;
-	char 	               name[32]		; /* Nand Name */
+	//char 	               name[32]		; /* Nand Name */
 } SNandInitInfo, *PSNandInitInfo;
 
 /* Group all usefull sizes for the nandflash chip */
