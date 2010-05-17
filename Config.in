@@ -26,6 +26,7 @@ if CONFIG_LOAD_LINUX
 config CONFIG_OS_MEM_BANK
 	string "OS Memory Bank Base Address"
 	default "0x70000000" if CONFIG_AT91SAM9G45EK
+	default "0x20000000" if CONFIG_AT91SAM9260EK
 	
 config CONFIG_OS_MEM_SIZE
 	string "OS Memory Bank Size"
