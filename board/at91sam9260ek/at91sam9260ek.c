@@ -40,6 +40,7 @@
 #include "debug.h"
 #include "memory.h"
 
+#if 0
 #ifndef CONFIG_THUMB
 static inline unsigned int get_cp15(void)
 {
@@ -56,6 +57,13 @@ static inline void set_cp15(unsigned int value)
 int get_cp15(void);
 void set_cp15(unsigned int value);
 #endif
+#endif
+
+int get_cp15(void);
+void set_cp15(unsigned int value);
+int get_cpsr(void);
+void set_cpsr(unsigned int value);
+
 
 #ifdef CONFIG_HW_INIT
 /*----------------------------------------------------------------------------*/

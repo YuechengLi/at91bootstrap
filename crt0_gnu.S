@@ -182,7 +182,8 @@ _go:
 	mov     lr, pc
 	bx      r0
 
-#ifdef CONFIG_THUMB
+/*#ifdef CONFIG_THUMB*/
+
 	.globl set_cp15
 set_cp15:
 	mcr	p15, 0, r0, c1, c0, 0
@@ -192,7 +193,47 @@ set_cp15:
 get_cp15:
 	mrc	p15, 0, r0, c1, c0, 0
 	bx	lr
-#endif
+
+	.global disable_irq
+disable_irq:
+	mrs	r0, cpsr
+	orr r0, r0, #0xc0
+	msr	cpsr_c, r0
+	bx	lr
+
+	.global get_cpsr
+get_cpsr:
+	mrs r0, cpsr
+	bx	lr
+
+	.global set_cpsr
+set_cpsr:
+	msr cpsr_c, r0
+	bx	lr
+
+	.global disable_icache
+disable_icache:
+	mrc p15, 0, r0, c1, c0, 0
+	mvn	r1, #(1 << 12)
+	and r0, r0, r1
+	mcr	p15, 0, r0, c1, c0, 0
+	bx	lr
+
+	.global disable_dcache
+disable_dcache:
+	mrc p15, 0, r0, c1, c0, 0
+	mvn	r1, #(1 << 2)
+	and r0, r0, r1
+	mcr	p15, 0, r0, c1, c0, 0
+	bx	lr
+
+	.global flush_idcache
+flush_idcache:
+	mov	r0, #0
+	mcr p15, 0, r0, c7, c7, 0
+	bx	lr
+
+/*#endif*/
 
 	.align
 _lp_data:
