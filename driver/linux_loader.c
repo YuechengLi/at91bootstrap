@@ -59,6 +59,55 @@
 #define BIN_LOAD_ADDR (OS_MEM_BANK + 0x2000000)
 #define IMAGE_MAGIC 0x27051956
 
+#if 0
+#ifndef CONFIG_THUMB
+static inline unsigned int get_cp15(void)
+{
+	unsigned int value;
+
+	__asm__ __volatile__("mrc p15, 0, %0, c1, c0, 0" : "=r" (value));
+
+	return value;
+}
+
+static inline void set_cp15(unsigned int value)
+{
+	__asm__ __volatile__("mcr p15, 0, %0, c1, c0, 0" : : "r" (value));
+}
+
+static inilne unsigned int get_cpsr(void)
+{
+	unsigned int value;
+
+    __asm__ __volatile__("mrs %0, cpsr" : "=r" (value));
+
+	return value;
+}
+
+static inline void set_cpsr(unsigned int value)
+{
+	__asm__ __volatile__("msr cpsr_c, %1" : : "r" (value));
+}
+
+#else
+static inline unsigned int get_cp15(void);
+static inline void set_cp15(unsigned int value);
+static inilne unsigned int get_cpsr(void);
+static inline void set_cpsr(unsigned int value);
+#endif
+
+#endif
+
+#if 0
+static inline unsigned int get_cp15(void);
+static inline void set_cp15(unsigned int value);
+static inline unsigned int get_cpsr(void);
+static inline void set_cpsr(unsigned int value);
+#endif
+extern inline void disable_icache(void);
+extern inline void disable_dcache(void);
+extern inline void disable_irq(void);
+
 int strlen(char *str)
 {
 	int i = 0;
@@ -130,9 +179,20 @@ static void setup_cmdline_tag(struct tag *tag, char *commandline)
 
 void clean_environment()
 {
-    unsigned long old, tmp;
-    unsigned long i;
+	/* Disable ARM Core interrupt */
+	disable_irq();
+#if 0
+	tmp = get_cpsr;
+	tmp |= 0xc0;
+	set_cpsr(tmp);
+#endif
 
+	/* Turen off I/D cache */
+	disable_icache();
+	disable_dcache();
+	/* Flush I/D cache */
+
+#if 0
     /* disable interrupt */
     dbg_log(1, "Disable interrupt...\n\r");
     __asm__ __volatile__("mrs %0, cpsr\n"
@@ -153,6 +213,7 @@ void clean_environment()
     i = 0;
     __asm__ __volatile__ ("mcr p15, 0, %0, c7, c7, 0": :"r" (i));
     dbg_log(1, "End clean environment...\n\r");
+#endif
 }
 
 struct tag *tags = (struct tag *)(OS_MEM_BANK + 0x100);
@@ -183,32 +244,6 @@ void setup_tags()
     tag->hdr.tag = ATAG_NONE;
     tag->hdr.size = 0;
 }
-
-#if 0
-int LoadImageFromNand()
-{
-    int BytesLeft = OS_IMG_SIZE;
-    char *ptr = (char *)BIN_LOAD_ADDR;
-    unsigned short block;
-    unsigned char err;
-    int i;
-
-    block = LINUX_IMG_NAND_OFFSET / gNandBlockSize;
-
-    for (i = 0; i < DEFAULT_BIN_SIZE/ gNandBlockSize; ++i) {
-        while (SkipBlockNandFlash_ReadBlock(&gSkippedNf, block, ptr) != 0) {
-            dbg_log(1, "Loading Linux, Skipped one bad block!\n\r");
-            block++;
-        }
-        ptr += gNandBlockSize;
-        block++;
-        dbg_log(1, "Total %d blocks loaded from NAND flash!\r", i);
-    }
-    dbg_log(1, "\n\r");
-
-    return 0;
-}
-#endif
 
 void LoadLinux()
 {
