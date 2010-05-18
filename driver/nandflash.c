@@ -115,6 +115,12 @@ static inline struct SNandInitInfo *AT91F_GetNandInitInfo(unsigned short chipID)
 		case 0x2cca:
 			info.uNandBusWidth = 0x1;
 			break;
+		case 0x2cda:
+		case 0x2caa:
+		case 0xecda:
+		case 0xecaa:
+		case 0x20aa:
+			break;
 		default:
 			return 0;
 	}
