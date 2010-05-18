@@ -112,6 +112,7 @@ config CONFIG_JUMP_ADDR
 	string
 	depends on !CONFIG_LOAD_UBOOT
 	default "0x70000000" if CONFIG_AT91CAP9ADK
+	default "0x70000000" if CONFIG_AT91SAM9G45EK
 	default "0x20000000"
 	help
 
