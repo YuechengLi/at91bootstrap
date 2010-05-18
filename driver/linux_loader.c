@@ -107,6 +107,7 @@ static inline void set_cpsr(unsigned int value);
 extern inline void disable_icache(void);
 extern inline void disable_dcache(void);
 extern inline void disable_irq(void);
+extern inline void flush_idcache(void);
 
 int strlen(char *str)
 {
@@ -191,6 +192,7 @@ void clean_environment()
 	disable_icache();
 	disable_dcache();
 	/* Flush I/D cache */
+	flush_idcache();
 
 #if 0
     /* disable interrupt */
@@ -209,7 +211,6 @@ void clean_environment()
     i &= ~(C1_DC | C1_IC);
     __asm__ __volatile__ ("mcr p15, 0, %0, c1, c0, 0": :"r" (i));
 
-    /* Flush I/D Cache */
     i = 0;
     __asm__ __volatile__ ("mcr p15, 0, %0, c7, c7, 0": :"r" (i));
     dbg_log(1, "End clean environment...\n\r");
