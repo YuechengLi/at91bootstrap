@@ -224,13 +224,11 @@ static void AT91F_WriteLarge_BlkAdr(unsigned int Adr)
 	WRITE_NAND_ADDRESS((Adr >>  8) & 0xFF);
 }
 
-
 static void AT91F_WriteSectorAdr(unsigned int Adr)
 {
 	AT91F_WriteLarge_BlkAdr(Adr);
 	WRITE_NAND_ADDRESS((Adr >> 16) & 0xFF);
 }
-
 
 BOOL AT91F_NandEraseBlock0(void)
 {
@@ -250,7 +248,6 @@ BOOL AT91F_NandEraseBlock0(void)
 	NAND_WAIT_READY();
 	NAND_WAIT_READY();
 
-
 	/* Check status bit for error notification */
 	WRITE_NAND_COMMAND(CMD_STATUS);
 	NAND_WAIT_READY();
@@ -265,7 +262,6 @@ exit:
 
 	return bRet;
 }
-
 
 #ifdef NANDFLASH_SMALL_BLOCKS
 BOOL AT91F_NandReadSector(PSNandInfo pNandInfo, unsigned int uSectorAddr,
