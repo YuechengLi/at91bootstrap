@@ -1,6 +1,6 @@
 #
 # Automatically generated make config: don't edit
-# Tue Jan 12 22:00:39 2010
+# Wed May 19 17:25:20 2010
 #
 HAVE_DOT_CONFIG=y
 CONFIG_BOARDNAME="at91sam9g45dfes"
@@ -102,7 +102,9 @@ CONFIG_JUMP_ADDR="0x73F00000"
 CONFIG_APP_CHECK=y
 # CONFIG_LONG_TEST is not set
 CONFIG_DEBUG=y
-CONFIG_VERBOSE=y
+CONFIG_DEBUG_INFO=y
+# CONFIG_DEBUG_LOUD is not set
+# CONFIG_DEBUG_VERY_LOUD is not set
 CONFIG_HW_INIT=y
 # CONFIG_USER_HW_INIT is not set
 # CONFIG_THUMB is not set
