@@ -1,9 +1,9 @@
 #
 # Automatically generated make config: don't edit
-# Thu May 20 10:12:55 2010
+# Thu May 20 14:42:33 2010
 #
 HAVE_DOT_CONFIG=y
-CONFIG_BOARDNAME="at91sam9m10df"
+CONFIG_BOARDNAME="at91sam9m10ek"
 # CONFIG_AT91SAM9260EK is not set
 # CONFIG_AT91SAM9261EK is not set
 # CONFIG_AT91SAM9263EK is not set
