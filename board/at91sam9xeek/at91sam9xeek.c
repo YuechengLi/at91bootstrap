@@ -35,6 +35,7 @@
 #include "gpio.h"
 #include "pmc.h"
 #include "rstc.h"
+#include "dbgu.h"
 #include "debug.h"
 #include "memory.h"
 
@@ -68,7 +69,7 @@ void hw_init(void)
 	
 	/* Configure PIOs */
 	const struct pio_desc hw_pio[] = {
-#ifdef CONFIG_VERBOSE
+#ifdef CONFIG_DEBUG
 		{"RXD", AT91C_PIN_PB(14), 0, PIO_DEFAULT, PIO_PERIPH_A},
 		{"TXD", AT91C_PIN_PB(15), 0, PIO_DEFAULT, PIO_PERIPH_A},
 #endif
@@ -106,10 +107,10 @@ void hw_init(void)
 	/* Configure the PIO controller */
 	pio_setup(hw_pio);
 
-#ifdef CONFIG_VERBOSE
+#ifdef CONFIG_DEBUG
 	/* Enable Debug messages on the DBGU */
-	dbg_init(BAUDRATE(MASTER_CLOCK, 115200));
-	header();
+	dbgu_init(BAUDRATE(MASTER_CLOCK, 115200));
+	dbgu_print("Start AT91Bootstrap...\n\r");
 #endif /* CONFIG_VERBOSE */
 
 #ifdef CONFIG_SDRAM
