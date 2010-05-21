@@ -225,7 +225,7 @@ INCL=board/$(BOARD)
 
 #AT91_CUSTOM_FLAGS:=-mcpu=arm9
 #AT91_CUSTOM_FLAGS:=-mcpu=arm926ej-s
-#GC_SECTIONS=--gc-sections
+GC_SECTIONS=--gc-sections
 
 CPPFLAGS=-g -Os -Wall 	-I$(INCL) -Iinclude	\
 	-DAT91BOOTSTRAP_VERSION=\"$(VERSION)\"	\
