@@ -129,6 +129,14 @@ LINUX_IMG_NAND_OFFSET := $(strip $(subst ",,$(CONFIG_LINUX_IMG_NAND_OFFSET)))
 
 LINUX_KERNEL_ARG_STRING := $(strip $(subst ",,$(CONFIG_LINUX_KERNEL_ARG_STRING)))
 
+JUMP_ADDR := $(strip $(subst ",,$(CONFIG_JUMP_ADDR)))
+
+GLBDRV_ADDR := $(strip $(subst ",,$(CONFIG_GLBDRV_ADDR)))
+
+BOOTSTRAP_MAXSIZE := $(strip $(subst ",,$(CONFIG_BOOTSTRAP_MAXSIZE)))
+
+CARD_SUFFIX = $(strip $(subst ",,$(CONFIG_CARD_SUFFIX)))
+
 # Board definitions
 
 BOARDNAME=$(strip $(subst ",,$(CONFIG_BOARDNAME)))
@@ -224,6 +232,10 @@ CPPFLAGS=-g -Os -Wall 	-I$(INCL) -Iinclude	\
 	$(NO_DWARF_CFI_ASM) \
 	$(AT91_CUSTOM_FLAGS) 
 
+CPPFLAGS_UTIL=-g -Os -Wall 	-I$(INCL) -Iinclude	\
+	-DAT91BOOTSTRAP_VERSION=\"$(VERSION)\" 
+
+
 ASFLAGS=-g -Os -Wall -I$(INCL) -Iinclude  		\
 	$(AT91_CUSTOM_FLAGS)
 
@@ -259,6 +271,11 @@ gen_bin: $(OBJS)
 	@echo "  LD        "$(BOOT_NAME).elf
 	@$(LD) $(LDFLAGS) -n -o $(BINDIR)/$(BOOT_NAME).elf $(OBJS)
 	@$(OBJCOPY) --strip-debug --strip-unneeded $(BINDIR)/$(BOOT_NAME).elf -O binary $(BINDIR)/$(BOOT_NAME).bin
+
+$(DRIVERS_SRC)/mci_util.o:	$(DRIVERS_SRC)/mci_util.c .config
+	@echo "  CC        "$<
+	$(CC)   $(CPPFLAGS_UTIL) -c -o $(DRIVERS_SRC)/mci_util.o $(DRIVERS_SRC)/mci_util.c	
+
 
 %.o : %.c .config
 	@echo "  CC        "$<

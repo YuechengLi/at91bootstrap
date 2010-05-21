@@ -2672,4 +2672,29 @@
 
 #define AT91C_NR_PIO               (32 * 3)
 
+
+#define 	AT91C_MCI_SCDSEL_SLOTA                (0x0) // (MCI) Slot A selected
+
+#define BOARD_SD_MCI_ID             AT91C_ID_MCI
+#define BOARD_SD_MCI_BASE 	AT91C_BASE_MCI
+#define BOARD_SD_SLOT               MCI_SD_SLOTA
+
+
+#define 	AT91C_MCI_SCDBUS_1BIT                 (0x0 <<  7) // (MCI) 1-bit data bus
+#define 	AT91C_MCI_SCDBUS_4BITS                (0x1 <<  7) // (MCI) 4-bits data bus
+#define BOARD_MCK	MASTER_CLOCK
+
+
+#define 	AT91C_MCI_TRDIR_WRITE                (0x0 << 18) // (MCI) Write
+#define 	AT91C_MCI_TRDIR_READ                 (0x1 << 18) // (MCI) Read
+
+
+#define 	AT91C_MCI_OPDCMD_PUSHPULL             (0x0 << 11) // (MCI) Push/pull command
+#define 	AT91C_MCI_OPDCMD_OPENDRAIN            (0x1 << 11) // (MCI) Open drain command
+
+#define BOARD_SD_MCI_ID_USE			0
+
+#define CHIP_SRAM0_BASEADDR		0x300000
+
+#define NO_PATITION
 #endif /* AT91SAM9261_INC_H */

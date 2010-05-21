@@ -1840,7 +1840,7 @@
 #define 	AT91C_MCI_SCDSEL_SLOTB                (0x1) // (MCI) Slot B selected
 #define 	AT91C_MCI_SCDSEL_SLOTC                (0x2) // (MCI) Slot C selected
 #define 	AT91C_MCI_SCDSEL_SLOTD                (0x3) // (MCI) Slot D selected
-#define AT91C_MCI_SCDBUS          (0x1 <<  6) // (MCI) SDCard/SDIO Bus Width
+#define AT91C_MCI_SCDBUS          (0x3 <<  6) // (MCI) SDCard/SDIO Bus Width
 #define 	AT91C_MCI_SCDBUS_1BIT                 (0x0 <<  6) // (MCI) 1-bit data bus
 #define 	AT91C_MCI_SCDBUS_4BITS                (0x2 <<  6) // (MCI) 4-bits data bus
 #define 	AT91C_MCI_SCDBUS_8BITS                (0x3 <<  6) // (MCI) 8-bits data bus
@@ -6337,3 +6337,18 @@
 
 
 
+#define MCI2_INTERFACE
+
+#define CHIP_DMA_CHANNEL_NUM   8
+
+#define BOARD_SD_DMA_HW_SRC_REQ_ID      0
+#define BOARD_SD_DMA_HW_DEST_REQ_ID     (0x0 <<  4)
+
+#define BOARD_MCI_DMA_CHANNEL       0
+
+#define BOARD_SD_MCI_BASE AT91C_BASE_MCI0
+#define BOARD_SD_MCI_ID             AT91C_ID_MCI0
+#define BOARD_SD_SLOT               MCI_SD_SLOTA
+#define BOARD_SD_MCI_ID_USE			0
+
+#define CHIP_SRAM0_BASEADDR 0x300000

@@ -35,6 +35,7 @@
 #include "pmc.h"
 #include "rstc.h"
 #include "debug.h"
+#include "dbgu.h"
 #include "memory.h"
 #include "psram.h"
 #include "matrix.h"
@@ -67,7 +68,7 @@ void hw_init(void)
 {
 	/* Configure PIOs */
 	const struct pio_desc hw_pio[] = {
-#ifdef CONFIG_VERBOSE
+#ifdef CONFIG_DEBUG
 		{"RXD", AT91C_PIN_PC(30), 0, PIO_DEFAULT, PIO_PERIPH_A},
 		{"TXD", AT91C_PIN_PC(31), 0, PIO_DEFAULT, PIO_PERIPH_A},
 #endif
@@ -349,11 +350,11 @@ void hw_init(void)
 		AHB_LCDC_ID
 	);
 
-#ifdef CONFIG_VERBOSE
+#ifdef CONFIG_DEBUG
 	/* Enable Debug messages on the DBGU */
-	dbg_init(BAUDRATE(MASTER_CLOCK, 115200));
-	header();
-#endif /* CONFIG_DEBUG */
+	dbgu_init(BAUDRATE(MASTER_CLOCK, 115200));
+	dbgu_print("Start AT91Bootstrap...\n\r");
+#endif
 
 #ifdef CONFIG_SDRAM
 	/* Initialize the matrix */
@@ -390,8 +391,8 @@ void hw_init(void)
 				AT91C_SDRAMC_MD_SDRAM);   /* SDRAM (no low power)   */
 #endif
 #endif	/* CONFIG_SDRAM */
-
-
+	
+	
 #if	defined(CONFIG_PSRAM)
 	 psram_hw_init();
 #endif  /* CFG_PSRAM */

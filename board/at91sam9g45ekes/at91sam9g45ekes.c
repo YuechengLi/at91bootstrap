@@ -34,6 +34,7 @@
 #include "gpio.h"
 #include "pmc.h"
 #include "rstc.h"
+#include "dbgu.h"
 #include "debug.h"
 #include "main.h"
 #include "ddramc.h"
@@ -74,7 +75,7 @@ void hw_init(void)
 
 	/* Configure PIOs */
 	const struct pio_desc hw_pio[] = {
-#ifdef CONFIG_VERBOSE
+#ifdef CONFIG_DEBUG
 		{"RXD", AT91C_PIN_PB(12), 0, PIO_DEFAULT, PIO_PERIPH_A},
 		{"TXD", AT91C_PIN_PB(13), 0, PIO_DEFAULT, PIO_PERIPH_A},
 #endif
@@ -111,11 +112,12 @@ void hw_init(void)
 	/* Configure the PIO controller */
 	pio_setup(hw_pio);
 
-#ifdef CONFIG_VERBOSE
-	/* Enable Debug messages on the DBGU */
-	dbg_init(BAUDRATE(MASTER_CLOCK, 115200));
+#ifdef CONFIG_DEBUG
 
-	dbg_print("Start AT91Bootstrap...\n\r");
+	/* Enable Debug messages on the DBGU */
+	dbgu_init(BAUDRATE(MASTER_CLOCK, 115200));
+
+	dbgu_print("Start AT91Bootstrap...\n\r");
 #endif /* CONFIG_VERBOSE */
 
 #ifdef CONFIG_DDR2
@@ -278,3 +280,17 @@ void nandflash_cfg_8bits_dbw_init(void)
 }
 
 #endif /* #ifdef CONFIG_NANDFLASH */
+
+#ifdef CONFIG_SCLK
+void sclk_enable(void)
+{
+	volatile int i;
+	unsigned int dwRegSave;
+	
+	(*(volatile unsigned int*)AT91C_SYS_SLCKSEL) = AT91C_SLCKSEL_OSC32EN | AT91C_SLCKSEL_RCEN;
+	for (i=0; i<0x100000; i++); //wait for a slow clock  startup time
+	
+	(*(volatile unsigned int*)AT91C_SYS_SLCKSEL) = AT91C_SLCKSEL_OSC32EN | AT91C_SLCKSEL_RCEN | AT91C_SLCKSEL_OSCSEL;
+	for (i=0; i<0x1000; i++);
+}
+#endif

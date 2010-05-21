@@ -34,6 +34,7 @@
 #include "main.h"
 #include "dbgu.h"
 
+#ifdef CONFIG_DEBUG
 /* Write DBGU register */
 static inline void write_dbgu(unsigned int offset, const unsigned int value)
 {
@@ -83,4 +84,4 @@ char dbgu_getc(void)
 		;
 	return  (char)read_dbgu(DBGU_RHR);
 }
-
+#endif

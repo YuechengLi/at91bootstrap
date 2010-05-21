@@ -172,6 +172,7 @@ static int pio_set_multi_drive(unsigned pin, int is_on)
 	return 0;
 }
 
+#if !defined(at91sam9g10)
 /*------------------------------------------------------------------------------*/
 /* \fn    pio_set_value								*/
 /* \brief assuming the pin is muxed as a gpio output, set its value.		*/
@@ -186,7 +187,8 @@ int pio_set_value(unsigned pin, int value)
 	write_pio((value ? PIO_SODR(pio) : PIO_CODR(pio)), mask);
 	return 0;
 }
-
+#endif
+#if !defined (CONFIG_SDCARD)
 /*------------------------------------------------------------------------------*/
 /* \fn    pio_get_value								*/
 /* \brief read the pin's value (works even if it's not muxed as a gpio).	*/
@@ -203,7 +205,7 @@ int pio_get_value(unsigned pin)
 	pdsr = read_pio(PIO_PDSR(pio));
 	return (pdsr & mask) != 0;
 }
-
+#endif
 /*------------------------------------------------------------------------------*/
 /* \fn    pio_device_pio_setup							*/
 /* \brief Configure PIO in periph mode according to the platform informations	*/
@@ -224,6 +226,7 @@ int pio_setup (const struct pio_desc *pio_desc)
                 else if (pio_desc->type == PIO_PERIPH_A)
                         pio_set_A_periph(pio_desc->pin_num,
                                 (pio_desc->attribute & PIO_PULLUP) ? 1 : 0);
+#if !(defined(at91sam9g10)&&defined(CONFIG_SDCARD))								
                 else if (pio_desc->type == PIO_PERIPH_B)
                         pio_set_B_periph(pio_desc->pin_num,
                                 (pio_desc->attribute & PIO_PULLUP) ? 1 : 0);
@@ -237,6 +240,7 @@ int pio_setup (const struct pio_desc *pio_desc)
                         pio_set_multi_drive(pio_desc->pin_num, (pio_desc->attribute & PIO_OPENDRAIN) ? 1 : 0);
                         pio_set_gpio_output(pio_desc->pin_num, pio_desc->dft_value);
                 }
+#endif					
                 else
                          return 0;
                 ++pin;

@@ -104,12 +104,14 @@ void hw_init(void)
 	/* Configure the PIO controller to output PCK0 */
 	pio_setup(hw_pio);
 
+	/* Configure the EBI Slave Slot Cycle to 64 */
+	writel( (readl((AT91C_BASE_MATRIX + MATRIX_SCFG3)) & ~0xFF) | 0x40, (AT91C_BASE_MATRIX + MATRIX_SCFG3));
+
+#ifdef CONFIG_DEBUG
 	/* Enable Debug messages on the DBGU */
 	dbgu_init(BAUDRATE(MASTER_CLOCK, 115200));
 	dbgu_print("Start AT91Bootstrap...\n\r");
-
-	/* Configure the EBI Slave Slot Cycle to 64 */
-	writel( (readl((AT91C_BASE_MATRIX + MATRIX_SCFG3)) & ~0xFF) | 0x40, (AT91C_BASE_MATRIX + MATRIX_SCFG3));
+#endif /* CONFIG_VERBOSE */
 
 	/* Initialize the matrix */
 	writel(readl(AT91C_BASE_MATRIX + MATRIX_SCFG0) | AT91C_MATRIX_DEFMSTR_TYPE_FIXED_DEFMSTR | AT91C_MATRIX_FIXED_DEFMSTR0_ARM926D, AT91C_BASE_MATRIX + MATRIX_SCFG0);
@@ -165,7 +167,7 @@ void hw_init(void)
 void sdramc_hw_init(void)
 {
 	/* Configure PIOs */
-	const struct pio_desc sdramc_pio[] = {
+/*	const struct pio_desc sdramc_pio[] = {
 		{"D16", AT91C_PIN_PC(16), 0, PIO_DEFAULT, PIO_PERIPH_A},
 		{"D17", AT91C_PIN_PC(17), 0, PIO_DEFAULT, PIO_PERIPH_A},
 		{"D18", AT91C_PIN_PC(18), 0, PIO_DEFAULT, PIO_PERIPH_A},
@@ -184,9 +186,19 @@ void sdramc_hw_init(void)
 		{"D31", AT91C_PIN_PC(31), 0, PIO_DEFAULT, PIO_PERIPH_A},
 		{(char *) 0, 0, 0, PIO_DEFAULT, PIO_PERIPH_A},
 	};
-
-	/* Configure the SDRAMC PIO controller to output PCK0 */
-	pio_setup(sdramc_pio);
+*/
+	struct pio_desc sdramc_pio[] = {
+		{"D", AT91C_PIN_PC(16), 0, PIO_DEFAULT, PIO_PERIPH_A},
+		{(char *) 0, 0, 0, PIO_DEFAULT, PIO_PERIPH_A},
+	};
+	unsigned int i;
+	
+	for (i=0; i<16; i++)
+	{
+		sdramc_pio[0].pin_num = AT91C_PIN_PC(16) + i;
+		/* Configure the SDRAMC PIO controller to output PCK0 */
+		pio_setup(sdramc_pio);
+	}
 }
 #endif
 

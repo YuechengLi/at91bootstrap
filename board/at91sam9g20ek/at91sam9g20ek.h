@@ -41,7 +41,7 @@
 /* PLL initialization is done later in the hw_init() function          */
 /* ******************************************************************* */
 #define MASTER_CLOCK		(132096000)
-/*#define	TOP_OF_MEMORY		0x301000*/
+#define	TOP_OF_MEMORY		0x301000
 #define PLL_LOCK_TIMEOUT	1000000
 
 #define PLLA_SETTINGS	0x202A3F01
@@ -100,4 +100,18 @@
 
 #define AT91C_SM_TDF	        (3 << 16)
 
+#define OP_BOOTSTRAP_MCI_on
+#define BOARD_SD_PIN_CD \
+    {1 << 9, AT91C_BASE_PIOC, AT91C_ID_PIOC, PIO_INPUT, PIO_PULLUP}
+	
+#define BOARD_SD_PINS \
+    {0x0000003B, AT91C_BASE_PIOA, AT91C_ID_PIOA, PIO_PERIPH_B, PIO_PULLUP}, \
+    {1 << 8, AT91C_BASE_PIOA, AT91C_ID_PIOA, PIO_PERIPH_A, PIO_DEFAULT}
+
+/// List of second MCI slot pins definitions.
+#define BOARD_SD_MCI1_PINS  \
+    {0xec0, AT91C_BASE_PIOA, AT91C_ID_PIOA, PIO_PERIPH_A, PIO_PULLUP}, \
+    {1 << 8, AT91C_BASE_PIOA, AT91C_ID_PIOA, PIO_PERIPH_A, PIO_DEFAULT}	
+
+#define at91sam9g20
 #endif	/* _AT91SAM9G20EK_H */

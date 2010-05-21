@@ -94,7 +94,11 @@ int main(void)
 #ifdef CONFIG_FLASH
 	load_norflash(IMG_ADDRESS, IMG_SIZE, JUMP_ADDR);
 #endif
-
+	
+#ifdef CONFIG_SDCARD
+	load_SDCard();
+#endif
+	
 	/* ==================== 3rd step:  Process the Image =================== */
 	/* Uncompress the image */
 #ifdef CONFIG_GUNZIP
@@ -109,9 +113,17 @@ int main(void)
 	msg_print(MSG_LINUX);
 #endif /* LINUX_ARG */
 
+#ifdef CONFIG_SCLK
+	sclk_enable();
+#endif	
+
+#ifdef CONFIG_LOAD_NK
+	return (JUMP_ADDR+0x1000);
+#else
 	//msg_print(MSG_PROMPT);
 	//msg_print_status(MSG_START,JUMP_ADDR);
 	/* Jump to the Image Address */
 	return JUMP_ADDR;
+#endif	
 }
 
