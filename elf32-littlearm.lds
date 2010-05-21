@@ -18,7 +18,9 @@ SECTIONS
 	}
 
 	/* collect all initialized .data sections */
-	.data : AT ( ADDR (.text) + SIZEOF (.text) ) { 
+	/* .data : AT ( ADDR (.text) + SIZEOF (.text) SIZEOF (.ARM.*) {  */
+	. = ALIGN(4);
+	.data : {
 		_sdata = .;
 		*(.vectors)
 		*(.data)
