@@ -265,7 +265,8 @@ TARGETS=$(obj) $(AT91BOOTSTRAP)
 
 PHONY:=all gen_bin
 
-all: gen_bin ChkFilesize
+all: gen_bin ChkFileSize
+
 gen_bin: $(OBJS)
 	$(if $(wildcard $(BINDIR)),,mkdir -p $(BINDIR))
 	@echo "  LD        "$(BOOT_NAME).elf
@@ -321,7 +322,7 @@ $(BINDIR)/sx-at91:	$(BINDIR)
 
 rebuild: clean all
 
-ChkFilesize:
+ChkFileSize:
 	@( fsize=`stat -c%s $(BINDIR)/$(BOOT_NAME).bin`; \
 	  echo "Size of $(BOOT_NAME).bin is $$fsize bytes"; \
 	  if [ "$$fsize" -gt "$(BOOTSTRAP_MAXSIZE)" ] ; then \
