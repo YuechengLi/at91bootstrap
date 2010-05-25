@@ -17,48 +17,35 @@ config CONFIG_PROJECT
 	default "nandflash"	if CONFIG_NANDFLASH
 	default "sdcard"	if CONFIG_SDCARD
 
-menuconfig CONFIG_LOAD_LINUX
-	bool "Support loading Linux directly"
-	depends on CONFIG_NANDFLASH
-	---help---
-	   Load Linux kernel directly from NANDFlash with U-Boot.
-if CONFIG_LOAD_LINUX
-config CONFIG_OS_MEM_BANK
-	string "OS Memory Bank Base Address"
-	default "0x70000000" if CONFIG_AT91SAM9G45EK
-	default "0x20000000" if CONFIG_AT91SAM9260EK
-	
-config CONFIG_OS_MEM_SIZE
-	string "OS Memory Bank Size"
-	default "0x4000000"
-	
-config CONFIG_LINUX_KERNEL_ARG_STRING
-	string "Linux kernel parameters"
-	default "mem=64M console=ttyS0,115200 root=/dev/mtdblock1 rw rootfstype=jffs2" if CONFIG_AT91SAM9260EK
-	default "mem=64M console=ttyS0,115200 root=/dev/mtdblock1 rw rootfstype=jffs2" if CONFIG_AT91SAM9261EK
-	default "mem=64M console=ttyS0,115200 root=/dev/mtdblock1 rw rootfstype=jffs2" if CONFIG_AT91SAM9RLEK
-	default "mem=64M console=ttyS0,115200 root=/dev/mtdblock1 rw rootfstype=jffs2" if CONFIG_AT91SAM9263EK
-	default "mem=64M console=ttyS0,115200 mtdparts=atmel_nand:4M(bootstrap),60M(rootfs),-(spare) root=/dev/mtdblock1 rw rootfstype=jffs2" if CONFIG_AT91SAM9G45EK
-	
-config CONFIG_OS_IMG_SIZE
-	string "OS Image Size"
-	default "2621440"
-
-config CONFIG_LINUX_IMG_NAND_OFFSET
-	string "NandFlash offset for Linux kernel(in decimal)"
-	default "2097152"
-
-endif
-
 choice
-	prompt "Load strategy"
+	prompt "Image Loading Strategy"
 	default CONFIG_LOAD_UBOOT
 
+#
+# Load U-Boot
+#
 config CONFIG_LOAD_UBOOT
 	bool "Load U-Boot into last MBYTE of SDRAM"
 	help
 	  Use this mode to load an second level boot monitor
 	  like U-boot into the last MB of SDRAM.
+
+#
+# Load Linux
+#
+config CONFIG_LOAD_LINUX
+	bool "Support loading Linux directly"
+	---help---
+	   Load Linux kernel directly from storage media
+
+#
+# Load WinCE
+#
+config CONFIG_LOAD_NK
+	bool "Support loading WinCE directly"
+	depends on CONFIG_NANDFLASH || CONFIG_SDCARD
+	help
+	  Use this mode to load WinCE NK Image
 
 config CONFIG_LOAD_64KB
 	bool "Load 64 kB into the start of SDRAM"
@@ -78,13 +65,103 @@ config CONFIG_LOAD_4MB
 	  Use this mode to load an embedded application
 	  which can have a size of up to 4 MByte
 
-config CONFIG_LOAD_NK
-	bool "Load NK Image"
-	depends on CONFIG_NANDFLASH || CONFIG_SDCARD
-	help
-	  Use this mode to load WinCE NK Image
-
 endchoice
+
+#
+# Linux Image Storage Setup
+#
+menu "Linux Image Storage Setup"
+	depends on CONFIG_LOAD_LINUX
+config CONFIG_OS_MEM_BANK
+	string "OS Memory Bank Base Address"
+	default "0x20000000" if CONFIG_AT91SAM9260EK
+	default "0x20000000" if CONFIG_AT91SAM9261EK
+	default "0x20000000" if CONFIG_AT91SAM9263EK
+	default "0x20000000" if CONFIG_AT91SAM9RLEK
+	default "0x20000000" if CONFIG_AT91SAM9G10EK
+	default "0x20000000" if CONFIG_AT91SAM9G20EK
+	default "0x70000000" if CONFIG_AT91SAM9G45EK
+	default "0x70000000" if CONFIG_AT91SAM9G45EKES
+	default "0x70000000" if CONFIG_AT91SAM9M10EK
+	
+config CONFIG_OS_MEM_SIZE
+	string "OS Memory Bank Size"
+	default "0x4000000"
+	
+config CONFIG_LINUX_KERNEL_ARG_STRING
+	string "Linux kernel parameters"
+	default "mem=64M console=ttyS0,115200 mtdparts=atmel_nand:4M(bootstrap),60M(rootfs),-(spare) root=/dev/mtdblock1 rw rootfstype=jffs2" if CONFIG_AT91SAM9260EK
+	default "mem=64M console=ttyS0,115200 mtdparts=atmel_nand:4M(bootstrap),60M(rootfs),-(spare) root=/dev/mtdblock1 rw rootfstype=jffs2" if CONFIG_AT91SAM9261EK
+	default "mem=64M console=ttyS0,115200 mtdparts=atmel_nand:4M(bootstrap),60M(rootfs),-(spare) root=/dev/mtdblock1 rw rootfstype=jffs2" if CONFIG_AT91SAM9263EK
+	default "mem=64M console=ttyS0,115200 mtdparts=atmel_nand:4M(bootstrap),60M(rootfs),-(spare) root=/dev/mtdblock1 rw rootfstype=jffs2" if CONFIG_AT91SAM9RLEK
+	default "mem=64M console=ttyS0,115200 mtdparts=atmel_nand:4M(bootstrap),60M(rootfs),-(spare) root=/dev/mtdblock1 rw rootfstype=jffs2" if CONFIG_AT91SAM9G10EK
+	default "mem=64M console=ttyS0,115200 mtdparts=atmel_nand:4M(bootstrap),60M(rootfs),-(spare) root=/dev/mtdblock1 rw rootfstype=jffs2" if CONFIG_AT91SAM9G20EK
+	default "mem=128M console=ttyS0,115200 mtdparts=atmel_nand:4M(bootstrap),60M(rootfs),-(spare) root=/dev/mtdblock1 rw rootfstype=jffs2" if CONFIG_AT91SAM9G45EK
+	default "mem=128M console=ttyS0,115200 mtdparts=atmel_nand:4M(bootstrap),60M(rootfs),-(spare) root=/dev/mtdblock1 rw rootfstype=jffs2" if CONFIG_AT91SAM9G45EKES
+	default "mem=64M console=ttyS0,115200 mtdparts=atmel_nand:4M(bootstrap),60M(rootfs),-(spare) root=/dev/mtdblock1 rw rootfstype=jffs2" if CONFIG_AT91SAM9M10EK
+
+config CONFIG_LINUX_KERNEL_NAME
+	depends on CONFIG_SDCARD
+	string "Linux Kernel Image Name on SD Card"
+	default "linux.img"
+
+config CONFIG_OS_IMG_SIZE
+	string "OS Image Size(in decimal)"
+	default "2621440"
+
+config CONFIG_LINUX_IMG_NAND_OFFSET
+	depends on CONFIG_NANDFLASH
+	string "NandFlash offset for Linux kernel(in decimal)"
+	default "2097152"
+endmenu
+
+#
+# WinCE Image Storage Setup
+#
+menu "WinCE Image Storage Setup"
+	depends on CONFIG_LOAD_NK
+config CONFIG_OS_MEM_BANK
+	string "OS Memory Bank Base Address"
+	default "0x20000000" if CONFIG_AT91SAM9260EK
+	default "0x20000000" if CONFIG_AT91SAM9261EK
+	default "0x20000000" if CONFIG_AT91SAM9263EK
+	default "0x20000000" if CONFIG_AT91SAM9RLEK
+	default "0x20000000" if CONFIG_AT91SAM9G10EK
+	default "0x20000000" if CONFIG_AT91SAM9G20EK
+	default "0x70000000" if CONFIG_AT91SAM9G45EK
+	default "0x70000000" if CONFIG_AT91SAM9G45EKES
+	default "0x70000000" if CONFIG_AT91SAM9M10EK
+	
+config CONFIG_OS_MEM_SIZE
+	string "OS Memory Bank Size"
+	default "0x4000000"
+
+config CONFIG_CE_LOAD_ADDR
+	string "Memory address to load NK.nb0(in decimal)"
+	default "537292800" if CONFIG_AT91SAM9260EK
+	default "537300992" if CONFIG_AT91SAM9261EK
+	default "537313280" if CONFIG_AT91SAM9263EK
+	default "537313280" if CONFIG_AT91SAM9RLEK
+	default "537300992" if CONFIG_AT91SAM9G10EK
+	default "537292800" if CONFIG_AT91SAM9G20EK
+	default "1879490560" if CONFIG_AT91SAM9G45EK
+	default "1879490560" if CONFIG_AT91SAM9G45EKES
+	default "1879490560" if CONFIG_AT91SAM9M10EK
+
+config CONFIG_CE_IMAGE_NAME
+	depends on CONFIG_SDCARD
+	string "WinCE Kernel Image Name on SD Card"
+	default "NK.nb0"
+
+config CONFIG_OS_IMG_SIZE
+	string "OS Image Size(in decimal)"
+	default "33554432"
+
+config CONFIG_LINUX_IMG_NAND_OFFSET
+	depends on CONFIG_NANDFLASH
+	string "NandFlash offset for Linux kernel(in decimal)"
+	default "2097152"
+endmenu
 
 config CONFIG_IMG_ADDRESS
 	string
