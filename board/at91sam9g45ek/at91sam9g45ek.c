@@ -292,3 +292,4 @@ void sclk_enable(void)
 	for (i=0; i<0x1000; i++);
 }
 #endif
+
