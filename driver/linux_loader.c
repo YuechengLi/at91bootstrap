@@ -1,59 +1,99 @@
 #include "main.h"
 #include "debug.h"
+#include "dbgu.h"
 #include "linux_tags.h"
+#include "dataflash.h"
 #include "nandflash.h"
 
-#if 0
-#define OS_ARGS_STRING "mem=64M console=ttyS0,115200 root=/dev/mtdblock1 rw rootfstype=jffs2"
+#ifdef CONFIG_LOAD_LINUX
 
-#if defined(at91sam9g10)
-    static unsigned int machid = 2159;
-    //static unsigned int machid = 848;
-    #define MAIN_MEMORY_ADDR 0x20000000
-    #define MAIN_MEMORY_SIZE 0x4000000
-#elif defined(at91sam9m10_ekes)
-    static unsigned int machid = 2509;
-    #define MAIN_MEMORY_ADDR 0x70000000
-    #define MAIN_MEMORY_SIZE 0x4000000
-	#undef OS_ARGS_STRING
-	/* Overwrite the default Nand partitioning since 2.6.30 */
-	#define OS_ARGS_STRING "mem=64M console=ttyS0,115200 mtdparts=atmel_nand:4M(bootstrap),60M(rootfs),-(spare) root=/dev/mtdblock1 rw rootfstype=jffs2"
-#elif defined(at91sam9m10g45ek)
-    static unsigned int machid = 1830;
-    #define MAIN_MEMORY_ADDR 0x70000000
-    #define MAIN_MEMORY_SIZE 0x4000000
-	#undef OS_ARGS_STRING
-	/* Overwrite the default Nand partitioning since 2.6.30 */
-	#define OS_ARGS_STRING "mem=64M console=ttyS0,115200 mtdparts=atmel_nand:4M(bootstrap),60M(rootfs),-(spare) root=/dev/mtdblock1 rw rootfstype=jffs2"
-#elif defined(at91sam9m10)
-	/* For SAM9G45-EK */
-    static unsigned int machid = 2212;
-    #define MAIN_MEMORY_ADDR 0x70000000
-    #define MAIN_MEMORY_SIZE 0x10000000
-#elif defined(at91sam9rl64)
-    static unsigned int machid = 1326;
-    #define MAIN_MEMORY_ADDR 0x20000000
-    #define MAIN_MEMORY_SIZE 0x4000000
-#elif defined(at91sam9260)
-    static unsigned int machid = 1099;
-    #define MAIN_MEMORY_ADDR 0x20000000
-    #define MAIN_MEMORY_SIZE 0x4000000
-#elif defined(at91sam9261)
-    static unsigned int machid = 848;
-    #define MAIN_MEMORY_ADDR 0x20000000
-    #define MAIN_MEMORY_SIZE 0x4000000
-#elif defined(at91sam9263)
-    static unsigned int machid = 1202;
-    #define MAIN_MEMORY_ADDR 0x20000000
-    #define MAIN_MEMORY_SIZE 0x4000000
-#elif defined(at91sam9G20)
-    static unsigned int machid = 1624;
-    #define MAIN_MEMORY_ADDR 0x20000000
-    #define MAIN_MEMORY_SIZE 0x4000000
+#ifdef CONFIG_AT91SAM9260EK
+#ifdef CONFIG_DATAFLASH
+    #define LINUX_KERNEL_ARG_STRING "mem=64M console=ttyS0,115200 root=/dev/mtdblock1 rw rootfstype=jffs2"
 #endif
-
-#define DEFAULT_BIN_SIZE (5 * 1024 * 1024)
-
+#ifdef CONFIG_NANDFLASH
+    #define LINUX_KERNEL_ARG_STRING "mem=64M console=ttyS0,115200 root=/dev/mtdblock1 rw rootfstype=jffs2"
+#endif
+#ifdef CONFIG_SDCARD
+    #define LINUX_KERNEL_ARG_STRING "mem=128M console=ttyS0,115200 root=/dev/mmcblk0p2 rootdelay=2"
+#endif
+#endif
+#ifdef CONFIG_AT91SAM9261EK
+#ifdef CONFIG_DATAFLASH
+    #define LINUX_KERNEL_ARG_STRING "mem=64M console=ttyS0,115200 root=/dev/mtdblock1 rw rootfstype=jffs2"
+#endif
+#ifdef CONFIG_NANDFLASH
+    #define LINUX_KERNEL_ARG_STRING "mem=64M console=ttyS0,115200 root=/dev/mtdblock1 rw rootfstype=jffs2"
+#endif
+#ifdef CONFIG_SDCARD
+    #define LINUX_KERNEL_ARG_STRING "mem=128M console=ttyS0,115200 root=/dev/mmcblk0p2 rootdelay=2"
+#endif
+#endif
+#ifdef CONFIG_AT91SAM9263EK
+#ifdef CONFIG_DATAFLASH
+    #define LINUX_KERNEL_ARG_STRING "mem=64M console=ttyS0,115200 root=/dev/mtdblock1 rw rootfstype=jffs2"
+#endif
+#ifdef CONFIG_NANDFLASH
+    #define LINUX_KERNEL_ARG_STRING "mem=64M console=ttyS0,115200 root=/dev/mtdblock1 rw rootfstype=jffs2"
+#endif
+#ifdef CONFIG_SDCARD
+    #define LINUX_KERNEL_ARG_STRING "mem=128M console=ttyS0,115200 root=/dev/mmcblk0p2 rootdelay=2"
+#endif
+#endif
+#ifdef CONFIG_AT91SAM9RLEK
+#ifdef CONFIG_DATAFLASH
+    #define LINUX_KERNEL_ARG_STRING "mem=64M console=ttyS0,115200 root=/dev/mtdblock1 rw rootfstype=jffs2"
+#endif
+#ifdef CONFIG_NANDFLASH
+    #define LINUX_KERNEL_ARG_STRING "mem=64M console=ttyS0,115200 root=/dev/mtdblock1 rw rootfstype=jffs2"
+#endif
+#ifdef CONFIG_SDCARD
+    #define LINUX_KERNEL_ARG_STRING "mem=128M console=ttyS0,115200 root=/dev/mmcblk0p2 rootdelay=2"
+#endif
+#endif
+#ifdef CONFIG_AT91SAM9G10EK
+#ifdef CONFIG_DATAFLASH
+    #define LINUX_KERNEL_ARG_STRING "mem=64M console=ttyS0,115200 root=/dev/mtdblock1 rw rootfstype=jffs2"
+#endif
+#ifdef CONFIG_NANDFLASH
+    #define LINUX_KERNEL_ARG_STRING "mem=64M console=ttyS0,115200 root=/dev/mtdblock1 rw rootfstype=jffs2"
+#endif
+#ifdef CONFIG_SDCARD
+    #define LINUX_KERNEL_ARG_STRING "mem=128M console=ttyS0,115200 root=/dev/mmcblk0p2 rootdelay=2"
+#endif
+#endif
+#ifdef CONFIG_AT91SAM9G20EK
+#ifdef CONFIG_DATAFLASH
+    #define LINUX_KERNEL_ARG_STRING "mem=64M console=ttyS0,115200 root=/dev/mtdblock1 rw rootfstype=jffs2"
+#endif
+#ifdef CONFIG_NANDFLASH
+    #define LINUX_KERNEL_ARG_STRING "mem=64M console=ttyS0,115200 root=/dev/mtdblock1 rw rootfstype=jffs2"
+#endif
+#ifdef CONFIG_SDCARD
+    #define LINUX_KERNEL_ARG_STRING "mem=128M console=ttyS0,115200 root=/dev/mmcblk0p2 rootdelay=2"
+#endif
+#endif
+#ifdef CONFIG_AT91SAM9G45EK
+#ifdef CONFIG_DATAFLASH
+    #define LINUX_KERNEL_ARG_STRING "mem=64M console=ttyS0,115200 mtdparts=atmel_nand:4M(bootstrap),60M(rootfs),-(spare) root=/dev/mtdblock1 rw rootfstype=jffs2"
+#endif
+#ifdef CONFIG_NANDFLASH
+    #define LINUX_KERNEL_ARG_STRING "mem=64M console=ttyS0,115200 mtdparts=atmel_nand:4M(bootstrap),60M(rootfs),-(spare) root=/dev/mtdblock1 rw rootfstype=jffs2"
+#endif
+#ifdef CONFIG_SDCARD
+    #define LINUX_KERNEL_ARG_STRING "mem=128M console=ttyS0,115200 root=/dev/mmcblk0p2 rootdelay=2"
+#endif
+#endif
+#ifdef CONFIG_AT91SAM9M10EK
+#ifdef CONFIG_DATAFLASH
+    #define LINUX_KERNEL_ARG_STRING "mem=64M console=ttyS0,115200 mtdparts=atmel_nand:4M(bootstrap),60M(rootfs),-(spare) root=/dev/mtdblock1 rw rootfstype=jffs2"
+#endif
+#ifdef CONFIG_NANDFLASH
+    #define LINUX_KERNEL_ARG_STRING "mem=64M console=ttyS0,115200 mtdparts=atmel_nand:4M(bootstrap),60M(rootfs),-(spare) root=/dev/mtdblock1 rw rootfstype=jffs2"
+#endif
+#ifdef CONFIG_SDCARD
+    #define LINUX_KERNEL_ARG_STRING "mem=128M console=ttyS0,115200 root=/dev/mmcblk0p2 rootdelay=2"
+#endif
 #endif
 
 #define BIN_LOAD_ADDR (OS_MEM_BANK + 0x2000000)
@@ -109,29 +149,6 @@ extern inline void disable_dcache(void);
 extern inline void disable_irq(void);
 extern inline void flush_idcache(void);
 
-int strlen(char *str)
-{
-	int i = 0;
-
-	while (str[i++] != '\0')
-		;
-
-	return i - 1;
-}
-
-char *strcpy(char *dst, char *src)
-{
-	char *bak = dst;
-
-	// In the simple implimentation, bypass ptr check for dst and src
-	while ((*dst++ = *src++) != '\0')
-		;
-
-	return bak;
-}
-
-extern void * memcpy (void * out, void * in, size_t length);
-
 typedef struct image_header {
     unsigned long ih_magic;
     unsigned long ih_hcrc;
@@ -160,8 +177,8 @@ static void setup_cmdline_tag(struct tag *tag, char *commandline)
 {
     char *p;
 
-    if (!commandline)
-        return;
+    //if (!commandline)
+    //    return;
 
     /* eat leading white space */
     for (p = commandline; *p == ' '; p++);
@@ -180,6 +197,7 @@ static void setup_cmdline_tag(struct tag *tag, char *commandline)
 
 void clean_environment()
 {
+#ifndef WINCE
 	/* Disable ARM Core interrupt */
 	disable_irq();
 #if 0
@@ -215,13 +233,14 @@ void clean_environment()
     __asm__ __volatile__ ("mcr p15, 0, %0, c7, c7, 0": :"r" (i));
     dbg_log(1, "End clean environment...\n\r");
 #endif
+#endif
 }
 
-struct tag *tags = (struct tag *)(OS_MEM_BANK + 0x100);
+//struct tag *tags = (struct tag *)(OS_MEM_BANK + 0x100);
 
 void setup_tags()
 {
-    struct tag *tag = tags;
+    struct tag *tag = (struct tag *)(OS_MEM_BANK + 0x100);
 
     /* start tag */
     tag->hdr.tag = ATAG_CORE;
@@ -249,43 +268,57 @@ void setup_tags()
 void LoadLinux()
 {
     unsigned long ep, load_addr, len;
+    void load_SDCard();
     void (*theKernel)(int zero, int arch, unsigned int params);
+    image_header_t *hdr;
 
-    //LoadImageFromNand();
-	read_nandflash((unsigned char *)BIN_LOAD_ADDR, (unsigned long)LINUX_IMG_NAND_OFFSET, (int)OS_IMG_SIZE);
+#ifdef CONFIG_DATAFLASH
+    load_df(
+			AT91C_SPI_PCS_DATAFLASH, 
+			IMG_ADDRESS, 
+			IMG_SIZE, 
+			JUMP_ADDR);
+#endif
+#ifdef CONFIG_NANDFLASH
+	read_nandflash((unsigned char *)JUMP_ADDR, (unsigned long)IMG_ADDRESS, (int)IMG_SIZE);
+#endif
+#ifdef CONFIG_SDCARD
+    load_SDCard();
+#endif
 
-    image_header_t *hdr = (image_header_t *)BIN_LOAD_ADDR;
-    if (ntohl(hdr->ih_magic) != IMAGE_MAGIC) {
-        dbg_log(1, "Bad Image Magic Number found!\n\r");
-        return;
-    }
+    hdr = (image_header_t *)BIN_LOAD_ADDR;
+    //if (ntohl(hdr->ih_magic) != IMAGE_MAGIC) {
+    //    dbg_log(1, "Bad Image Magic Number found!\n\r");
+    //    return;
+    //}
 
     len = ntohl(hdr->ih_size);
     load_addr = ntohl(hdr->ih_load);
     ep = ntohl(hdr->ih_ep);
-    dbg_log(1, "Image size: %d, load_addr: %x, ep: %x\n\r", len, load_addr, ep);
+    //dbg_log(1, "Image size: %d, load_addr: %x, ep: %x\n\r", len, load_addr, ep);
 
-    if (hdr->ih_comp != 0) {
-        dbg_log(1, "Compressed U-Boot Image has not been supported yet!\n\r");
-        return;
-    }
+    //if (hdr->ih_comp != 0) {
+    //    dbg_log(1, "Compressed U-Boot Image has not been supported yet!\n\r");
+    //    return;
+    //}
 
     theKernel = (void (*)(int, int, unsigned int))ep;
 
-    clean_environment();
+    //clean_environment();
 
-    dbg_log(1, "relocating linux kernel to proper address, dst: %x, src: %x, len: %d\n\r",
-            load_addr, (unsigned long)BIN_LOAD_ADDR + sizeof(image_header_t), len);
+    //dbg_log(1, "relocating linux kernel to proper address, dst: %x, src: %x, len: %d\n\r",
+    //        load_addr, (unsigned long)BIN_LOAD_ADDR + sizeof(image_header_t), len);
     memcpy((void *)load_addr, (void *)((unsigned long)BIN_LOAD_ADDR + sizeof(image_header_t)),
            len);
-    dbg_log(1, "... %d bytes data transferred!\n\r", len);
+    //dbg_log(1, "... %d bytes data transferred!\n\r", len);
 
     setup_tags();
-    dbg_log(1, "\n\rStarting linux kernel ..., machid: %d, tags: %x\n\r\n\r", MACH_TYPE, tags);
+    //dbg_log(1, "\n\rStarting linux kernel ..., machid: %d, tags: %x\n\r\n\r", MACH_TYPE, (OS_MEM_BANK + 0x100));
 
-    theKernel(0, MACH_TYPE, (unsigned int)tags);
+    theKernel(0, MACH_TYPE, (unsigned int)(OS_MEM_BANK + 0x100));
 
     /* never reach here */
-    return;
+    //return;
 }
 
+#endif

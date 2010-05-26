@@ -1,29 +1,41 @@
-#define size_t unsigned long
-
-void * memset (void * dest,int val, size_t len)
-{
-  unsigned char *ptr = (unsigned char*)dest;
-  while (len-- > 0)
-    *ptr++ = val;
-  return dest;
+/* Copy memory to memory */
+void memcpy (void* dst, const void* src, int cnt) {
+	char *d = (char*)dst;
+	const char *s = (const char *)src;
+	while (cnt--) *d++ = *s++;
 }
 
-void bcopy (char * src,char *dest,int len)
-{
-  if (dest < src)
-    while (len--)
-      *dest++ = *src++;
-  else
-    {
-      char *lasts = src + (len-1);
-      char *lastd = dest + (len-1);
-      while (len--)
-        *(char *)lastd-- = *(char *)lasts--;
-    }
+/* Fill memory */
+void memset (void* dst, int val, int cnt) {
+	char *d = (char*)dst;
+	while (cnt--) *d++ = (char)val;
 }
 
-void * memcpy (void * out, void * in, size_t length)
+/* Compare memory to memory */
+int memcmp (const void* dst, const void* src, int cnt) {
+	const char *d = (const char *)dst, *s = (const char *)src;
+	int r = 0;
+	while (cnt-- && (r = *d++ - *s++) == 0) ;
+	return r;
+}
+
+int strlen(char *str)
 {
-    bcopy(in, out, length);
-    return out;
+	int i = 0;
+
+	while (str[i++] != '\0')
+		;
+
+	return i - 1;
+}
+
+char *strcpy(char *dst, char *src)
+{
+	char *bak = dst;
+
+	// In the simple implimentation, bypass ptr check for dst and src
+	while ((*dst++ = *src++) != '\0')
+		;
+
+	return bak;
 }

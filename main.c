@@ -41,6 +41,12 @@
 void	user_hw_init(void);
 #endif
 
+extern void Jump(unsigned int addr); // Function import from startup.s file
+extern unsigned int load_SDCard();
+void sclk_enable(void);
+void LoadLinux();
+void LoadWince();
+
 /*------------------------------------------------------------------------------*/
 /* Function Name       : main							*/
 /* Object              : Main function						*/
@@ -62,31 +68,27 @@ int main(void)
 	/* ==================== 2nd step: Load from media ==================== */
 	/* Load from Dataflash in RAM */
 #if defined(CONFIG_DATAFLASH) || defined(CONFIG_DATAFLASH_CARD)
-	do {
-		if(load_df(
+#if defined(CONFIG_LOAD_LINUX)
+    LoadLinux();
+#elif defined(CONFIG_LOAD_NK) || defined(CONFIG_LOAD_EBOOT)
+    LoadWince();
+#else
+    load_df(
 			AT91C_SPI_PCS_DATAFLASH, 
 			IMG_ADDRESS, 
 			IMG_SIZE, 
-			JUMP_ADDR) 
-			== FAILURE) {
-			// dbg_print_cr(">Valid image not found");
-			{ volatile unsigned int loop; for(loop = 200000; loop > 0; loop--);}
-		} else {
-			// dbg_print_cr(">Valid image found");
-			break;
-		}
-	} while (1);
+			JUMP_ADDR);
+#endif
 #endif
 
 	/* Load from Nandflash in RAM */
-#ifdef CONFIG_NANDFLASH
-#ifdef CONFIG_LOAD_LINUX
-	{
-		extern void *LoadLinux();
-		LoadLinux();
-	}
+#if defined(CONFIG_NANDFLASH)
+#if defined(CONFIG_LOAD_LINUX)
+    LoadLinux();
+#elif defined(CONFIG_LOAD_NK) || defined(CONFIG_LOAD_EBOOT)
+    LoadWince();
 #else
-	read_nandflash((unsigned char *)JUMP_ADDR, (unsigned long)IMG_ADDRESS, (int)IMG_SIZE);
+    read_nandflash((unsigned char *)JUMP_ADDR, (unsigned long)IMG_ADDRESS, (int)IMG_SIZE);
 #endif
 #endif
 
@@ -94,9 +96,15 @@ int main(void)
 #ifdef CONFIG_FLASH
 	load_norflash(IMG_ADDRESS, IMG_SIZE, JUMP_ADDR);
 #endif
-	
-#ifdef CONFIG_SDCARD
-	load_SDCard();
+
+#if defined(CONFIG_SDCARD)
+#if defined(CONFIG_LOAD_LINUX)
+    LoadLinux();
+#elif defined(CONFIG_LOAD_NK) || defined(CONFIG_LOAD_EBOOT)
+    LoadWince();
+#else
+    load_SDCard();
+#endif
 #endif
 	
 	/* ==================== 3rd step:  Process the Image =================== */
@@ -115,15 +123,20 @@ int main(void)
 
 #ifdef CONFIG_SCLK
 	sclk_enable();
-#endif	
+#endif
 
+#ifdef WINCE
+#ifdef CONFIG_LOAD_NK
+	Jump(JUMP_ADDR+0x1000);
+#else
+    Jump(JUMP_ADDR);
+#endif	
+#else
 #ifdef CONFIG_LOAD_NK
 	return (JUMP_ADDR+0x1000);
 #else
-	//msg_print(MSG_PROMPT);
-	//msg_print_status(MSG_START,JUMP_ADDR);
-	/* Jump to the Image Address */
-	return JUMP_ADDR;
-#endif	
+    return JUMP_ADDR;
+#endif
+#endif
 }
 

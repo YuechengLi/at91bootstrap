@@ -49,13 +49,28 @@ static unsigned int read_ddramc(unsigned int address, unsigned int offset)
 	return readl((address + offset));
 }
 
+void Wait(unsigned int count)
+{
+    volatile unsigned int i;
+#ifdef WINCE
+    volatile unsigned int j = 0;
+#endif
+
+	for (i = 0; i < count; i++) {
+#ifdef WINCE
+        j++;
+#else
+		asm("    nop");
+#endif
+    }
+}
+
 //*----------------------------------------------------------------------------
 //* \fn    sdram_init
 //* \brief Initialize the SDDRC Controller
 //*----------------------------------------------------------------------------
 int ddram_init(unsigned int ddram_controller_address, unsigned int ddram_address, struct SDdramConfig *ddram_config)
 {
-	volatile unsigned int i;
 	unsigned int cr = 0;
 	
 	// Step 1: Program the memory device type
@@ -79,9 +94,7 @@ int ddram_init(unsigned int ddram_controller_address, unsigned int ddram_address
 	*((unsigned volatile int*) ddram_address) = 0;
  
 	// Initialization Step 3 (must wait 200 us) (6 core cycles per iteration, core is at 396MHz: min 13200 loops)
-	for (i = 0; i < 13300; i++) {
-		asm("    nop");
-	}
+	Wait(13300);
 	
 	// Step 4:  An NOP command is issued to the DDR2-SDRAM 
 	// NOP command -> allow to enable cke
@@ -89,45 +102,35 @@ int ddram_init(unsigned int ddram_controller_address, unsigned int ddram_address
 	*((unsigned volatile int*) ddram_address) = 0;
 
 	// wait 400 ns min
-	for (i = 0; i < 100; i++) {
-		asm("    nop");
-	}
+	Wait(100);
 
 	// Initialization Step 5: Set All Bank Precharge
 	write_ddramc(ddram_controller_address, HDDRSDRC2_MR, AT91C_DDRC2_MODE_PRCGALL_CMD);
 	*((unsigned volatile int*) ddram_address) = 0;
 
 	// wait 400 ns min
-	for (i = 0; i < 100; i++) {
-		asm("    nop");
-	}
+	Wait(100);
 
        // Initialization Step 6: Set EMR operation (EMRS2)
 	write_ddramc(ddram_controller_address, HDDRSDRC2_MR, AT91C_DDRC2_MODE_EXT_LMR_CMD);
 	*((unsigned int *)(ddram_address + 0x4000000)) = 0;
 
 	// wait 2 cycles min
-	for (i = 0; i < 100; i++) {
-		asm("    nop");
-	}
+	Wait(100);
 
 	// Initialization Step 7: Set EMR operation (EMRS3)
 	write_ddramc(ddram_controller_address, HDDRSDRC2_MR, AT91C_DDRC2_MODE_EXT_LMR_CMD);
 	*((unsigned int *)(ddram_address + 0x6000000)) = 0;
 
 	// wait 2 cycles min
-	for (i = 0; i < 100; i++) {
-		asm("    nop");
-	}
+	Wait(100);
 
 	// Initialization Step 8: Set EMR operation (EMRS1)
 	write_ddramc(ddram_controller_address, HDDRSDRC2_MR, AT91C_DDRC2_MODE_EXT_LMR_CMD);
 	*((unsigned int *)(ddram_address + 0x2000000)) = 0;
 
 	// wait 200 cycles min
-	for (i = 0; i < 10000; i++) {
-		asm("    nop");
-	}
+	Wait(10000);
 
 	// Initialization Step 9: enable DLL reset
 	cr = read_ddramc(ddram_controller_address, HDDRSDRC2_CR);
@@ -138,36 +141,28 @@ int ddram_init(unsigned int ddram_controller_address, unsigned int ddram_address
 	*(((unsigned volatile int*) ddram_address)) = 0;
 
 	// wait 2 cycles min
-	for (i = 0; i < 100; i++) {
-		asm("    nop");
-	}
+	Wait(100);
 
 	// Initialization Step 11: Set All Bank Precharge
 	write_ddramc(ddram_controller_address, HDDRSDRC2_MR, AT91C_DDRC2_MODE_PRCGALL_CMD);
 	*(((unsigned volatile int*) ddram_address)) = 0;
 
 	// wait 400 ns min
-	for (i = 0; i < 100; i++) {
-		asm("    nop");
-	}
+	Wait(100);
 
 	// Initialization Step 12: Two auto-refresh (CBR) cycles are provided. Program the auto refresh command (CBR) into the Mode Register.
 	write_ddramc(ddram_controller_address, HDDRSDRC2_MR, AT91C_DDRC2_MODE_RFSH_CMD);
 	*(((unsigned volatile int*) ddram_address)) = 0;
 
 	// wait 10 cycles min
-	for (i = 0; i < 100; i++) {
-		asm("    nop");
-	}
+	Wait(100);
 
 	// Set 2nd CBR
 	write_ddramc(ddram_controller_address, HDDRSDRC2_MR, AT91C_DDRC2_MODE_RFSH_CMD);
 	*(((unsigned volatile int*) ddram_address)) = 0;
 
 	// wait 10 cycles min
-	for (i = 0; i < 100; i++) {
-		asm("    nop");
-	}
+	Wait(100);
 
 	// Initialization Step 13: Program DLL field into the Configuration Register to low(Disable DLL reset).
 	cr = read_ddramc(ddram_controller_address, HDDRSDRC2_CR);
@@ -186,9 +181,7 @@ int ddram_init(unsigned int ddram_controller_address, unsigned int ddram_address
 	*(((unsigned int*) (ddram_address + 0x2000000))) = 0;
 
 	// wait 2 cycles min
-	for (i = 0; i < 100; i++) {
-		asm("    nop");
-	}
+	Wait(100);
 
 	// Step 17: Program OCD field into the Configuration Register to low (OCD calibration mode exit).
 	cr = read_ddramc(ddram_controller_address, HDDRSDRC2_CR);
@@ -199,9 +192,7 @@ int ddram_init(unsigned int ddram_controller_address, unsigned int ddram_address
 	*(((unsigned int*) (ddram_address + 0x6000000))) = 0;
 
 	// wait 2 cycles min
-	for (i = 0; i < 100; i++) {
-		asm("    nop");
-	}
+	Wait(100);
 
 	// Step 19,20: A mode Normal command is provided. Program the Normal mode into Mode Register.
 	write_ddramc(ddram_controller_address, HDDRSDRC2_MR, AT91C_DDRC2_MODE_NORMAL_CMD);
@@ -217,9 +208,7 @@ int ddram_init(unsigned int ddram_controller_address, unsigned int ddram_address
 	// OK now we are ready to work on the DDRSDR
 
 	// wait for end of calibration
-	for (i = 0; i < 500; i++) {
-		asm("    nop");
-	}
+	Wait(500);
 	
 	return 0;
 }
