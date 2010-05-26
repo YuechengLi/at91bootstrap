@@ -1,0 +1,13 @@
+TARGETNAME=lib
+TARGETTYPE=LIBRARY
+RELEASETYPE=PLATFORM
+
+CDEFINES=$(CDEFINES) -DWINCE /Oi-
+
+INCLUDES=..\include; \
+         $(_WINCEROOT)\PUBLIC\COMMON\SDK\INC; \
+
+SOURCES= \
+    div0.c \
+    udiv.c \
+    string.c \
