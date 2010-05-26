@@ -128,12 +128,12 @@ DRESULT disk_write (
     BYTE count            /* Sector count (1..255) */
 )
 {
+    unsigned int addr, len;
     DRESULT res=RES_PARERR;
     unsigned int result;
     void * tmp;
     tmp = (void *) buff;
-
-    unsigned int addr, len;
+    
     if (medias[drv].blockSize < SECTOR_SIZE_DEFAULT) {
         addr = sector * (SECTOR_SIZE_DEFAULT / medias[drv].blockSize);
         len  = count * (SECTOR_SIZE_DEFAULT / medias[drv].blockSize);

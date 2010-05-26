@@ -82,7 +82,7 @@
 	((unsigned long)AT91C_SMARTMEDIA_BASE) = (unsigned short)d; \
 	} while(0)
 	
-#define READ_NAND16() ((volatile unsigned short)(*(volatile unsigned short *) \
+#define READ_NAND16() ((unsigned short)(*(volatile unsigned short *) \
 						(unsigned long)AT91C_SMARTMEDIA_BASE))
 
 #if 0

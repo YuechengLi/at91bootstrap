@@ -240,6 +240,7 @@ static unsigned char Verify256(
 
         // Get byte and bit indexes
         unsigned char byte = correctionCode[0] & 0x80;
+        unsigned char bit = (correctionCode[2] >> 5) & 0x04;
         byte |= (correctionCode[0] << 1) & 0x40;
         byte |= (correctionCode[0] << 2) & 0x20;
         byte |= (correctionCode[0] << 3) & 0x10;
@@ -249,7 +250,6 @@ static unsigned char Verify256(
         byte |= (correctionCode[1] >> 2) & 0x02;
         byte |= (correctionCode[1] >> 1) & 0x01;
 
-        unsigned char bit = (correctionCode[2] >> 5) & 0x04;
         bit |= (correctionCode[2] >> 4) & 0x02;
         bit |= (correctionCode[2] >> 3) & 0x01;
 

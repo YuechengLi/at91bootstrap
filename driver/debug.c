@@ -109,7 +109,7 @@ int dbg_log(const char level, const char *fmt_str, ...)
 				num = fill_string(p, va_arg(ap, char *));
 				break;
 			case 'c':
-				num = fill_char(p, va_arg(ap, signed long));
+				num = fill_char(p, (char)va_arg(ap, signed long));
 				break;
 			default:
 				return -1;

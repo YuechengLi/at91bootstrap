@@ -53,6 +53,7 @@ static inline unsigned int read_ddr2(unsigned int offset)
 //*----------------------------------------------------------------------------
 int ddr2_init(unsigned int sdramc_cr, unsigned int sdramc_tr)
 {
+    return 0;
 }
 
 #endif /* CONFIG_DDR2 */

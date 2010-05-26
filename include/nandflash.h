@@ -95,7 +95,7 @@ typedef struct _NandInfo
 #define BAD_BLOCK_TAG   0xFF
 
 
-typedef struct __attribute__((__packed__)) _SectorInfo
+typedef struct _SectorInfo
 {
     unsigned char spare[SPARE_DATA_SIZE];
 } SSectorInfo, *PSSectorInfo;
