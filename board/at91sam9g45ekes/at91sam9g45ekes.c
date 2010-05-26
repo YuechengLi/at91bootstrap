@@ -106,7 +106,7 @@ void hw_init(void)
 
 	/* Configure CP15 */
 	cp15 = get_cp15();
-	cp15 |= I_CACHE;
+	//cp15 |= I_CACHE;
 	set_cp15(cp15);
 
 	/* Configure the PIO controller */

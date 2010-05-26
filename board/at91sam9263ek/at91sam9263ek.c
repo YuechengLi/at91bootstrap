@@ -29,6 +29,10 @@
  * Creation            : NLe Aug 8th 2006
  *-----------------------------------------------------------------------------
  */
+#if defined(WINCE) && !defined(CONFIG_AT91SAM9263EK)
+
+#else
+ 
 #include "part.h"
 #include "main.h"
 #include "gpio.h"
@@ -40,22 +44,10 @@
 #include "psram.h"
 #include "matrix.h"
 
-#ifndef CONFIG_THUMB
-static inline unsigned int get_cp15(void)
-{
-	unsigned int value;
-	__asm__("mrc p15, 0, %0, c1, c0, 0" : "=r" (value));
-	return value;
-}
-
-static inline void set_cp15(unsigned int value)
-{
-	__asm__("mcr p15, 0, %0, c1, c0, 0" : : "r" (value));
-}
-#else
 int get_cp15(void);
 void set_cp15(unsigned int value);
-#endif
+int get_cpsr(void);
+void set_cpsr(unsigned int value);
 
 #ifdef CONFIG_HW_INIT
 /*---------------------------------------------------------------------------- */
@@ -549,4 +541,4 @@ void nandflash_cfg_8bits_dbw_init(void)
 
 #endif /* #ifdef CONFIG_NANDFLASH */
 
-
+#endif

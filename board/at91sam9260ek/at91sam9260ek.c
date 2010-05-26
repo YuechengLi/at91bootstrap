@@ -31,6 +31,10 @@
  * ODi Nov 9th         : dstp #3507 "Bad PIO descriptors in at91samxxxek.c"
  *-----------------------------------------------------------------------------
  */
+#if defined(WINCE) && !defined(CONFIG_AT91SAM9260EK)
+
+#else
+ 
 #include "part.h"
 #include "main.h"
 #include "gpio.h"
@@ -39,25 +43,6 @@
 #include "dbgu.h"
 #include "debug.h"
 #include "memory.h"
-
-#if 0
-#ifndef CONFIG_THUMB
-static inline unsigned int get_cp15(void)
-{
-	unsigned int value;
-	__asm__("mrc p15, 0, %0, c1, c0, 0" : "=r" (value));
-	return value;
-}
-
-static inline void set_cp15(unsigned int value)
-{
-	__asm__("mcr p15, 0, %0, c1, c0, 0" : : "r" (value));
-}
-#else
-int get_cp15(void);
-void set_cp15(unsigned int value);
-#endif
-#endif
 
 int get_cp15(void);
 void set_cp15(unsigned int value);
@@ -107,7 +92,7 @@ void hw_init(void)
 
 	/* Configure CP15 */
 	cp15 = get_cp15();
-	cp15 |= I_CACHE;
+	//cp15 |= I_CACHE;
 	set_cp15(cp15);
 
 	/* Configure the PIO controller */
@@ -312,3 +297,5 @@ void nandflash_cfg_8bits_dbw_init(void)
 
 
 #endif /* #ifdef CONFIG_NANDFLASH */
+
+#endif

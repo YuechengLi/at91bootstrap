@@ -30,6 +30,10 @@
  * Creation            : Mar. 9th 2009
  *-----------------------------------------------------------------------------
  */
+#if defined(WINCE) && !defined(CONFIG_AT91SAM9G10EK)
+
+#else
+ 
 #include "part.h"
 #include "main.h"
 #include "gpio.h"
@@ -39,22 +43,10 @@
 #include "debug.h"
 #include "memory.h"
 
-#ifndef CONFIG_THUMB
-static inline unsigned int get_cp15(void)
-{
-	unsigned int value;
-	__asm__("mrc p15, 0, %0, c1, c0, 0" : "=r" (value));
-	return value;
-}
-
-static inline void set_cp15(unsigned int value)
-{
-	__asm__("mcr p15, 0, %0, c1, c0, 0" : : "r" (value));
-}
-#else
 int get_cp15(void);
 void set_cp15(unsigned int value);
-#endif
+int get_cpsr(void);
+void set_cpsr(unsigned int value);
 
 #ifdef CONFIG_HW_INIT
 /*------------------------------------------------------------------------------*/
@@ -98,7 +90,7 @@ void hw_init(void)
 
 	/* Configure CP15 */
 	cp15 = get_cp15();
-	cp15 |= I_CACHE;
+	//cp15 |= I_CACHE;
 	set_cp15(cp15);
 
 	/* Configure the PIO controller to output PCK0 */
@@ -110,7 +102,7 @@ void hw_init(void)
 #ifdef CONFIG_DEBUG
 	/* Enable Debug messages on the DBGU */
 	dbgu_init(BAUDRATE(MASTER_CLOCK, 115200));
-	dbgu_print("Start AT91Bootstrap...\n\r");
+	//dbgu_print("Start AT91Bootstrap...\n\r");
 #endif /* CONFIG_VERBOSE */
 
 	/* Initialize the matrix */
@@ -271,3 +263,4 @@ void nandflash_cfg_8bits_dbw_init(void)
 
 #endif /* #ifdef CONFIG_NANDFLASH */
 
+#endif
