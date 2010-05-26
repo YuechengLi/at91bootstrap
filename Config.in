@@ -106,13 +106,13 @@ config CONFIG_LINUX_KERNEL_NAME
 	default "linux.img"
 
 config CONFIG_OS_IMG_SIZE
-	string "OS Image Size(in decimal)"
-	default "2621440"
+	string "OS Image Size"
+	default "0x280000"
 
 config CONFIG_LINUX_IMG_NAND_OFFSET
 	depends on CONFIG_NANDFLASH
-	string "NandFlash offset for Linux kernel(in decimal)"
-	default "2097152"
+	string "NandFlash offset for Linux kernel"
+	default "0x200000"
 endmenu
 
 #
@@ -137,7 +137,7 @@ config CONFIG_OS_MEM_SIZE
 	default "0x4000000"
 
 config CONFIG_CE_LOAD_ADDR
-	string "Memory address to load NK.nb0(in decimal)"
+	string "Memory address to load NK.nb0"
 	default "537292800" if CONFIG_AT91SAM9260EK
 	default "537300992" if CONFIG_AT91SAM9261EK
 	default "537313280" if CONFIG_AT91SAM9263EK
@@ -148,19 +148,19 @@ config CONFIG_CE_LOAD_ADDR
 	default "1879490560" if CONFIG_AT91SAM9G45EKES
 	default "1879490560" if CONFIG_AT91SAM9M10EK
 
-config CONFIG_CE_IMAGE_NAME
+config CONFIG_WINCE_IMAGE_NAME
 	depends on CONFIG_SDCARD
 	string "WinCE Kernel Image Name on SD Card"
 	default "NK.nb0"
 
 config CONFIG_OS_IMG_SIZE
-	string "OS Image Size(in decimal)"
-	default "33554432"
+	string "OS Image Size"
+	default "0x2000000"
 
-config CONFIG_LINUX_IMG_NAND_OFFSET
+config CONFIG_WINCE_IMG_NAND_OFFSET
 	depends on CONFIG_NANDFLASH
-	string "NandFlash offset for Linux kernel(in decimal)"
-	default "2097152"
+	string "NandFlash offset for Linux kernel"
+	default "0x200000"
 endmenu
 
 config CONFIG_IMG_ADDRESS
