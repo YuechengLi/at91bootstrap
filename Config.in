@@ -31,6 +31,14 @@ config CONFIG_LOAD_UBOOT
 	  like U-boot into the last MB of SDRAM.
 
 #
+# Load EBoot
+#
+config CONFIG_LOAD_EBOOT
+	bool "Support loading EBoot"
+	help
+	  Use this mode to load EBoot
+
+#
 # Load Linux
 #
 config CONFIG_LOAD_LINUX
@@ -46,14 +54,6 @@ config CONFIG_LOAD_NK
 	depends on CONFIG_NANDFLASH || CONFIG_SDCARD
 	help
 	  Use this mode to load WinCE NK Image
-
-#
-# Load EBoot
-#
-config CONFIG_LOAD_EBOOT
-	bool "Support loading EBoot"
-	help
-	  Use this mode to load EBoot
 
 config CONFIG_LOAD_64KB
 	bool "Load 64 kB into the start of SDRAM"
