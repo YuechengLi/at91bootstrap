@@ -31,11 +31,16 @@
 //         Headers
 //------------------------------------------------------------------------------
 
+#if defined(CONFIG_SDCARD_HS)
+
 #include "mci_hs.h"
 
 
 #include "dmad.h"
 #include "dma.h"
+
+#include "dbgu.h"
+#include "debug.h"
 
 //------------------------------------------------------------------------------
 //         Local constants
@@ -409,7 +414,7 @@ static unsigned int DMACH_MCI_M2P(unsigned int channel_index,
     return 0;
 }
 
-static inline void DMACH_EnableIt(unsigned int pMciHw,
+static void DMACH_EnableIt(unsigned int pMciHw,
                                  unsigned int channel)
 {
     unsigned int intFlag;
@@ -1110,3 +1115,5 @@ unsigned int MCI_FifoTransfer(Mci *pMci, MciCmd *pCommand)
 
     return status;
 }
+
+#endif

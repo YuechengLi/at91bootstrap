@@ -26,7 +26,7 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ----------------------------------------------------------------------------
  */
-
+#if defined(CONFIG_DMA)
 //------------------------------------------------------------------------------
 //         Headers
 //------------------------------------------------------------------------------
@@ -410,3 +410,4 @@ void DMA_SetFlowControl(unsigned char channel,
     (*(volatile unsigned int *)(AT91C_BASE_HDMA_CH_0+channel*40 + HDMA_CTRLB)) = value;
 }
 
+#endif

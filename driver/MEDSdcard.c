@@ -27,12 +27,15 @@
  * ----------------------------------------------------------------------------
  */
 
+#if defined(CONFIG_SDCARD)
+    
 //------------------------------------------------------------------------------
 //         Headers
 //------------------------------------------------------------------------------
 #include "part.h"
 #include "MEDSdcard.h"
 #include "fatfs_config.h"
+#include "dbgu.h"
 #include "debug.h"
 
 #include "irq.h"
@@ -702,10 +705,8 @@ unsigned int load_SDCard()
 #endif	
 	
     if( res != FR_OK ) {
-        
         return 0;
     }
-	
 	
 	dwAddress = JUMP_ADDR;
 
@@ -733,42 +734,10 @@ unsigned int load_SDCard()
     }
 #endif
 	
-#ifdef CONFIG_LOAD_NK	
-	memset(&fileObject, 0, sizeof(fileObject));
-	res = f_open(&fileObject, "SETTING.bin" , FA_OPEN_EXISTING|FA_READ);
-	
-	if( res != FR_OK ) {
-        
-        return 0;
-    }
-	
-	dwAddress = GLBDRV_ADDR;
-
-
-	do{
-		ByteRead = 0;
-		res = f_read(&fileObject, (void*)(dwAddress), SIZE_SETTING, &ByteRead);
-		dwAddress += SIZE_SETTING;
-		
-	}while(ByteRead>=SIZE_SETTING);
-	
-    if(res != FR_OK) {
-		
-        
-        return 0;
-    }   
-	
-#if !defined(at91sam9g10)
-	res = f_close(&fileObject);
-    if( res != FR_OK ) {
-        
-        return 0;
-    }
-#endif
-#endif
 	StopReading((SdCard*)medias[0].interface);
 	
 //	Configure_System_Paramters();
 	
 	return 1;
 }
+#endif

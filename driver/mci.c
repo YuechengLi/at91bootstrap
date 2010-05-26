@@ -27,13 +27,16 @@
  * ----------------------------------------------------------------------------
  */
 
+#if defined(CONFIG_SDCARD) && !defined(CONFIG_SDCARD_HS)
+
 //------------------------------------------------------------------------------
 //         Headers
 //------------------------------------------------------------------------------
 
 #include "mci.h"
 #include "part.h"
-
+#include "dbgu.h"
+#include "debug.h"
 //------------------------------------------------------------------------------
 //         Local constants
 //------------------------------------------------------------------------------
@@ -134,7 +137,7 @@ static void MCI_Reset(AT91PS_MCI pMciHw, unsigned char keepSettings)
 //------------------------------------------------------------------------------
 /// Delay some loop
 //------------------------------------------------------------------------------
-static void Delay(volatile unsigned int loop)
+void Delay(volatile unsigned int loop)
 {
     for(;loop > 0; loop --);
 }
@@ -177,9 +180,9 @@ void MCI_Init(
     unsigned int mode,
     unsigned int bPolling)
 {
+#if !defined(OP_BOOTSTRAP_MCI_on) || defined(at91sam9g20) || defined(at91sam9g10) || defined(at91sam9263)
     unsigned short clkDiv;
-
-    
+#endif
 
     // Initialize the MCI driver structure
     pMci->pMciHw    = pMciHw;
@@ -279,13 +282,25 @@ unsigned int MCI_SetSpeed(Mci *pMci,
 		
 		
 //        divLimit = (mck / 2 / mciLimit);
+#ifdef WINCE
+		divLimit = (mck / 2);
+		divLimit = (divLimit / mciLimit);
+#else
 		divLimit = Boot_Div(mck, 2);
 		divLimit = Boot_Div(divLimit, mciLimit);
+#endif
+
 //		dbg_printnum("mck1:", mck);
 //        if ((mck / 2) % mciLimit) divLimit ++;
-		
+
+#ifdef WINCE		
+		comparevalue = (mck / 2);
+		comparevalue = (comparevalue % mciLimit);
+#else
 		comparevalue = Boot_Div(mck, 2);
 		comparevalue = Boot_Mod(comparevalue, mciLimit);
+#endif
+
 		if (comparevalue) divLimit ++;
     } 
 	
@@ -295,8 +310,13 @@ unsigned int MCI_SetSpeed(Mci *pMci,
 		clkdiv = mck/mciSpeed;*/
 	
 //        clkdiv = (mck / 2 / mciSpeed);
+#ifdef WINCE
+		clkdiv = (mck / 2);
+		clkdiv = (clkdiv / mciSpeed);
+#else
 		clkdiv = Boot_Div(mck, 2);
 		clkdiv = Boot_Div(clkdiv, mciSpeed);
+#endif
 		
         if (mciLimit && clkdiv < divLimit)
             clkdiv = divLimit;
@@ -309,8 +329,13 @@ unsigned int MCI_SetSpeed(Mci *pMci,
 
     // Actual MCI speed
 //    mciSpeed = mck / 2 / (clkdiv + 1);
-	mciSpeed = Boot_Div(mck, 2);
+#ifdef WINCE
+	mciSpeed = (mck / 2);
+	mciSpeed = (mciSpeed / (clkdiv + 1));
+#else
+    mciSpeed = Boot_Div(mck, 2);
 	mciSpeed = Boot_Div(mciSpeed, (clkdiv + 1));
+#endif
 
 
     // Set the Data Timeout Register & Completion Timeout
@@ -603,7 +628,7 @@ void MCI_Handler(Mci *pMci)
         // Reset the MCI to clear these dummy data
         #if (AT91C_MCI_RDPROOF == 0)
         if ((pCommand->cmd & AT91C_MCI_TRCMD_STOP) != 0) {
-            unsigned int mciCr, mciSdcr, mciMr, mciDtor;
+            unsigned int /*mciCr,*/ mciSdcr, mciMr, mciDtor;
             mciMr = READ_MCI(pMciHw, MCI_MR);
             mciSdcr = READ_MCI(pMciHw, MCI_SDCR);
             mciDtor = READ_MCI(pMciHw, MCI_DTOR);
@@ -672,3 +697,5 @@ unsigned char MCI_IsTxComplete(Mci *pMci)
         return 0;
     }
 }
+
+#endif

@@ -26,6 +26,8 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ----------------------------------------------------------------------------
  */
+ 
+#if defined(CONFIG_SDCARD)
 
 //------------------------------------------------------------------------------
 //         Headers
@@ -33,7 +35,8 @@
 
 #include "sdmmc_mci.h"
 
-
+#include "dbgu.h"
+#include "debug.h"
 
 #include "pio.h"
 
@@ -775,7 +778,8 @@ static unsigned char Cmd1(SdCard *pSd,
     if (error) {
         return error;
     }
-    if ((response & AT91C_CARD_POWER_UP_BUSY) == AT91C_CARD_POWER_UP_BUSY) {        if((response & AT91C_MMC_OCR_BIT2930) == AT91C_MMC_HIGH_DENSITY) {
+    if ((response & AT91C_CARD_POWER_UP_BUSY) == AT91C_CARD_POWER_UP_BUSY) {
+        if((response & AT91C_MMC_OCR_BIT2930) == AT91C_MMC_HIGH_DENSITY) {
             *pHdSupport = 1;
         }
         return 0;
@@ -2210,11 +2214,11 @@ unsigned char SD_WriteBlock(SdCard *pSd,
 /// \param pSd  Pointer to a SD card driver instance.
 /// \param pSdDriver  Pointer to SD driver already initialized
 //------------------------------------------------------------------------------
-static unsigned char SdMmcInit(SdCard *pSd, SdDriver *pSdDriver)
+static unsigned short SdMmcInit(SdCard *pSd, SdDriver *pSdDriver)
 {
     unsigned char  isCCSet;
     unsigned short error;
-    unsigned int   status;
+    unsigned int   status = 0;
     unsigned char  cmd8Retries = 1;
     unsigned int   cmd1Retries = 10000;//120;
     unsigned char  isHdSupport = 0;
@@ -2261,6 +2265,7 @@ static unsigned char SdMmcInit(SdCard *pSd, SdDriver *pSdDriver)
                 
                 return error;
             }
+#if !defined(CONFIG_AT91SAM9G10EK) && defined(WINCE)
             do {
                 error = Cmd1(pSd, 1, &isHdSupport);
             }
@@ -2269,7 +2274,9 @@ static unsigned char SdMmcInit(SdCard *pSd, SdDriver *pSdDriver)
                 
                 return error;
             }
-            else {
+            else
+#endif
+           {
                 pSd->cardType = CARD_MMC;
                 if(isHdSupport) {
                     pSd->cardType = CARD_MMCHD;
@@ -2354,7 +2361,7 @@ static unsigned char SdMmcInit(SdCard *pSd, SdDriver *pSdDriver)
     // If the card support EXT_CSD, read it!
     
     
-
+#if !defined(CONFIG_AT91SAM9G10EK) && defined(WINCE)
     // Get extended information of the card
     SdMmcUpdateInformation(pSd, 0, 0);
 
@@ -2496,6 +2503,7 @@ static unsigned char SdMmcInit(SdCard *pSd, SdDriver *pSdDriver)
 
         SdMmcUpdateInformation(pSd, isHsSupport, 1);
     }
+#endif
     return 0;
 }
 
@@ -2542,7 +2550,7 @@ unsigned char SD_Init(SdCard *pSd, SdDriver *pSdDriver)
     // (RCA=0x0000) and with a default driver stage register setting
     // (lowest speed, highest driving current capability).
 
-    error = SdMmcInit(pSd, pSdDriver);
+    error = (unsigned char)SdMmcInit(pSd, pSdDriver);
     if (error) {
         
         return error;
@@ -2635,8 +2643,10 @@ unsigned char SD_HighSpeedMode(SdCard *pSd,
 
     if (pSd->mode != hsMode) {
         error = SdMmcSwitchHsMode(pSd, hsMode);
+#if !defined(CONFIG_AT91SAM9G10EK) && defined(WINCE)
         if (error == 0)
             error = SdMmcUpdateInformation(pSd, 1, 1);
+#endif
     }
     // Reset state for data R/W
     pSd->state = SD_STATE_READY;
@@ -3169,3 +3179,4 @@ void StopReading(SdCard *pSd)
 
 }
 
+#endif
