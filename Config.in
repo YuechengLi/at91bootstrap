@@ -47,6 +47,14 @@ config CONFIG_LOAD_NK
 	help
 	  Use this mode to load WinCE NK Image
 
+#
+# Load EBoot
+#
+config CONFIG_LOAD_EBOOT
+	bool "Support loading EBoot"
+	help
+	  Use this mode to load EBoot
+
 config CONFIG_LOAD_64KB
 	bool "Load 64 kB into the start of SDRAM"
 	help
