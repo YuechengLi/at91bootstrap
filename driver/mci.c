@@ -137,10 +137,7 @@ static void MCI_Reset(AT91PS_MCI pMciHw, unsigned char keepSettings)
 //------------------------------------------------------------------------------
 /// Delay some loop
 //------------------------------------------------------------------------------
-void Delay(volatile unsigned int loop)
-{
-    for(;loop > 0; loop --);
-}
+void Delay(volatile unsigned int loop);
 
 //------------------------------------------------------------------------------
 //         Global functions

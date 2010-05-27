@@ -632,7 +632,7 @@ static void ResetCommand(SdCmd *pCommand)
 //------------------------------------------------------------------------------
 /// Delay some loop
 //------------------------------------------------------------------------------
-static void Delay(volatile unsigned int loop)
+void Delay(volatile unsigned int loop)
 {
     for(;loop > 0; loop --);
 }
