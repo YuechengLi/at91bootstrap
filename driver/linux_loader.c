@@ -104,9 +104,9 @@
 #define BIN_LOAD_ADDR (OS_MEM_BANK + 0x2000000)
 #define IMAGE_MAGIC 0x27051956
 
-extern int strlen(char *s);
-extern void *strcpy(char *dst, char *src);
-extern void *memcpy(void *dst, void *src, int count);
+size_t strlen(const char *str);
+char *strcpy(char *dst, const char *src);
+void *memcpy(void* dst, const void* src, size_t cnt);
 
 #if 0
 #ifndef CONFIG_THUMB

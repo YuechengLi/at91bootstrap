@@ -1,3 +1,5 @@
+typedef unsigned int size_t;
+
 /* Copy memory to memory */
 void *memcpy (void* dst, const void* src, int cnt) {
 	char *d = (char*)dst;
@@ -16,14 +18,14 @@ void *memset (void* dst, int val, int cnt) {
 }
 
 /* Compare memory to memory */
-int memcmp (const void* dst, const void* src, int cnt) {
+int memcmp (const void* dst, const void* src, size_t cnt) {
 	const char *d = (const char *)dst, *s = (const char *)src;
 	int r = 0;
 	while (cnt-- && (r = *d++ - *s++) == 0) ;
 	return r;
 }
 
-int strlen(char *str)
+size_t strlen(const char *str)
 {
 	int i = 0;
 
@@ -33,7 +35,7 @@ int strlen(char *str)
 	return i - 1;
 }
 
-char *strcpy(char *dst, char *src)
+char *strcpy(char *dst, const char *src)
 {
 	char *bak = dst;
 
