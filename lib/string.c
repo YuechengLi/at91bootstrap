@@ -1,14 +1,18 @@
 /* Copy memory to memory */
-void memcpy (void* dst, const void* src, int cnt) {
+void *memcpy (void* dst, const void* src, int cnt) {
 	char *d = (char*)dst;
 	const char *s = (const char *)src;
 	while (cnt--) *d++ = *s++;
+
+	return d;
 }
 
 /* Fill memory */
-void memset (void* dst, int val, int cnt) {
+void *memset (void* dst, int val, int cnt) {
 	char *d = (char*)dst;
 	while (cnt--) *d++ = (char)val;
+
+	return d;
 }
 
 /* Compare memory to memory */
