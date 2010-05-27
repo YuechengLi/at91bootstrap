@@ -108,7 +108,7 @@ config CONFIG_LINUX_KERNEL_ARG_STRING
 	default "mem=128M console=ttyS0,115200 mtdparts=atmel_nand:4M(bootstrap),60M(rootfs),-(spare) root=/dev/mtdblock1 rw rootfstype=jffs2" if CONFIG_AT91SAM9G45EKES
 	default "mem=64M console=ttyS0,115200 mtdparts=atmel_nand:4M(bootstrap),60M(rootfs),-(spare) root=/dev/mtdblock1 rw rootfstype=jffs2" if CONFIG_AT91SAM9M10EK
 
-config CONFIG_LINUX_KERNEL_NAME
+config CONFIG_OS_IMAGE_NAME
 	depends on CONFIG_SDCARD
 	string "Linux Kernel Image Name on SD Card"
 	default "linux.img"
@@ -156,7 +156,7 @@ config CONFIG_CE_LOAD_ADDR
 	default "1879490560" if CONFIG_AT91SAM9G45EKES
 	default "1879490560" if CONFIG_AT91SAM9M10EK
 
-config CONFIG_WINCE_IMAGE_NAME
+config CONFIG_OS_IMAGE_NAME
 	depends on CONFIG_SDCARD
 	string "WinCE Kernel Image Name on SD Card"
 	default "NK.nb0"

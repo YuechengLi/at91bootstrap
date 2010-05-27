@@ -125,6 +125,8 @@ OS_MEM_SIZE := $(strip $(subst ",,$(CONFIG_OS_MEM_SIZE)))
 
 OS_IMG_SIZE := $(strip $(subst ",,$(CONFIG_OS_IMG_SIZE)))
 
+OS_IMAGE_NAME := $(strip $(subst ",,$(CONFIG_OS_IMAGE_NAME)))
+
 LINUX_IMG_NAND_OFFSET := $(strip $(subst ",,$(CONFIG_LINUX_IMG_NAND_OFFSET)))
 
 LINUX_KERNEL_ARG_STRING := $(strip $(subst ",,$(CONFIG_LINUX_KERNEL_ARG_STRING)))
