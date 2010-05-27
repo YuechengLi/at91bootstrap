@@ -7,6 +7,8 @@
 
 #ifdef CONFIG_LOAD_LINUX
 
+#ifdef WINCE
+
 #ifdef CONFIG_AT91SAM9260EK
 #ifdef CONFIG_DATAFLASH
     #define LINUX_KERNEL_ARG_STRING "mem=64M console=ttyS0,115200 root=/dev/mtdblock1 rw rootfstype=jffs2"
@@ -94,10 +96,17 @@
 #ifdef CONFIG_SDCARD
     #define LINUX_KERNEL_ARG_STRING "mem=128M console=ttyS0,115200 root=/dev/mmcblk0p2 rootdelay=2"
 #endif
+
 #endif
+
+#endif /* WINCE */
 
 #define BIN_LOAD_ADDR (OS_MEM_BANK + 0x2000000)
 #define IMAGE_MAGIC 0x27051956
+
+extern int strlen(char *s);
+extern void *strcpy(char *dst, char *src);
+extern void *memcpy(void *dst, void *src, int count);
 
 #if 0
 #ifndef CONFIG_THUMB

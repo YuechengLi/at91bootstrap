@@ -82,6 +82,10 @@ ifeq ($(CONFIG_SDCARD),y)
 CPPFLAGS += -DCONFIG_SDCARD
 endif
 
+ifeq ($(CONFIG_SDCARD_HS),y)
+CPPFLAGS += -DCONFIG_DMA -DCONFIG_SDCARD_HS
+endif
+
 # Dataflash support
 
 ifeq ($(MEMORY),dataflash)
@@ -97,10 +101,6 @@ endif
 
 ifeq ($(CONFIG_NANDFLASH_SMALL_BLOCKS),y)
 CPPFLAGS += -DCONFIG_NANDFLASH_SMALL_BLOCKS
-endif
-
-ifeq ($(CONFIG_XXXXXX),y)
-CPPFLAGS += -DCONFIG_XXXXXX
 endif
 
 ifeq ($(CONFIG_ENABLE_SW_ECC), y)

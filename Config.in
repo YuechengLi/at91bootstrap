@@ -174,8 +174,9 @@ endmenu
 config CONFIG_IMG_ADDRESS
 	string
 	default "0x00008000" if CONFIG_FLASH
-	default "0x00008400" if CONFIG_DATAFLASH
-	default "0x00020000" if CONFIG_NANDFLASH
+	default "0x00008400" if CONFIG_DATAFLASH && CONFIG_LOAD_UBOOT
+	default "0x00020000" if CONFIG_NANDFLASH && CONFIG_LOAD_UBOOT
+	default "0x00200000" if CONFIG_NANDFLASH && CONFIG_LOAD_LINUX
 	default	"0x00000000" if CONFIG_SDCARD
 	help
 
@@ -198,6 +199,7 @@ config CONFIG_IMG_SIZE
 	default	"0x00010000"	if CONFIG_LOAD_64KB
 	default	"0x00100000"	if CONFIG_LOAD_1MB
 	default	"0x00400000"	if CONFIG_LOAD_4MB
+	default "0x00280000"	if CONFIG_LOAD_LINUX
 	default "0x02000000"	if CONFIG_LOAD_NK
 	help
 	  at91bootstrap will copy this amount of data
