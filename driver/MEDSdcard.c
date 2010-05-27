@@ -696,13 +696,8 @@ unsigned int load_SDCard()
         
         return 0;
     }
-	
-#ifdef CONFIG_LOAD_NK	
-	res = f_open(&fileObject, "NK.nb0" , FA_OPEN_EXISTING|FA_READ);
-#else	
-	res = f_open(&fileObject, "EBoot.nb0" , FA_OPEN_EXISTING|FA_READ);
-//	res = f_open(&fileObject, "test.nb0" , FA_OPEN_EXISTING|FA_READ);
-#endif	
+		
+	res = f_open(&fileObject, OS_IMAGE_NAME , FA_OPEN_EXISTING|FA_READ);
 	
     if( res != FR_OK ) {
         return 0;

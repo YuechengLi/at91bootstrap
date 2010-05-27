@@ -2,6 +2,7 @@
 
 call clean.bat
 set STACK_CHECK_DISABLE=1
+set OS_IMAGE_NAME="image.bin"
 
 %1 :%2
 

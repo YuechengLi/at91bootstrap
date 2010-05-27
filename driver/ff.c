@@ -1280,34 +1280,19 @@ FRESULT create_name (
 #endif
 #endif
 
-#if defined(CONFIG_AT91SAM9G10EK)
-#if defined(CONFIG_LOAD_NK)
-    dj->fn[0] = 'N';
-	dj->fn[1] = 'K';
-	dj->fn[2] = ' ';
-	dj->fn[3] = ' ';
-	dj->fn[4] = ' ';
+#if defined(CONFIG_AT91SAM9G10EK) && defined(WINCE)
+    dj->fn[0] = 'i';
+	dj->fn[1] = 'm';
+	dj->fn[2] = 'a';
+	dj->fn[3] = 'g';
+	dj->fn[4] = 'e';
 	dj->fn[5] = ' ';
 	dj->fn[6] = ' ';
 	dj->fn[7] = ' ';
-	dj->fn[8] = 'N';
-	dj->fn[9] = 'B';
-	dj->fn[10] = '0';
+	dj->fn[8] = 'b';
+	dj->fn[9] = 'i';
+	dj->fn[10] = 'n';
 	dj->fn[11] = 0x14;
-#else
-    dj->fn[0] = 'E';
-	dj->fn[1] = 'B';
-	dj->fn[2] = 'O';
-	dj->fn[3] = 'O';
-	dj->fn[4] = 'T';
-	dj->fn[5] = ' ';
-	dj->fn[6] = ' ';
-	dj->fn[7] = ' ';
-	dj->fn[8] = 'N';
-	dj->fn[9] = 'B';
-	dj->fn[10] = '0';
-	dj->fn[11] = 0x14;
-#endif
 #endif
 
 	return FR_OK;
