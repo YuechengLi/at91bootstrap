@@ -108,9 +108,6 @@
 #define NS_EXT		0x10	/* Lower case flag (ext) */
 #define NS_DOT		0x20	/* Dot entry */
 
-unsigned int Boot_Div( unsigned int x, unsigned int y);
-
-
 /*--------------------------------------------------------------------------
 
    Private Work Area
@@ -1565,20 +1562,9 @@ FRESULT auto_mount (	/* FR_OK(0): successful, !=0: any error occured */
 	tsect = LD_WORD(fs->win+BPB_TotSec16);				/* Number of sectors on the file system */
 	if (!tsect) tsect = LD_DWORD(fs->win+BPB_TotSec32);
 	
-	
-
-//	fs->max_clust = mclst = (tsect						/* Last cluster# + 1 */
-//		- LD_WORD(fs->win+BPB_RsvdSecCnt) - fsize - fs->n_rootdir / (SS(fs)/32)
-//		) / fs->csize + 2;
-#ifdef WINCE
 	fs->max_clust = mclst = ((tsect						/* Last cluster# + 1 */
 		- LD_WORD(fs->win+BPB_RsvdSecCnt) - fsize - fs->n_rootdir / (SS(fs)/32)
 		) / fs->csize) + 2;
-#else
-    fs->max_clust = mclst = Boot_Div((tsect						/* Last cluster# + 1 */
-		- LD_WORD(fs->win+BPB_RsvdSecCnt) - fsize - fs->n_rootdir / (SS(fs)/32)
-		), fs->csize) + 2;
-#endif
 	
 	fmt = FS_FAT12;										/* Determine the FAT sub type */
 	if (mclst >= 0xFF7) fmt = FS_FAT16;					/* Number of clusters >= 0xFF5 */

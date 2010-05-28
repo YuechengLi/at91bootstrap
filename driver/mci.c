@@ -99,8 +99,7 @@
 //------------------------------------------------------------------------------
 //         External functions
 //------------------------------------------------------------------------------
-extern unsigned int Boot_Div( unsigned int x, unsigned int y);
-extern unsigned int Boot_Mod( unsigned int x, unsigned int y);
+
 //------------------------------------------------------------------------------
 //         Internal functions
 //------------------------------------------------------------------------------
@@ -279,24 +278,13 @@ unsigned int MCI_SetSpeed(Mci *pMci,
 		
 		
 //        divLimit = (mck / 2 / mciLimit);
-#ifdef WINCE
 		divLimit = (mck / 2);
 		divLimit = (divLimit / mciLimit);
-#else
-		divLimit = Boot_Div(mck, 2);
-		divLimit = Boot_Div(divLimit, mciLimit);
-#endif
-
 //		dbg_printnum("mck1:", mck);
 //        if ((mck / 2) % mciLimit) divLimit ++;
-
-#ifdef WINCE		
+	
 		comparevalue = (mck / 2);
 		comparevalue = (comparevalue % mciLimit);
-#else
-		comparevalue = Boot_Div(mck, 2);
-		comparevalue = Boot_Mod(comparevalue, mciLimit);
-#endif
 
 		if (comparevalue) divLimit ++;
     } 
@@ -307,13 +295,8 @@ unsigned int MCI_SetSpeed(Mci *pMci,
 		clkdiv = mck/mciSpeed;*/
 	
 //        clkdiv = (mck / 2 / mciSpeed);
-#ifdef WINCE
 		clkdiv = (mck / 2);
 		clkdiv = (clkdiv / mciSpeed);
-#else
-		clkdiv = Boot_Div(mck, 2);
-		clkdiv = Boot_Div(clkdiv, mciSpeed);
-#endif
 		
         if (mciLimit && clkdiv < divLimit)
             clkdiv = divLimit;
@@ -326,14 +309,8 @@ unsigned int MCI_SetSpeed(Mci *pMci,
 
     // Actual MCI speed
 //    mciSpeed = mck / 2 / (clkdiv + 1);
-#ifdef WINCE
 	mciSpeed = (mck / 2);
 	mciSpeed = (mciSpeed / (clkdiv + 1));
-#else
-    mciSpeed = Boot_Div(mck, 2);
-	mciSpeed = Boot_Div(mciSpeed, (clkdiv + 1));
-#endif
-
 
     // Set the Data Timeout Register & Completion Timeout
     // Data timeout is 500ms, completion timeout 1s.

@@ -195,7 +195,6 @@ SOURCES= \
     mci_hs.c \
     mci.c \
     ff.c \
-    mci_util.c \
     diskio.c \
     dmad.c \
     dma.c \

@@ -9,7 +9,6 @@ else
 COBJS-$(CONFIG_SDCARD)             +=  $(DRIVERS_SRC)/mci.o
 endif
 
-COBJS-$(CONFIG_SDCARD)             +=  $(DRIVERS_SRC)/mci_util.o
 COBJS-$(CONFIG_SDCARD)             +=  $(DRIVERS_SRC)/Media.o
 COBJS-$(CONFIG_SDCARD)             +=  $(DRIVERS_SRC)/diskio.o
 

@@ -275,11 +275,6 @@ gen_bin: $(OBJS)
 	@$(LD) $(LDFLAGS) -n -o $(BINDIR)/$(BOOT_NAME).elf $(OBJS)
 	@$(OBJCOPY) --strip-debug --strip-unneeded $(BINDIR)/$(BOOT_NAME).elf -O binary $(BINDIR)/$(BOOT_NAME).bin
 
-$(DRIVERS_SRC)/mci_util.o:	$(DRIVERS_SRC)/mci_util.c .config
-	@echo "  CC        "$<
-	$(CC)   $(CPPFLAGS_UTIL) -c -o $(DRIVERS_SRC)/mci_util.o $(DRIVERS_SRC)/mci_util.c	
-
-
 %.o : %.c .config
 	@echo "  CC        "$<
 	@$(CC) $(CPPFLAGS) -c -o $@ $<
