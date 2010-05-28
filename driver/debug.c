@@ -37,6 +37,8 @@
 #include <stdio.h>
 #include <stdarg.h>
 
+#ifdef	CONFIG_DEBUG
+
 static char dbg_buf[MAX_BUFFER];
 
 static inline short fill_char(char *buf, char val)
@@ -128,4 +130,4 @@ int dbg_log(const char level, const char *fmt_str, ...)
 
 	return 0;
 }
-
+#endif

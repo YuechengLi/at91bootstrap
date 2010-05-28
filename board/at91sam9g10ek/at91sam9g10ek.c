@@ -99,7 +99,7 @@ void hw_init(void)
 	/* Configure the EBI Slave Slot Cycle to 64 */
 	writel( (readl((AT91C_BASE_MATRIX + MATRIX_SCFG3)) & ~0xFF) | 0x40, (AT91C_BASE_MATRIX + MATRIX_SCFG3));
 
-#if defined(CONFIG_DEBUG) && !defined(WINCE)
+#if defined(CONFIG_DEBUG)
 	/* Enable Debug messages on the DBGU */
 	dbgu_init(BAUDRATE(MASTER_CLOCK, 115200));
 	dbgu_print("Start AT91Bootstrap...\n\r");

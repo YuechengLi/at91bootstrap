@@ -3,6 +3,7 @@
 call clean.bat
 set STACK_CHECK_DISABLE=1
 set OS_IMAGE_NAME="image.bin"
+set CONFIG_DEBUG=Y
 
 %1 :%2
 
@@ -799,6 +800,7 @@ set CONFIG_SDCARD=Y
 set JUMP_ADDR=0x20000000
 set CONFIG_CPU_CLK_266MHZ=Y
 set CONFIG_LOAD_EBOOT=Y
+set CONFIG_DEBUG=
 goto :build
 
 :9g10_sdcard_cekernel
@@ -808,6 +810,7 @@ set CONFIG_SDCARD=Y
 set JUMP_ADDR=0x20069000
 set CONFIG_CPU_CLK_266MHZ=Y
 set CONFIG_LOAD_NK=Y
+set CONFIG_DEBUG=
 goto :build
 
 :9g10_sdcard_uboot
@@ -817,6 +820,7 @@ set CONFIG_SDCARD=Y
 set JUMP_ADDR=0x23F00000
 set CONFIG_CPU_CLK_266MHZ=Y
 set CONFIG_LOAD_UBOOT=Y
+set CONFIG_DEBUG=
 goto :build
 
 :9g10_sdcard_linuxkernel
@@ -829,6 +833,7 @@ set OS_MEM_BANK=0x20000000
 set OS_MEM_SIZE=0x4000000
 set MACH_TYPE=0x86F
 set CONFIG_CPU_CLK_266MHZ=Y
+set CONFIG_DEBUG=
 goto :build
 
 :9g10_sdcard_gettingstarted
@@ -837,6 +842,7 @@ set AT91SAM9G10=Y
 set CONFIG_SDCARD=Y
 set JUMP_ADDR=0x20000000
 set CONFIG_CPU_CLK_266MHZ=Y
+set CONFIG_DEBUG=
 goto :build
 
 :9g10_sdcard_massstorage
@@ -845,6 +851,7 @@ set AT91SAM9G10=Y
 set CONFIG_SDCARD=Y
 set JUMP_ADDR=0x20000000
 set CONFIG_CPU_CLK_266MHZ=Y
+set CONFIG_DEBUG=
 goto :build
 
 :9g20_dataflash_eboot
