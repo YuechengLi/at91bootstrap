@@ -37,6 +37,7 @@
 #define AT91C_SDRAM 		((volatile unsigned int *)AT91C_EBI_SDRAM)
 
 extern int sddrc_init(unsigned int sdramc_cr, unsigned int sdramc_tr);
+
 extern void sddrc_hw_init(void);
 
-#endif /*SDDRC_H_*/
+#endif                          /*SDDRC_H_ */

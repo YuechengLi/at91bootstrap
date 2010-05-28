@@ -33,17 +33,18 @@
 #ifndef DDRAMC_H_
 #define DDRAMC_H_
 
-typedef struct SDdramConfig
-{
-	unsigned int ddramc_mdr;
-	unsigned int ddramc_cr;
-	unsigned int ddramc_rtr;
-	unsigned int ddramc_t0pr;
-	unsigned int ddramc_t1pr;
-	unsigned int ddramc_t2pr;
+typedef struct SDdramConfig {
+    unsigned int ddramc_mdr;
+    unsigned int ddramc_cr;
+    unsigned int ddramc_rtr;
+    unsigned int ddramc_t0pr;
+    unsigned int ddramc_t1pr;
+    unsigned int ddramc_t2pr;
 } SDdramConfig, *PSDdramConfig;
 
-extern int ddram_init(unsigned int ddram_controller_address, unsigned int ddram_address, struct SDdramConfig *ddram_config);
+extern int ddram_init(unsigned int ddram_controller_address,
+                      unsigned int ddram_address,
+                      struct SDdramConfig *ddram_config);
 extern void ddramc_hw_init(void);
 
-#endif /*SDRAMC_H_*/
+#endif                          /*SDRAMC_H_ */

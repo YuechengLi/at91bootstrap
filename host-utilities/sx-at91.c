@@ -74,18 +74,18 @@ Xmodem Frame form: <SOH><blk #><255-blk #><--128 data bytes--><CRC hi><CRC lo>
 #define XMODEM_ACK 0x06
 #define XMODEM_NAK 0x15
 #define XMODEM_CRC_CHR	'C'
-#define XMODEM_CRC_SIZE 2			/* Crc_High Byte + Crc_Low Byte */
-#define XMODEM_FRAME_ID_SIZE 2 /* Frame_Id + 255-Frame_Id */
-#define XMODEM_DATA_SIZE_SOH 128  /* for Xmodem protocol */
-#define XMODEM_DATA_SIZE_STX 1024 /* for 1K xmodem protocol */
-#define USE_1K_XMODEM 0  /* 1 for use 1k_xmodem 0 for xmodem */
+#define XMODEM_CRC_SIZE 2       /* Crc_High Byte + Crc_Low Byte */
+#define XMODEM_FRAME_ID_SIZE 2  /* Frame_Id + 255-Frame_Id */
+#define XMODEM_DATA_SIZE_SOH 128        /* for Xmodem protocol */
+#define XMODEM_DATA_SIZE_STX 1024       /* for 1K xmodem protocol */
+#define USE_1K_XMODEM 0         /* 1 for use 1k_xmodem 0 for xmodem */
 
 #if (USE_1K_XMODEM)
-	#define XMODEM_DATA_SIZE 	XMODEM_DATA_SIZE_STX
-	#define XMODEM_HEAD		XMODEM_STX
+#define XMODEM_DATA_SIZE 	XMODEM_DATA_SIZE_STX
+#define XMODEM_HEAD		XMODEM_STX
 #else
-	#define XMODEM_DATA_SIZE 	XMODEM_DATA_SIZE_SOH
-	#define XMODEM_HEAD 		XMODEM_SOH
+#define XMODEM_DATA_SIZE 	XMODEM_DATA_SIZE_SOH
+#define XMODEM_HEAD 		XMODEM_SOH
 #endif
 /*********/
 
@@ -93,208 +93,212 @@ Xmodem Frame form: <SOH><blk #><255-blk #><--128 data bytes--><CRC hi><CRC lo>
 #define MYBAUDRATE B115200
 
 /***************SUB PROGRAM*******/
-unsigned short GetCrc16 ( char *ptr, unsigned short count )
+unsigned short GetCrc16(char *ptr, unsigned short count)
 {
-	unsigned short crc, i;
+    unsigned short crc, i;
 
-	crc = 0;
-	while(count--)
-	{
-		crc = crc ^ (int) *ptr++ << 8;
-	
-		for(i = 0; i < 8; i++)
-		{
-			if(crc & 0x8000)
-				crc = crc << 1 ^ 0x1021;
-			else			
-				crc = crc << 1;
-		}
-	}
+    crc = 0;
+    while (count--) {
+        crc = crc ^ (int)*ptr++ << 8;
 
-	return (crc & 0xFFFF);
+        for (i = 0; i < 8; i++) {
+            if (crc & 0x8000)
+                crc = crc << 1 ^ 0x1021;
+            else
+                crc = crc << 1;
+        }
+    }
+
+    return (crc & 0xFFFF);
 }
 
 /*******************************/
 int Initial_SerialPort(void)
 {
-	int fd;
-	struct termios options;
+    int fd;
 
-	fd = open( SERIAL_DEVICE , O_RDWR | O_NOCTTY | O_NDELAY );
-	if ( fd == -1 )
-	{ 
-		/*open error!*/
-		perror("Can't open serial port!");
-		return -1;
-	}
+    struct termios options;
 
-	/*Get the current options for the port...*/
-	tcgetattr(fd, &options);
+    fd = open(SERIAL_DEVICE, O_RDWR | O_NOCTTY | O_NDELAY);
+    if (fd == -1) {
+        /*
+         * open error!
+         */
+        perror("Can't open serial port!");
+        return -1;
+    }
 
-	/*Set the baud rates to BAUDRATE...*/
-	cfsetispeed(&options,MYBAUDRATE);
-	cfsetospeed(&options,MYBAUDRATE);
-	tcsetattr(fd, TCSANOW, &options);
-	if (0 != tcgetattr(fd, &options)) 
-	{
-		perror("SetupSerial 1");
-		return -1;
-	} 
-	
-	/*
-	 * 8bit Data,no partity,1 stop bit...
-	 */
-	options.c_cflag &= ~PARENB;
-	options.c_cflag &= ~CSTOPB;
-	options.c_cflag &= ~CSIZE;
-	options.c_cflag |= CS8;
-	tcflush(fd,TCIFLUSH);
+    /*
+     * Get the current options for the port...
+     */
+    tcgetattr(fd, &options);
 
-	/***Choosing Raw Input*/
-	options.c_lflag &= ~(ICANON | ECHO | ECHOE | ISIG);
-	options.c_oflag &= ~OPOST; 
+    /*
+     * Set the baud rates to BAUDRATE...
+     */
+    cfsetispeed(&options, MYBAUDRATE);
+    cfsetospeed(&options, MYBAUDRATE);
+    tcsetattr(fd, TCSANOW, &options);
+    if (0 != tcgetattr(fd, &options)) {
+        perror("SetupSerial 1");
+        return -1;
+    }
 
-	/*
-	 * Set the new options for the port...
-	 */
-	if (0 != tcsetattr(fd, TCSANOW, &options))
-	{
- 		perror("SetupSerial error");
- 		return -1 ;
-	}
+    /*
+     * 8bit Data,no partity,1 stop bit...
+     */
+    options.c_cflag &= ~PARENB;
+    options.c_cflag &= ~CSTOPB;
+    options.c_cflag &= ~CSIZE;
+    options.c_cflag |= CS8;
+    tcflush(fd, TCIFLUSH);
 
-	return fd ;
+        /***Choosing Raw Input*/
+    options.c_lflag &= ~(ICANON | ECHO | ECHOE | ISIG);
+    options.c_oflag &= ~OPOST;
+
+    /*
+     * Set the new options for the port...
+     */
+    if (0 != tcsetattr(fd, TCSANOW, &options)) {
+        perror("SetupSerial error");
+        return -1;
+    }
+
+    return fd;
 }
 
 /******************************/
 void ClearReceiveBuffer(int fd)
 {
-	unsigned char tmp;
-	while ((read(fd,&tmp,1))>0);
-	
-	return;
+    unsigned char tmp;
+
+    while ((read(fd, &tmp, 1)) > 0) ;
+
+    return;
 }
 
 /********************************/
-int main(int argc,char *argv[])
+int main(int argc, char *argv[])
 {
-	int fd;
-	char *data_file_name;
-	char packet_data[ XMODEM_DATA_SIZE ];
-	char frame_data[ XMODEM_DATA_SIZE + XMODEM_CRC_SIZE + XMODEM_FRAME_ID_SIZE + 1 ];
-	FILE *datafile;
-	int complete,retry_num,pack_counter,read_number,write_number,i;
-	unsigned short crc_value;
-	unsigned char ack_id;
+    int fd;
 
-	printf("sx-at91 started...\r\n");
-	
-	/* open serial port1 */
-	if ( (fd = Initial_SerialPort()) == -1)  
-		return -1 ;
+    char *data_file_name;
 
-	data_file_name = argv[1];
+    char packet_data[XMODEM_DATA_SIZE];
 
-	if((datafile=fopen(data_file_name,"rb"))==NULL)
-	{
-		perror ("Can't open file!");
-		return -1 ;
-	}
+    char frame_data[XMODEM_DATA_SIZE + XMODEM_CRC_SIZE + XMODEM_FRAME_ID_SIZE +
+                    1];
+    FILE *datafile;
 
-	/*******************************/
-	
-	pack_counter = 0;
-	complete = 0;
-	retry_num = 0;
-	ClearReceiveBuffer(fd);
+    int complete, retry_num, pack_counter, read_number, write_number, i;
 
-	while((read(fd,&ack_id,1))<=0);
-	
-	printf("%c\r\n",ack_id);
-	ack_id=XMODEM_ACK;
-	while(!complete)
-	{
-		switch(ack_id)
-		{
-		case XMODEM_ACK:
-			retry_num = 0;
-			pack_counter++;
-			read_number = fread( packet_data, sizeof(char), XMODEM_DATA_SIZE, datafile);
-			if(read_number>0)
-			{
-				if(read_number<XMODEM_DATA_SIZE_SOH)
-				{
-			
-					printf("Start filling the last frame!\r\n");
-					for(;read_number<XMODEM_DATA_SIZE;read_number++)
-						packet_data[read_number] = 0x00;
-				}
-				frame_data[0] = XMODEM_HEAD;
-				frame_data[1] = (char)pack_counter;
-				frame_data[2] = (char)(255-frame_data[1]);
-	
-				for(i=0;i<XMODEM_DATA_SIZE;i++)
-					frame_data[i+3]=packet_data[i];
-	
-				crc_value = GetCrc16(packet_data,XMODEM_DATA_SIZE);
-				frame_data[XMODEM_DATA_SIZE_SOH+3]=(unsigned char)(crc_value >> 8);
-				frame_data[XMODEM_DATA_SIZE_SOH+4]=(unsigned char)(crc_value);
-				write_number = write( fd, frame_data, XMODEM_DATA_SIZE_SOH + 5);
-				printf("waiting for ACK,%d,%d,...",pack_counter,write_number);
-				while((read(fd,&ack_id,1))<=0);
-			
-				if(ack_id == XMODEM_ACK)
-					printf("Ok!\r\n");
-				else
-					printf("Error!\r\n");
-			}
-			else
-			{
-				ack_id = XMODEM_EOT;
-				complete = 1;
-				printf("Waiting for complete ACK ...");
-			
-				while(ack_id != XMODEM_ACK)
-				{
-					ack_id = XMODEM_EOT;	
-					write_number=write(fd,&ack_id,1);
-					while((read(fd,&ack_id,1))<=0);
-				}
-				printf("OK\r\n");
-		
-				printf("Sending file complete\r\n");
-			}
-		break;
+    unsigned short crc_value;
 
-		case XMODEM_NAK:
-			if( retry_num++ > 10) 
-			{
-				printf("Retry too many times,Quit!\r\n");
-				complete = 1;
-			}
-			else
-			{
-				write_number = write(fd,frame_data,XMODEM_DATA_SIZE + 5);
-				printf("Retry for ACK,%d,%d...",pack_counter,write_number);
-				while((read(fd,&ack_id,1))<=0);
-				
-				if( ack_id == XMODEM_ACK )
-					printf("OK\r\n");
-				else
-					printf("Error!\r\n");
-			}
-		break;
+    unsigned char ack_id;
 
-		default:
-			printf("Fatal Error!\r\n");
-			complete = 1;
-		break;
-		}
+    printf("sx-at91 started...\r\n");
 
-	}
+    /*
+     * open serial port1 
+     */
+    if ((fd = Initial_SerialPort()) == -1)
+        return -1;
 
-	fclose(datafile);
-	close(fd);
+    data_file_name = argv[1];
 
-	return 0;
+    if ((datafile = fopen(data_file_name, "rb")) == NULL) {
+        perror("Can't open file!");
+        return -1;
+    }
+
+        /*******************************/
+
+    pack_counter = 0;
+    complete = 0;
+    retry_num = 0;
+    ClearReceiveBuffer(fd);
+
+    while ((read(fd, &ack_id, 1)) <= 0) ;
+
+    printf("%c\r\n", ack_id);
+    ack_id = XMODEM_ACK;
+    while (!complete) {
+        switch (ack_id) {
+        case XMODEM_ACK:
+            retry_num = 0;
+            pack_counter++;
+            read_number =
+                fread(packet_data, sizeof (char), XMODEM_DATA_SIZE, datafile);
+            if (read_number > 0) {
+                if (read_number < XMODEM_DATA_SIZE_SOH) {
+
+                    printf("Start filling the last frame!\r\n");
+                    for (; read_number < XMODEM_DATA_SIZE; read_number++)
+                        packet_data[read_number] = 0x00;
+                }
+                frame_data[0] = XMODEM_HEAD;
+                frame_data[1] = (char)pack_counter;
+                frame_data[2] = (char)(255 - frame_data[1]);
+
+                for (i = 0; i < XMODEM_DATA_SIZE; i++)
+                    frame_data[i + 3] = packet_data[i];
+
+                crc_value = GetCrc16(packet_data, XMODEM_DATA_SIZE);
+                frame_data[XMODEM_DATA_SIZE_SOH + 3] =
+                    (unsigned char)(crc_value >> 8);
+                frame_data[XMODEM_DATA_SIZE_SOH + 4] =
+                    (unsigned char)(crc_value);
+                write_number = write(fd, frame_data, XMODEM_DATA_SIZE_SOH + 5);
+                printf("waiting for ACK,%d,%d,...", pack_counter, write_number);
+                while ((read(fd, &ack_id, 1)) <= 0) ;
+
+                if (ack_id == XMODEM_ACK)
+                    printf("Ok!\r\n");
+                else
+                    printf("Error!\r\n");
+            } else {
+                ack_id = XMODEM_EOT;
+                complete = 1;
+                printf("Waiting for complete ACK ...");
+
+                while (ack_id != XMODEM_ACK) {
+                    ack_id = XMODEM_EOT;
+                    write_number = write(fd, &ack_id, 1);
+                    while ((read(fd, &ack_id, 1)) <= 0) ;
+                }
+                printf("OK\r\n");
+
+                printf("Sending file complete\r\n");
+            }
+            break;
+
+        case XMODEM_NAK:
+            if (retry_num++ > 10) {
+                printf("Retry too many times,Quit!\r\n");
+                complete = 1;
+            } else {
+                write_number = write(fd, frame_data, XMODEM_DATA_SIZE + 5);
+                printf("Retry for ACK,%d,%d...", pack_counter, write_number);
+                while ((read(fd, &ack_id, 1)) <= 0) ;
+
+                if (ack_id == XMODEM_ACK)
+                    printf("OK\r\n");
+                else
+                    printf("Error!\r\n");
+            }
+            break;
+
+        default:
+            printf("Fatal Error!\r\n");
+            complete = 1;
+            break;
+        }
+
+    }
+
+    fclose(datafile);
+    close(fd);
+
+    return 0;
 }

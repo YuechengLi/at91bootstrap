@@ -64,8 +64,8 @@
 
 /* AC characteristics */
 /* DLYBS = tCSS= 250ns min and DLYBCT = tCSH = 250ns */
-#define DATAFLASH_TCSS		(0xfa << 16)	/* 250ns min (tCSS) <=> 250/100000000 = 250ns */
-#define DATAFLASH_TCHS		(0x8 << 24)	/* 250ns min (tCSH) <=> (8*32)/(100000000) */
+#define DATAFLASH_TCSS		(0xfa << 16)    /* 250ns min (tCSS) <=> 250/100000000 = 250ns */
+#define DATAFLASH_TCHS		(0x8 << 24)     /* 250ns min (tCSH) <=> (8*32)/(100000000) */
 
 #define DF_CS_SETTINGS 		(AT91C_SPI_NCPHA | (AT91C_SPI_DLYBS & DATAFLASH_TCSS) | (AT91C_SPI_DLYBCT & DATAFLASH_TCHS) | ((MASTER_CLOCK / AT91C_SPI_CLK) << 8))
 
@@ -78,11 +78,4 @@
 /* SDDRC Settings                                                     */
 /*                                                                     */
 /* ******************************************************************* */
-#endif	/* _AT91CAP9STK_H */
-
-
-
-
-
-
-
+#endif                          /* _AT91CAP9STK_H */

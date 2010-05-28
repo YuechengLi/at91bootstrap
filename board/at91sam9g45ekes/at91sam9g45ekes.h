@@ -32,7 +32,7 @@
  */
 #ifndef _AT91SAM9G45EKES_H
 #define _AT91SAM9G45EKES_H
- 
+
 /* ******************************************************************* */
 /* PMC Settings                                                        */
 /*                                                                     */
@@ -44,7 +44,7 @@
 #define PLL_LOCK_TIMEOUT	1000000
 
 #define BOARD_MAINOSC           12000000
-#define BOARD_MCK               ((unsigned long)((BOARD_MAINOSC / 3 / 2 / 3) * 200 )) // 133MHz
+#define BOARD_MCK               ((unsigned long)((BOARD_MAINOSC / 3 / 2 / 3) * 200 ))   // 133MHz
 #define BOARD_OSCOUNT           (AT91C_CKGR_OSCOUNT & (64 << 8))
 #define BOARD_CKGR_PLLA         (AT91C_CKGR_SRCA | AT91C_CKGR_OUTA_0)
 #define BOARD_PLLACOUNT         (0x3F << 8)
@@ -57,13 +57,13 @@
                                 | BOARD_MULA \
                                 | BOARD_DIVA)
 
-//#define PLLA_SETTINGS	0x202A3F01
+//#define PLLA_SETTINGS 0x202A3F01
 #define PLLUTMI
 #define PLLUTMI_SETTINGS	0x10193F05
 
 /* Switch MCK on PLLA output PCK = PLLA/2 = 3 * MCK */
-//#define MCKR_SETTINGS		0x1300
-#define MCKR_CSS_SETTINGS	0x1302 
+//#define MCKR_SETTINGS         0x1300
+#define MCKR_CSS_SETTINGS	0x1302
 //(AT91C_PMC_CSS_PLLA_CLK | MCKR_SETTINGS)
 
 /* ******************************************************************* */
@@ -86,14 +86,13 @@
 /* ******************************************************************* */
 #define AT91C_SMARTMEDIA_BASE	0x40000000
 
-#define AT91_SMART_MEDIA_ALE    (1 << 21)	/* our ALE is AD21 */
-#define AT91_SMART_MEDIA_CLE    (1 << 22)	/* our CLE is AD22 */
+#define AT91_SMART_MEDIA_ALE    (1 << 21)       /* our ALE is AD21 */
+#define AT91_SMART_MEDIA_CLE    (1 << 22)       /* our CLE is AD22 */
 
 #define NAND_DISABLE_CE() do { *(volatile unsigned int *)AT91C_PIOC_SODR = AT91C_PIO_PC14;} while(0)
 #define NAND_ENABLE_CE() do { *(volatile unsigned int *)AT91C_PIOC_CODR = AT91C_PIO_PC14;} while(0)
 
 #define NAND_WAIT_READY() while (!(*(volatile unsigned int *)AT91C_PIOC_PDSR & AT91C_PIO_PC8))
-
 
 /* ******************************************************************** */
 /* SMC Chip Select 3 Timings for NandFlash for MASTER_CLOCK = 133000000.*/
@@ -104,12 +103,12 @@
 #define AT91C_SM_NCS_WR_SETUP	(0 << 8)
 #define AT91C_SM_NRD_SETUP	(2 << 16)
 #define AT91C_SM_NCS_RD_SETUP	(0 << 24)
-  
+
 #define AT91C_SM_NWE_PULSE 	(4 << 0)
 #define AT91C_SM_NCS_WR_PULSE	(4 << 8)
 #define AT91C_SM_NRD_PULSE	(4 << 16)
 #define AT91C_SM_NCS_RD_PULSE	(4 << 24)
-  
+
 #define AT91C_SM_NWE_CYCLE 	(7 << 0)
 #define AT91C_SM_NRD_CYCLE	(7 << 16)
 
@@ -119,10 +118,9 @@
 
 #define BOARD_SD_PIN_CD \
     {AT91C_PIO_PD10, AT91C_BASE_PIOD, AT91C_ID_PIOD_E, PIO_INPUT, PIO_PULLUP}
-	
+
 #define BOARD_SD_PINS \
     {(0x3E <<  0), AT91C_BASE_PIOA, AT91C_ID_PIOA, PIO_PERIPH_A, PIO_PULLUP}, \
     {(0x1 <<  0), AT91C_BASE_PIOA, AT91C_ID_PIOA, PIO_PERIPH_A, PIO_DEFAULT}
 
-	
-#endif	/* _AT91SAM9G45EKES_H */
+#endif                          /* _AT91SAM9G45EKES_H */

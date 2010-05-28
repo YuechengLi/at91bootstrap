@@ -34,14 +34,12 @@
 #include "part.h"
 #include "main.h"
 
-void	sbit(unsigned int bit,unsigned int adr)
+void sbit(unsigned int bit, unsigned int adr)
 {
-	writel( (readl(adr)) | bit, adr);
+    writel((readl(adr)) | bit, adr);
 }
 
-void	cbit(unsigned int bit,unsigned int adr)
+void cbit(unsigned int bit, unsigned int adr)
 {
-	writel( (readl(adr)) & ~bit, adr);
+    writel((readl(adr)) & ~bit, adr);
 }
-
-

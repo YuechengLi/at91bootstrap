@@ -26,14 +26,15 @@
  */
 static void print_buttons(WINDOW * dialog, int height, int width, int selected)
 {
-	int x = width / 2 - 10;
-	int y = height - 2;
+    int x = width / 2 - 10;
 
-	print_button(dialog, gettext(" Yes "), y, x, selected == 0);
-	print_button(dialog, gettext("  No  "), y, x + 13, selected == 1);
+    int y = height - 2;
 
-	wmove(dialog, y, x + 1 + 13 * selected);
-	wrefresh(dialog);
+    print_button(dialog, gettext(" Yes "), y, x, selected == 0);
+    print_button(dialog, gettext("  No  "), y, x + 13, selected == 1);
+
+    wmove(dialog, y, x + 1 + 13 * selected);
+    wrefresh(dialog);
 }
 
 /*
@@ -41,74 +42,79 @@ static void print_buttons(WINDOW * dialog, int height, int width, int selected)
  */
 int dialog_yesno(const char *title, const char *prompt, int height, int width)
 {
-	int i, x, y, key = 0, button = 0;
-	WINDOW *dialog;
+    int i, x, y, key = 0, button = 0;
 
-do_resize:
-	if (getmaxy(stdscr) < (height + 4))
-		return -ERRDISPLAYTOOSMALL;
-	if (getmaxx(stdscr) < (width + 4))
-		return -ERRDISPLAYTOOSMALL;
+    WINDOW *dialog;
 
-	/* center dialog box on screen */
-	x = (COLS - width) / 2;
-	y = (LINES - height) / 2;
+ do_resize:
+    if (getmaxy(stdscr) < (height + 4))
+        return -ERRDISPLAYTOOSMALL;
+    if (getmaxx(stdscr) < (width + 4))
+        return -ERRDISPLAYTOOSMALL;
 
-	draw_shadow(stdscr, y, x, height, width);
+    /*
+     * center dialog box on screen 
+     */
+    x = (COLS - width) / 2;
+    y = (LINES - height) / 2;
 
-	dialog = newwin(height, width, y, x);
-	keypad(dialog, TRUE);
+    draw_shadow(stdscr, y, x, height, width);
 
-	draw_box(dialog, 0, 0, height, width,
-		 dlg.dialog.atr, dlg.border.atr);
-	wattrset(dialog, dlg.border.atr);
-	mvwaddch(dialog, height - 3, 0, ACS_LTEE);
-	for (i = 0; i < width - 2; i++)
-		waddch(dialog, ACS_HLINE);
-	wattrset(dialog, dlg.dialog.atr);
-	waddch(dialog, ACS_RTEE);
+    dialog = newwin(height, width, y, x);
+    keypad(dialog, TRUE);
 
-	print_title(dialog, title, width);
+    draw_box(dialog, 0, 0, height, width, dlg.dialog.atr, dlg.border.atr);
+    wattrset(dialog, dlg.border.atr);
+    mvwaddch(dialog, height - 3, 0, ACS_LTEE);
+    for (i = 0; i < width - 2; i++)
+        waddch(dialog, ACS_HLINE);
+    wattrset(dialog, dlg.dialog.atr);
+    waddch(dialog, ACS_RTEE);
 
-	wattrset(dialog, dlg.dialog.atr);
-	print_autowrap(dialog, prompt, width - 2, 1, 3);
+    print_title(dialog, title, width);
 
-	print_buttons(dialog, height, width, 0);
+    wattrset(dialog, dlg.dialog.atr);
+    print_autowrap(dialog, prompt, width - 2, 1, 3);
 
-	while (key != KEY_ESC) {
-		key = wgetch(dialog);
-		switch (key) {
-		case 'Y':
-		case 'y':
-			delwin(dialog);
-			return 0;
-		case 'N':
-		case 'n':
-			delwin(dialog);
-			return 1;
+    print_buttons(dialog, height, width, 0);
 
-		case TAB:
-		case KEY_LEFT:
-		case KEY_RIGHT:
-			button = ((key == KEY_LEFT ? --button : ++button) < 0) ? 1 : (button > 1 ? 0 : button);
+    while (key != KEY_ESC) {
+        key = wgetch(dialog);
+        switch (key) {
+        case 'Y':
+        case 'y':
+            delwin(dialog);
+            return 0;
+        case 'N':
+        case 'n':
+            delwin(dialog);
+            return 1;
 
-			print_buttons(dialog, height, width, button);
-			wrefresh(dialog);
-			break;
-		case ' ':
-		case '\n':
-			delwin(dialog);
-			return button;
-		case KEY_ESC:
-			key = on_key_esc(dialog);
-			break;
-		case KEY_RESIZE:
-			delwin(dialog);
-			on_key_resize();
-			goto do_resize;
-		}
-	}
+        case TAB:
+        case KEY_LEFT:
+        case KEY_RIGHT:
+            button =
+                ((key == KEY_LEFT ? --button : ++button) < 0) ? 1 : (button >
+                                                                     1 ? 0 :
+                                                                     button);
 
-	delwin(dialog);
-	return key;		/* ESC pressed */
+            print_buttons(dialog, height, width, button);
+            wrefresh(dialog);
+            break;
+        case ' ':
+        case '\n':
+            delwin(dialog);
+            return button;
+        case KEY_ESC:
+            key = on_key_esc(dialog);
+            break;
+        case KEY_RESIZE:
+            delwin(dialog);
+            on_key_resize();
+            goto do_resize;
+        }
+    }
+
+    delwin(dialog);
+    return key;                 /* ESC pressed */
 }

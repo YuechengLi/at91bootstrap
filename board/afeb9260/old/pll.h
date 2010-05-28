@@ -15,15 +15,15 @@
 #endif
 
 #ifdef PLLA_180MHz
-#define PLLA_SETTINGS	0x2125BF1E /* 180MHz */
-#define MASTER_CLOCK		(179999198/2) /* 180MHz MCK=90MHz */
+#define PLLA_SETTINGS	0x2125BF1E      /* 180MHz */
+#define MASTER_CLOCK		(179999198/2)   /* 180MHz MCK=90MHz */
 #endif
 
 #ifdef PLLA_120MHz
-//#define PLLA_SETTINGS	0x2125BF2d /* 120MHz */
-//#define MASTER_CLOCK		(119999322) /* 120MHz MCK=60MHz*/
-#define PLLA_SETTINGS	0x2125BF2d /* 120MHz */
-#define MASTER_CLOCK		(119999465/2) /* 120MHz MCK=60MHz*/
+//#define PLLA_SETTINGS 0x2125BF2d /* 120MHz */
+//#define MASTER_CLOCK          (119999322) /* 120MHz MCK=60MHz*/
+#define PLLA_SETTINGS	0x2125BF2d      /* 120MHz */
+#define MASTER_CLOCK		(119999465/2)   /* 120MHz MCK=60MHz */
 #endif
 
 #if !defined(PLLA_180MHz) && !defined(PLLA_120MHz)

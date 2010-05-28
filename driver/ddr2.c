@@ -44,7 +44,7 @@ static inline void write_ddr2(unsigned int offset, const unsigned int value)
 /* Read DDR2 registers */
 static inline unsigned int read_ddr2(unsigned int offset)
 {
-	return 0;
+    return 0;
 }
 
 //*----------------------------------------------------------------------------
@@ -56,5 +56,4 @@ int ddr2_init(unsigned int sdramc_cr, unsigned int sdramc_tr)
     return 0;
 }
 
-#endif /* CONFIG_DDR2 */
-
+#endif                          /* CONFIG_DDR2 */

@@ -50,38 +50,38 @@
 /*//////////////////////////////////////////////////////////////////////////////////////////////////////*/
 
 /* READ COMMANDS */
-#define DB_CONTINUOUS_ARRAY_READ   	0xE8		/* Continuous array read */
-#define DB_BURST_ARRAY_READ        	0xE8		/* Burst array read */
-#define DB_PAGE_READ               	0xD2		/* Main memory page read */
-#define DB_BUF1_READ               	0xD4		/* Buffer 1 read */
-#define DB_BUF2_READ               	0xD6		/* Buffer 2 read */
-#define DB_STATUS                  	0xD7		/* Status Register */
+#define DB_CONTINUOUS_ARRAY_READ   	0xE8    /* Continuous array read */
+#define DB_BURST_ARRAY_READ        	0xE8    /* Burst array read */
+#define DB_PAGE_READ               	0xD2    /* Main memory page read */
+#define DB_BUF1_READ               	0xD4    /* Buffer 1 read */
+#define DB_BUF2_READ               	0xD6    /* Buffer 2 read */
+#define DB_STATUS                  	0xD7    /* Status Register */
 
 /* PROGRAM and ERASE COMMANDS */
-#define DB_BUF1_WRITE              	0x84		/* Buffer 1 write */
-#define DB_BUF2_WRITE              	0x87		/* Buffer 2 write */
-#define DB_BUF1_PAGE_ERASE_PGM     	0x83		/* Buffer 1 to main memory page program with built-In erase */
-#define DB_BUF1_PAGE_ERASE_FASTPGM 	0x93		/* Buffer 1 to main memory page program with built-In erase, Fast program */
-#define DB_BUF2_PAGE_ERASE_PGM     	0x86		/* Buffer 2 to main memory page program with built-In erase */
-#define DB_BUF2_PAGE_ERASE_FASTPGM 	0x96		/* Buffer 1 to main memory page program with built-In erase, Fast program */
-#define DB_BUF1_PAGE_PGM           	0x88		/* Buffer 1 to main memory page program without built-In erase */
-#define DB_BUF1_PAGE_FASTPGM       	0x98		/* Buffer 1 to main memory page program without built-In erase, Fast program*/
-#define DB_BUF2_PAGE_PGM           	0x89		/* Buffer 2 to main memory page program without built-In erase */
-#define DB_BUF2_PAGE_FASTPGM       	0x99		/* Buffer 1 to main memory page program without built-In erase, Fast program*/
-#define DB_PAGE_ERASE              	0x81		/* Page Erase */
-#define DB_BLOCK_ERASE             	0x50		/* Block Erase */
-#define DB_PAGE_PGM_BUF1           	0x82		/* Main memory page through buffer 1 */
-#define DB_PAGE_FASTPGM_BUF1       	0x92		/* Main memory page through buffer 1, Fast program */
-#define DB_PAGE_PGM_BUF2           	0x85		/* Main memory page through buffer 2 */
-#define DB_PAGE_FastPGM_BUF2       	0x95		/* Main memory page through buffer 2, Fast program */
+#define DB_BUF1_WRITE              	0x84    /* Buffer 1 write */
+#define DB_BUF2_WRITE              	0x87    /* Buffer 2 write */
+#define DB_BUF1_PAGE_ERASE_PGM     	0x83    /* Buffer 1 to main memory page program with built-In erase */
+#define DB_BUF1_PAGE_ERASE_FASTPGM 	0x93    /* Buffer 1 to main memory page program with built-In erase, Fast program */
+#define DB_BUF2_PAGE_ERASE_PGM     	0x86    /* Buffer 2 to main memory page program with built-In erase */
+#define DB_BUF2_PAGE_ERASE_FASTPGM 	0x96    /* Buffer 1 to main memory page program with built-In erase, Fast program */
+#define DB_BUF1_PAGE_PGM           	0x88    /* Buffer 1 to main memory page program without built-In erase */
+#define DB_BUF1_PAGE_FASTPGM       	0x98    /* Buffer 1 to main memory page program without built-In erase, Fast program */
+#define DB_BUF2_PAGE_PGM           	0x89    /* Buffer 2 to main memory page program without built-In erase */
+#define DB_BUF2_PAGE_FASTPGM       	0x99    /* Buffer 1 to main memory page program without built-In erase, Fast program */
+#define DB_PAGE_ERASE              	0x81    /* Page Erase */
+#define DB_BLOCK_ERASE             	0x50    /* Block Erase */
+#define DB_PAGE_PGM_BUF1           	0x82    /* Main memory page through buffer 1 */
+#define DB_PAGE_FASTPGM_BUF1       	0x92    /* Main memory page through buffer 1, Fast program */
+#define DB_PAGE_PGM_BUF2           	0x85    /* Main memory page through buffer 2 */
+#define DB_PAGE_FastPGM_BUF2       	0x95    /* Main memory page through buffer 2, Fast program */
 
 /* ADDITIONAL COMMANDS */
-#define DB_PAGE_2_BUF1_TRF         	0x53		/* Main memory page to buffer 1 transfert */
-#define DB_PAGE_2_BUF2_TRF         	0x55		/* Main memory page to buffer 2 transfert */
-#define DB_PAGE_2_BUF1_CMP         	0x60		/* Main memory page to buffer 1 compare */
-#define DB_PAGE_2_BUF2_CMP          0x61		/* Main memory page to buffer 2 compare */
-#define DB_AUTO_PAGE_PGM_BUF1      	0x58		/* Auto page rewrite throught buffer 1 */
-#define DB_AUTO_PAGE_PGM_BUF2      	0x59		/* Auto page rewrite throught buffer 2 */
+#define DB_PAGE_2_BUF1_TRF         	0x53    /* Main memory page to buffer 1 transfert */
+#define DB_PAGE_2_BUF2_TRF         	0x55    /* Main memory page to buffer 2 transfert */
+#define DB_PAGE_2_BUF1_CMP         	0x60    /* Main memory page to buffer 1 compare */
+#define DB_PAGE_2_BUF2_CMP          0x61        /* Main memory page to buffer 2 compare */
+#define DB_AUTO_PAGE_PGM_BUF1      	0x58    /* Auto page rewrite throught buffer 1 */
+#define DB_AUTO_PAGE_PGM_BUF2      	0x59    /* Auto page rewrite throught buffer 2 */
 
 /*//////////////////////////////////////////////////////////////////////////////////////////////////////*/
 /* ATMEL Dataflash description										*/
@@ -102,45 +102,42 @@
 /*//////////////////////////////////////////////////////////////////////////////////////////////////////*/
 /* Dataflash Interface Definition									*/
 /*//////////////////////////////////////////////////////////////////////////////////////////////////////*/
-typedef enum  _AT91S_DF_SEM {
+typedef enum _AT91S_DF_SEM {
     UNLOCKED,
     LOCKED
 } AT91S_DF_SEM;
 
-typedef enum  _AT91S_DF_STATE {
-	START_COMMAND,
-	WAIT_FOR_BUSY,
-	ERASE,
-	END_OF_ERASE,
+typedef enum _AT91S_DF_STATE {
+    START_COMMAND,
+    WAIT_FOR_BUSY,
+    ERASE,
+    END_OF_ERASE,
 
-	START_WRITE,
-	END_OF_WRITE,
+    START_WRITE,
+    END_OF_WRITE,
 
-	START_READ,
-	END_OF_READ,
-	READ_GET_STATUS,
-	WAIT_FOR_READ_STATUS
-
+    START_READ,
+    END_OF_READ,
+    READ_GET_STATUS,
+    WAIT_FOR_READ_STATUS
 } AT91S_DF_STATE;
-
 
 /* Dataflash Description Structure */
 typedef struct _AT91S_DF_DESC {
-	int		pages_number;    /* dataflash page number */
-	int		pages_size;      /* dataflash page size */
-	int		page_offset;     /* page offset in command */
-	int     block_size;      /* nb page per block */
-	int		byte_mask;       /* byte mask in command */
-	int     binaryPageMode;  /* indicate if configured in power-of-2 binary */
+    int pages_number;           /* dataflash page number */
+    int pages_size;             /* dataflash page size */
+    int page_offset;            /* page offset in command */
+    int block_size;             /* nb page per block */
+    int byte_mask;              /* byte mask in command */
+    int binaryPageMode;         /* indicate if configured in power-of-2 binary */
 } AT91S_DF_DESC, *AT91PS_DF_DESC;
 
 /* Dataflash Descriptor Structure */
-typedef struct _AT91S_DF
-{
-	unsigned char   bCs;
-	AT91S_DF_SEM    bSemaphore;    /* SPI semaphore */
-	unsigned int    command[2];
- 	AT91S_DF_DESC   dfDescription;
+typedef struct _AT91S_DF {
+    unsigned char bCs;
+    AT91S_DF_SEM bSemaphore;    /* SPI semaphore */
+    unsigned int command[2];
+    AT91S_DF_DESC dfDescription;
 } AT91S_DF, *AT91PS_DF;
 
 #define AT91C_DF_NB_BLOCS(pDf)  (pDf->dfDescription.pages_number / pDf->dfDescription.block_size)
@@ -208,16 +205,17 @@ typedef struct _AT91S_DF
     ((pDf)->command[0] & 0x4000)
 
 extern void df_hw_init(void);
-extern void df_recovery(AT91PS_DF pDf);
-extern int load_df(unsigned int pcs, unsigned int img_addr, unsigned int img_size, unsigned int img_dest);
 
-extern char df_send_command (
-	AT91PS_DF pDataFlash,
-	unsigned char bCmd,      // Command value
-	unsigned char bCmdSize,  // Command Size
-	char          *pData,    // Data to be sent
-	unsigned int  dDataSize, // Data Size
-	unsigned int  dAddress); // Dataflash Address
+extern void df_recovery(AT91PS_DF pDf);
+
+extern int load_df(unsigned int pcs, unsigned int img_addr,
+                   unsigned int img_size, unsigned int img_dest);
+
+extern char df_send_command(AT91PS_DF pDataFlash, unsigned char bCmd,   // Command value
+                            unsigned char bCmdSize,     // Command Size
+                            char *pData,        // Data to be sent
+                            unsigned int dDataSize,     // Data Size
+                            unsigned int dAddress);     // Dataflash Address
 
 /*
 extern char df_wait_ready(

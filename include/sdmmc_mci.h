@@ -203,7 +203,6 @@
 //         Header
 //------------------------------------------------------------------------------
 
-
 #include "part.h"
 #if !defined(MCI2_INTERFACE)
 #include "mci.h"
@@ -214,7 +213,6 @@
 //------------------------------------------------------------------------------
 //         Constants
 //------------------------------------------------------------------------------
-
 
 /// There was an error with the SD driver.
 #define SD_ERROR_DRIVER          1
@@ -312,64 +310,64 @@
 
 // CID register access macros (128 bits, 4 * 32 bits).
 #define SD_CID(pSd, bitfield, bits)   (  (pSd->cid[3-(bitfield)/32] >> ((bitfield)%32)) & ((1 << (bits)) - 1))
-#define SD_CID_MID(pSd)               SD_CID(pSd, 120, 8)      ///< Manufacturer ID  
-#define SD_CID_BGA(pSd)               SD_CID(pSd, 112, 2)      ///< Card/BGA(eMMC)
-#define SD_CID_CBS(pSd)               SD_CID(pSd, 112, 2)      ///< Card/BGA(eMMC)
-#define SD_CID_OID_BYTE_1(pSd)        SD_CID(pSd, 112, 8)      ///< OEM/Application ID byte 1
-#define SD_CID_OID_BYTE_0(pSd)        SD_CID(pSd, 104, 8)      ///< OEM/Application ID byte 0
-#define SD_CID_PNM_BYTE_4(pSd)        SD_CID(pSd,  96, 8)      ///< Product revision byte 4
-#define SD_CID_PNM_BYTE_3(pSd)        SD_CID(pSd,  88, 8)      ///< Product revision byte 3
-#define SD_CID_PNM_BYTE_2(pSd)        SD_CID(pSd,  80, 8)      ///< Product revision byte 2
-#define SD_CID_PNM_BYTE_1(pSd)        SD_CID(pSd,  72, 8)      ///< Product revision byte 1
-#define SD_CID_PNM_BYTE_0(pSd)        SD_CID(pSd,  64, 8)      ///< Product revision byte 0
-#define SD_CID_PRV_1(pSd)             SD_CID(pSd,  24, 8)      ///< Product serial number 1
-#define SD_CID_PRV_2(pSd)             SD_CID(pSd,  32,24)      ///< Product serial number 2
-#define SD_CID_MDT_YEAR(pSd)          (SD_CID(pSd, 12, 8))+2000///< Manufacturing date year
-#define SD_CID_MDT_MONTH(pSd)         SD_CID(pSd,   8, 4)      ///< Manufacturing date month
-#define SD_CID_CRC(pSd)               SD_CID(pSd,   1, 7)      ///< CRC7 checksum
+#define SD_CID_MID(pSd)               SD_CID(pSd, 120, 8)       ///< Manufacturer ID
+#define SD_CID_BGA(pSd)               SD_CID(pSd, 112, 2)       ///< Card/BGA(eMMC)
+#define SD_CID_CBS(pSd)               SD_CID(pSd, 112, 2)       ///< Card/BGA(eMMC)
+#define SD_CID_OID_BYTE_1(pSd)        SD_CID(pSd, 112, 8)       ///< OEM/Application ID byte 1
+#define SD_CID_OID_BYTE_0(pSd)        SD_CID(pSd, 104, 8)       ///< OEM/Application ID byte 0
+#define SD_CID_PNM_BYTE_4(pSd)        SD_CID(pSd,  96, 8)       ///< Product revision byte 4
+#define SD_CID_PNM_BYTE_3(pSd)        SD_CID(pSd,  88, 8)       ///< Product revision byte 3
+#define SD_CID_PNM_BYTE_2(pSd)        SD_CID(pSd,  80, 8)       ///< Product revision byte 2
+#define SD_CID_PNM_BYTE_1(pSd)        SD_CID(pSd,  72, 8)       ///< Product revision byte 1
+#define SD_CID_PNM_BYTE_0(pSd)        SD_CID(pSd,  64, 8)       ///< Product revision byte 0
+#define SD_CID_PRV_1(pSd)             SD_CID(pSd,  24, 8)       ///< Product serial number 1
+#define SD_CID_PRV_2(pSd)             SD_CID(pSd,  32,24)       ///< Product serial number 2
+#define SD_CID_MDT_YEAR(pSd)          (SD_CID(pSd, 12, 8))+2000 ///< Manufacturing date year
+#define SD_CID_MDT_MONTH(pSd)         SD_CID(pSd,   8, 4)       ///< Manufacturing date month
+#define SD_CID_CRC(pSd)               SD_CID(pSd,   1, 7)       ///< CRC7 checksum
 
 // CSD register access macros (128 bits, 4 * 32 bits).
 #define SD_CSD(pSd, bitfield, bits)   ((((pSd)->csd)[3-(bitfield)/32] >> ((bitfield)%32)) & ((1 << (bits)) - 1))
-#define SD_CSD_STRUCTURE(pSd)          SD_CSD(pSd, 126, 2) ///< CSD structure 00b  Version 1.0 01b version 2.0 High Cap
-#define SD_CSD_SPEC_VERS(pSd)          SD_CSD(pSd, 122, 4) ///< System Specification Version Number
-#define SD_CSD_TAAC(pSd)               SD_CSD(pSd, 112, 8) ///< Data read-access-time-1
-#define SD_CSD_NSAC(pSd)               SD_CSD(pSd, 104, 8) ///< Data read access-time-2 in CLK cycles
-#define SD_CSD_TRAN_SPEED(pSd)         SD_CSD(pSd, 96,  8) ///< Max. data transfer rate
-#define SD_CSD_CCC(pSd)                SD_CSD(pSd, 84, 12) ///< Card command class
-#define SD_CSD_READ_BL_LEN(pSd)        SD_CSD(pSd, 80,  4) ///< Max. read data block length
-#define SD_CSD_READ_BL_PARTIAL(pSd)    SD_CSD(pSd, 79,  1) ///< Bartial blocks for read allowed
-#define SD_CSD_WRITE_BLK_MISALIGN(pSd) SD_CSD(pSd, 78,  1) ///< Write block misalignment
-#define SD_CSD_READ_BLK_MISALIGN(pSd)  SD_CSD(pSd, 77,  1) ///< Read block misalignment
-#define SD_CSD_DSR_IMP(pSd)            SD_CSD(pSd, 76,  1) ///< DSP implemented
+#define SD_CSD_STRUCTURE(pSd)          SD_CSD(pSd, 126, 2)      ///< CSD structure 00b  Version 1.0 01b version 2.0 High Cap
+#define SD_CSD_SPEC_VERS(pSd)          SD_CSD(pSd, 122, 4)      ///< System Specification Version Number
+#define SD_CSD_TAAC(pSd)               SD_CSD(pSd, 112, 8)      ///< Data read-access-time-1
+#define SD_CSD_NSAC(pSd)               SD_CSD(pSd, 104, 8)      ///< Data read access-time-2 in CLK cycles
+#define SD_CSD_TRAN_SPEED(pSd)         SD_CSD(pSd, 96,  8)      ///< Max. data transfer rate
+#define SD_CSD_CCC(pSd)                SD_CSD(pSd, 84, 12)      ///< Card command class
+#define SD_CSD_READ_BL_LEN(pSd)        SD_CSD(pSd, 80,  4)      ///< Max. read data block length
+#define SD_CSD_READ_BL_PARTIAL(pSd)    SD_CSD(pSd, 79,  1)      ///< Bartial blocks for read allowed
+#define SD_CSD_WRITE_BLK_MISALIGN(pSd) SD_CSD(pSd, 78,  1)      ///< Write block misalignment
+#define SD_CSD_READ_BLK_MISALIGN(pSd)  SD_CSD(pSd, 77,  1)      ///< Read block misalignment
+#define SD_CSD_DSR_IMP(pSd)            SD_CSD(pSd, 76,  1)      ///< DSP implemented
 #define SD_CSD_C_SIZE(pSd)             ((SD_CSD(pSd, 72,  2) << 10) + \
                                         (SD_CSD(pSd, 64,  8) << 2)  + \
-                                        SD_CSD(pSd, 62,  2)) ///< Device size
+                                        SD_CSD(pSd, 62,  2))    ///< Device size
 #define SD_CSD_C_SIZE_HC(pSd)          ((SD_CSD(pSd, 64,  6) << 16) + \
                                         (SD_CSD(pSd, 56,  8) << 8)  + \
-                                        SD_CSD(pSd, 48,  8)) ///< Device size v2.0 High Capacity
-#define SD_CSD_VDD_R_CURR_MIN(pSd)     SD_CSD(pSd, 59,  3) ///< Max. read current @VDD min
-#define SD_CSD_VDD_R_CURR_MAX(pSd)     SD_CSD(pSd, 56,  3) ///< Max. read current @VDD max
-#define SD_CSD_VDD_W_CURR_MIN(pSd)     SD_CSD(pSd, 53,  3) ///< Max. write current @VDD min
-#define SD_CSD_VDD_W_CURR_MAX(pSd)     SD_CSD(pSd, 50,  3) ///< Max. write current @VDD max
-#define SD_CSD_C_SIZE_MULT(pSd)        SD_CSD(pSd, 47,  3) ///< Device size multiplier
-#define SD_CSD_ERASE_BLK_EN(pSd)       SD_CSD(pSd, 46,  1) ///< Erase single block enable
-#define MMC_CSD_ERASE_BLK_EN(pSd)      SD_CSD(pSd, 46,  1) ///< Erase single block enable
-#define MMC_CSD_ERASE_GRP_SIZE(pSd)    SD_CSD(pSd, 42,  4) ///< Erase group size
-#define SD_CSD_ERASE_GRP_MULT(pSd)     SD_CSD(pSd, 37,  4) ///< Erase group size multiplier
-#define SD_CSD_SECTOR_SIZE(pSd)        ((SD_CSD(pSd, 40,  6) << 1) + SD_CSD(pSd, 39,  1)) ///< Erase sector size
-#define SD_CSD_WP_GRP_SIZE(pSd)        SD_CSD(pSd, 32,  7) ///< Write protect group size
-#define SD_CSD_WP_GRP_ENABLE(pSd)      SD_CSD(pSd, 31,  1) ///< write protect group enable
-#define SD_CSD_R2W_FACTOR(pSd)         SD_CSD(pSd, 26,  3) ///< Write speed factor
-#define SD_CSD_WRITE_BL_LEN(pSd)       ((SD_CSD(pSd, 24,  2) << 2) + SD_CSD(pSd, 22,  2)) ///< Max write block length
-#define SD_CSD_WRITE_BL_PARTIAL(pSd)   SD_CSD(pSd, 21,  1) ///< Partial blocks for write allowed
-#define SD_CSD_CONTENT_PROT_APP(pSd)   SD_CSD(pSd, 16,  1) ///< File format group
-#define SD_CSD_FILE_FORMAT_GRP(pSd)    SD_CSD(pSd, 15,  1) ///< File format group
-#define SD_CSD_COPY(pSd)               SD_CSD(pSd, 14,  1) ///< Copy flag (OTP)
-#define SD_CSD_PERM_WRITE_PROTECT(pSd) SD_CSD(pSd, 13,  1) ///< Permanent write protect
-#define SD_CSD_TMP_WRITE_PROTECT(pSd)  SD_CSD(pSd, 12,  1) ///< Temporary write protection
-#define SD_CSD_FILE_FORMAT(pSd)        SD_CSD(pSd, 10,  2) ///< File format
-#define SD_CSD_ECC(pSd)                SD_CSD(pSd,  8,  2) ///< CRC
-#define SD_CSD_CRC(pSd)                SD_CSD(pSd,  1,  7) ///< CRC
+                                        SD_CSD(pSd, 48,  8))    ///< Device size v2.0 High Capacity
+#define SD_CSD_VDD_R_CURR_MIN(pSd)     SD_CSD(pSd, 59,  3)      ///< Max. read current @VDD min
+#define SD_CSD_VDD_R_CURR_MAX(pSd)     SD_CSD(pSd, 56,  3)      ///< Max. read current @VDD max
+#define SD_CSD_VDD_W_CURR_MIN(pSd)     SD_CSD(pSd, 53,  3)      ///< Max. write current @VDD min
+#define SD_CSD_VDD_W_CURR_MAX(pSd)     SD_CSD(pSd, 50,  3)      ///< Max. write current @VDD max
+#define SD_CSD_C_SIZE_MULT(pSd)        SD_CSD(pSd, 47,  3)      ///< Device size multiplier
+#define SD_CSD_ERASE_BLK_EN(pSd)       SD_CSD(pSd, 46,  1)      ///< Erase single block enable
+#define MMC_CSD_ERASE_BLK_EN(pSd)      SD_CSD(pSd, 46,  1)      ///< Erase single block enable
+#define MMC_CSD_ERASE_GRP_SIZE(pSd)    SD_CSD(pSd, 42,  4)      ///< Erase group size
+#define SD_CSD_ERASE_GRP_MULT(pSd)     SD_CSD(pSd, 37,  4)      ///< Erase group size multiplier
+#define SD_CSD_SECTOR_SIZE(pSd)        ((SD_CSD(pSd, 40,  6) << 1) + SD_CSD(pSd, 39,  1))       ///< Erase sector size
+#define SD_CSD_WP_GRP_SIZE(pSd)        SD_CSD(pSd, 32,  7)      ///< Write protect group size
+#define SD_CSD_WP_GRP_ENABLE(pSd)      SD_CSD(pSd, 31,  1)      ///< write protect group enable
+#define SD_CSD_R2W_FACTOR(pSd)         SD_CSD(pSd, 26,  3)      ///< Write speed factor
+#define SD_CSD_WRITE_BL_LEN(pSd)       ((SD_CSD(pSd, 24,  2) << 2) + SD_CSD(pSd, 22,  2))       ///< Max write block length
+#define SD_CSD_WRITE_BL_PARTIAL(pSd)   SD_CSD(pSd, 21,  1)      ///< Partial blocks for write allowed
+#define SD_CSD_CONTENT_PROT_APP(pSd)   SD_CSD(pSd, 16,  1)      ///< File format group
+#define SD_CSD_FILE_FORMAT_GRP(pSd)    SD_CSD(pSd, 15,  1)      ///< File format group
+#define SD_CSD_COPY(pSd)               SD_CSD(pSd, 14,  1)      ///< Copy flag (OTP)
+#define SD_CSD_PERM_WRITE_PROTECT(pSd) SD_CSD(pSd, 13,  1)      ///< Permanent write protect
+#define SD_CSD_TMP_WRITE_PROTECT(pSd)  SD_CSD(pSd, 12,  1)      ///< Temporary write protection
+#define SD_CSD_FILE_FORMAT(pSd)        SD_CSD(pSd, 10,  2)      ///< File format
+#define SD_CSD_ECC(pSd)                SD_CSD(pSd,  8,  2)      ///< CRC
+#define SD_CSD_CRC(pSd)                SD_CSD(pSd,  1,  7)      ///< CRC
 #define SD_CSD_MULT(pSd)               (1 << (SD_CSD_C_SIZE_MULT(pSd) + 2))
 #define SD_CSD_BLOCKNR(pSd)            ((SD_CSD_C_SIZE(pSd) + 1) * SD_CSD_MULT(pSd))
 #define SD_CSD_BLOCKNR_HC(pSd)         ((SD_CSD_C_SIZE_HC(pSd) + 1) * 1024)
@@ -424,7 +422,7 @@
 /// Speed Class, value can be calculated by Pw/2
 #define SD_STAT_SPEED_CLASS(pSd)             SD_STAT(pSd, 440, 8)
 #define     SD_STAT_SPEED_CLASS_0            0
-#define     SD_STAT_SPEED_CLASS_2            1  // >= 2MB/s 
+#define     SD_STAT_SPEED_CLASS_2            1  // >= 2MB/s
 #define     SD_STAT_SPEED_CLASS_4            2  // >= 4MB/s
 #define     SD_STAT_SPEED_CLASS_6            3  // >= 6MB/s
 /// 8-bit, by 1MB/s step.
@@ -488,7 +486,7 @@
 #define SD_SW_STAT_FUN_GRP_FUN_BUSY(funNdx)     (1 << (funNdx))
 
 // EXT_CSD register definition.
-#define SD_EXTCSD_S_CMD_SET_INDEX              504   // Below belongs to Properties Segment
+#define SD_EXTCSD_S_CMD_SET_INDEX              504      // Below belongs to Properties Segment
 #define SD_EXTCSD_BOOT_INFO_INDEX              228
 #define SD_EXTCSD_BOOT_SIZE_MULTI_INDEX        226
 #define SD_EXTCSD_ACC_SIZE_INDEX               225
@@ -514,7 +512,7 @@
 #define SD_EXTCSD_CSD_STRUCTURE_INDEX          194
 #define SD_EXTCSD_EXT_CSD_REV_INDEX            192
 
-#define SD_EXTCSD_CMD_SET_INDEX                191  //Below belongs to Mode Segment
+#define SD_EXTCSD_CMD_SET_INDEX                191      //Below belongs to Mode Segment
 #define SD_EXTCSD_CMD_SET_REV_INDEX            189
 #define SD_EXTCSD_POWER_CLASS_INDEX            187
 #define SD_EXTCSD_HS_TIMING_INDEX              185
@@ -536,43 +534,43 @@
       (((unsigned char*)((pSd)->extData))[(bytefield) +  2] << 16) + \
       (((unsigned char*)((pSd)->extData))[(bytefield) + 24] << 24) )
 #define MMC_EXTCSD(pSd) ((unsigned char*)((pSd)->extData))
-#define SD_EXTCSD_S_CMD_SET(pSd)               (MMC_EXTCSD(pSd)[SD_EXTCSD_S_CMD_SET_INDEX]) // Supported Command Sets
-#define SD_EXTCSD_BOOT_INFO(pSd)               (MMC_EXTCSD(pSd)[SD_EXTCSD_BOOT_INFO_INDEX]) // Boot information
-#define SD_EXTCSD_BOOT_SIZE_MULTI(pSd)         (MMC_EXTCSD(pSd)[SD_EXTCSD_BOOT_SIZE_MULTI_INDEX]) // Boot partition size
-#define SD_EXTCSD_ACC_SIZE(pSd)                (MMC_EXTCSD(pSd)[SD_EXTCSD_ACC_SIZE_INDEX]) // Access size
-#define SD_EXTCSD_HC_ERASE_GRP_SIZE(pSd)       (MMC_EXTCSD(pSd)[SD_EXTCSD_HC_ERASE_GRP_SIZE_INDEX]) // High-capacity erase unit size
-#define SD_EXTCSD_ERASE_TIMEOUT_MULT(pSd)      (MMC_EXTCSD(pSd)[SD_EXTCSD_ERASE_TIMEOUT_MULT_INDEX]) // High-capacity erase timeout
-#define SD_EXTCSD_REL_WR_SEC_C(pSd)            (MMC_EXTCSD(pSd)[SD_EXTCSD_REL_WR_SEC_C_INDEX]) // Reliable write sector count
-#define SD_EXTCSD_HC_WP_GRP_SIZE(pSd)          (MMC_EXTCSD(pSd)[SD_EXTCSD_HC_WP_GRP_SIZE_INDEX]) // High-capacity write protect group size
-#define SD_EXTCSD_S_C_VCC(pSd)                 (MMC_EXTCSD(pSd)[SD_EXTCSD_S_C_VCC_INDEX]) // Sleep current(VCC)
-#define SD_EXTCSD_S_C_VCCQ(pSd)                (MMC_EXTCSD(pSd)[SD_EXTCSD_S_C_VCCQ_INDEX]) // Sleep current(VCCQ)
-#define SD_EXTCSD_S_A_TIMEOUT(pSd)             (MMC_EXTCSD(pSd)[SD_EXTCSD_S_A_TIMEOUT_INDEX]) // Sleep/awake timeout
+#define SD_EXTCSD_S_CMD_SET(pSd)               (MMC_EXTCSD(pSd)[SD_EXTCSD_S_CMD_SET_INDEX])     // Supported Command Sets
+#define SD_EXTCSD_BOOT_INFO(pSd)               (MMC_EXTCSD(pSd)[SD_EXTCSD_BOOT_INFO_INDEX])     // Boot information
+#define SD_EXTCSD_BOOT_SIZE_MULTI(pSd)         (MMC_EXTCSD(pSd)[SD_EXTCSD_BOOT_SIZE_MULTI_INDEX])       // Boot partition size
+#define SD_EXTCSD_ACC_SIZE(pSd)                (MMC_EXTCSD(pSd)[SD_EXTCSD_ACC_SIZE_INDEX])      // Access size
+#define SD_EXTCSD_HC_ERASE_GRP_SIZE(pSd)       (MMC_EXTCSD(pSd)[SD_EXTCSD_HC_ERASE_GRP_SIZE_INDEX])     // High-capacity erase unit size
+#define SD_EXTCSD_ERASE_TIMEOUT_MULT(pSd)      (MMC_EXTCSD(pSd)[SD_EXTCSD_ERASE_TIMEOUT_MULT_INDEX])    // High-capacity erase timeout
+#define SD_EXTCSD_REL_WR_SEC_C(pSd)            (MMC_EXTCSD(pSd)[SD_EXTCSD_REL_WR_SEC_C_INDEX])  // Reliable write sector count
+#define SD_EXTCSD_HC_WP_GRP_SIZE(pSd)          (MMC_EXTCSD(pSd)[SD_EXTCSD_HC_WP_GRP_SIZE_INDEX])        // High-capacity write protect group size
+#define SD_EXTCSD_S_C_VCC(pSd)                 (MMC_EXTCSD(pSd)[SD_EXTCSD_S_C_VCC_INDEX])       // Sleep current(VCC)
+#define SD_EXTCSD_S_C_VCCQ(pSd)                (MMC_EXTCSD(pSd)[SD_EXTCSD_S_C_VCCQ_INDEX])      // Sleep current(VCCQ)
+#define SD_EXTCSD_S_A_TIMEOUT(pSd)             (MMC_EXTCSD(pSd)[SD_EXTCSD_S_A_TIMEOUT_INDEX])   // Sleep/awake timeout
 #define SD_EXTCSD_SEC_COUNT(pSd)               ((MMC_EXTCSD(pSd)[SD_EXTCSD_SEC_COUNT_INDEX]) + \
                                                 (MMC_EXTCSD(pSd)[SD_EXTCSD_SEC_COUNT_INDEX+1] << 8 ) + \
                                                 (MMC_EXTCSD(pSd)[SD_EXTCSD_SEC_COUNT_INDEX+2] << 16 ) + \
-                                                (MMC_EXTCSD(pSd)[SD_EXTCSD_SEC_COUNT_INDEX+3] << 24 )) //Sector Count
-#define SD_EXTCSD_MIN_PERF_W_8_52(pSd)         (MMC_EXTCSD(pSd)[SD_EXTCSD_MIN_PERF_W_8_52_INDEX]) // Minimum Write Performance for 8bit at 52MHz
-#define SD_EXTCSD_MIN_PERF_R_8_52(pSd)         (MMC_EXTCSD(pSd)[SD_EXTCSD_MIN_PERF_R_8_52_INDEX]) // Minimum Read Performance for 8bit at 52MHz
-#define SD_EXTCSD_MIN_PERF_W_8_26_4_52(pSd)    (MMC_EXTCSD(pSd)[SD_EXTCSD_MIN_PERF_W_8_26_4_52_INDEX]) // Minimum Write Performance for 8bit at 26MHz, for 4bit at 52MHz
-#define SD_EXTCSD_MIN_PERF_R_8_26_4_52(pSd)    (MMC_EXTCSD(pSd)[SD_EXTCSD_MIN_PERF_R_8_26_4_52_INDEX]) // Minimum Read Performance for 8bit at 26MHz, for 4bit at 52MHz
-#define SD_EXTCSD_MIN_PERF_W_4_26(pSd)         (MMC_EXTCSD(pSd)[SD_EXTCSD_MIN_PERF_W_4_26_INDEX]) // Minimum Write Performance for 4bit at 26MHz
-#define SD_EXTCSD_MIN_PERF_R_4_26(pSd)         (MMC_EXTCSD(pSd)[SD_EXTCSD_MIN_PERF_R_4_26_INDEX]) // Minimum Read Performance for 4bit at 26MHz
+                                                (MMC_EXTCSD(pSd)[SD_EXTCSD_SEC_COUNT_INDEX+3] << 24 ))  //Sector Count
+#define SD_EXTCSD_MIN_PERF_W_8_52(pSd)         (MMC_EXTCSD(pSd)[SD_EXTCSD_MIN_PERF_W_8_52_INDEX])       // Minimum Write Performance for 8bit at 52MHz
+#define SD_EXTCSD_MIN_PERF_R_8_52(pSd)         (MMC_EXTCSD(pSd)[SD_EXTCSD_MIN_PERF_R_8_52_INDEX])       // Minimum Read Performance for 8bit at 52MHz
+#define SD_EXTCSD_MIN_PERF_W_8_26_4_52(pSd)    (MMC_EXTCSD(pSd)[SD_EXTCSD_MIN_PERF_W_8_26_4_52_INDEX])  // Minimum Write Performance for 8bit at 26MHz, for 4bit at 52MHz
+#define SD_EXTCSD_MIN_PERF_R_8_26_4_52(pSd)    (MMC_EXTCSD(pSd)[SD_EXTCSD_MIN_PERF_R_8_26_4_52_INDEX])  // Minimum Read Performance for 8bit at 26MHz, for 4bit at 52MHz
+#define SD_EXTCSD_MIN_PERF_W_4_26(pSd)         (MMC_EXTCSD(pSd)[SD_EXTCSD_MIN_PERF_W_4_26_INDEX])       // Minimum Write Performance for 4bit at 26MHz
+#define SD_EXTCSD_MIN_PERF_R_4_26(pSd)         (MMC_EXTCSD(pSd)[SD_EXTCSD_MIN_PERF_R_4_26_INDEX])       // Minimum Read Performance for 4bit at 26MHz
 #define SD_EXTCSD_PWR_CL_26_360(pSd)           (MMC_EXTCSD(pSd)[SD_EXTCSD_PWR_CL_26_360_INDEX]) // Power class for 26MHz at 3.6v
 #define SD_EXTCSD_PWR_CL_52_360(pSd)           (MMC_EXTCSD(pSd)[SD_EXTCSD_PWR_CL_52_360_INDEX]) // Power class for 52MHz at 3.6v
 #define SD_EXTCSD_PWR_CL_26_195(pSd)           (MMC_EXTCSD(pSd)[SD_EXTCSD_PWR_CL_26_195_INDEX]) // Power class for 26MHz at 1.95v
 #define SD_EXTCSD_PWR_CL_52_195(pSd)           (MMC_EXTCSD(pSd)[SD_EXTCSD_PWR_CL_52_195_INDEX]) // Power class for 52MHz at 1.95v
-#define SD_EXTCSD_CARD_TYPE(pSd)               (MMC_EXTCSD(pSd)[SD_EXTCSD_CARD_TYPE_INDEX]) // Card type
+#define SD_EXTCSD_CARD_TYPE(pSd)               (MMC_EXTCSD(pSd)[SD_EXTCSD_CARD_TYPE_INDEX])     // Card type
 #define SD_EXTCSD_CSD_STRUCTURE(pSd)           (MMC_EXTCSD(pSd)[SD_EXTCSD_CSD_STRUCTURE_INDEX]) // CSD structure version
-#define SD_EXTCSD_EXT_CSD_REV(pSd)             (MMC_EXTCSD(pSd)[SD_EXTCSD_EXT_CSD_REV_INDEX]) // Extended CSD structure version
-#define SD_EXTCSD_CMD_SET(pSd)                 (MMC_EXTCSD(pSd)[SD_EXTCSD_CMD_SET_INDEX]) // Command set
-#define SD_EXTCSD_CMD_SET_REV(pSd)             (MMC_EXTCSD(pSd)[SD_EXTCSD_CMD_SET_REV_INDEX]) // Command set revision
-#define SD_EXTCSD_POWER_CLASS(pSd)             (MMC_EXTCSD(pSd)[SD_EXTCSD_POWER_CLASS_INDEX]) // Power class
-#define SD_EXTCSD_HS_TIMING(pSd)               (MMC_EXTCSD(pSd)[SD_EXTCSD_HS_TIMING_INDEX]) // High-speed interface timing
-#define SD_EXTCSD_BUS_WIDTH(pSd)               (MMC_EXTCSD(pSd)[SD_EXTCSD_BUS_WIDTH_INDEX]) // Bus width mode
-#define SD_EXTCSD_ERASED_MEM_CONT(pSd)         (MMC_EXTCSD(pSd)[SD_EXTCSD_ERASED_MEM_CONT_INDEX]) // Erased memory content
-#define SD_EXTCSD_BOOT_CONFIG(pSd)             (MMC_EXTCSD(pSd)[SD_EXTCSD_BOOT_CONFIG_INDEX]) // Boot configuration
-#define SD_EXTCSD_BOOT_BUS_WIDTH(pSd)          (MMC_EXTCSD(pSd)[SD_EXTCSD_BOOT_BUS_WIDTH_INDEX]) // Boot bus width
-#define SD_EXTCSD_ERASE_GROUP_DEF(pSd)         (MMC_EXTCSD(pSd)[SD_EXTCSD_ERASE_GROUP_DEF_INDEX]) // High-density erase group definition
+#define SD_EXTCSD_EXT_CSD_REV(pSd)             (MMC_EXTCSD(pSd)[SD_EXTCSD_EXT_CSD_REV_INDEX])   // Extended CSD structure version
+#define SD_EXTCSD_CMD_SET(pSd)                 (MMC_EXTCSD(pSd)[SD_EXTCSD_CMD_SET_INDEX])       // Command set
+#define SD_EXTCSD_CMD_SET_REV(pSd)             (MMC_EXTCSD(pSd)[SD_EXTCSD_CMD_SET_REV_INDEX])   // Command set revision
+#define SD_EXTCSD_POWER_CLASS(pSd)             (MMC_EXTCSD(pSd)[SD_EXTCSD_POWER_CLASS_INDEX])   // Power class
+#define SD_EXTCSD_HS_TIMING(pSd)               (MMC_EXTCSD(pSd)[SD_EXTCSD_HS_TIMING_INDEX])     // High-speed interface timing
+#define SD_EXTCSD_BUS_WIDTH(pSd)               (MMC_EXTCSD(pSd)[SD_EXTCSD_BUS_WIDTH_INDEX])     // Bus width mode
+#define SD_EXTCSD_ERASED_MEM_CONT(pSd)         (MMC_EXTCSD(pSd)[SD_EXTCSD_ERASED_MEM_CONT_INDEX])       // Erased memory content
+#define SD_EXTCSD_BOOT_CONFIG(pSd)             (MMC_EXTCSD(pSd)[SD_EXTCSD_BOOT_CONFIG_INDEX])   // Boot configuration
+#define SD_EXTCSD_BOOT_BUS_WIDTH(pSd)          (MMC_EXTCSD(pSd)[SD_EXTCSD_BOOT_BUS_WIDTH_INDEX])        // Boot bus width
+#define SD_EXTCSD_ERASE_GROUP_DEF(pSd)         (MMC_EXTCSD(pSd)[SD_EXTCSD_ERASE_GROUP_DEF_INDEX])       // High-density erase group definition
 
 // EXTCSD total size and block number
 #define SD_EXTCSD_TOTAL_SIZE(pSd)              (SD_EXTCSD_SEC_COUNT(pSd)*512)
@@ -588,25 +586,25 @@
 #define SD_EXTCSD_HS_TIMING_DISABLE            (0x0UL)
 
 // Boot config
-#define SD_EXTCSD_BOOT_PARTITION_ACCESS        (0x7UL) // boot partition access
+#define SD_EXTCSD_BOOT_PARTITION_ACCESS        (0x7UL)  // boot partition access
 #define SD_EXTCSD_BOOT_PART_NO_ACCESS          (0x0UL)
 #define SD_EXTCSD_BOOT_PART_RW_PART1           (0x1UL)
 #define SD_EXTCSD_BOOT_PART_RW_PART2           (0x2UL)
-#define SD_EXTCSD_BOOT_PARTITION_ENABLE        (0x7UL << 3) // boot partition enable
+#define SD_EXTCSD_BOOT_PARTITION_ENABLE        (0x7UL << 3)     // boot partition enable
 #define SD_EXTCSD_BOOT_PART_DISABLE            (0x0UL << 3)
 #define SD_EXTCSD_BOOT_PART_ENABLE_PART1       (0x1UL << 3)
 #define SD_EXTCSD_BOOT_PART_ENABLE_PART2       (0x2UL << 3)
 #define SD_EXTCSD_BOOT_PART_ENABLE_USER        (0x7UL << 3)
-#define SD_EXTCSD_BOOT_PARTITION_ACK           (0x1UL << 7) // boot acknowledge
+#define SD_EXTCSD_BOOT_PARTITION_ACK           (0x1UL << 7)     // boot acknowledge
 #define SD_EXTCSD_BOOT_PART_NOACK              (0x0UL << 7)
 #define SD_EXTCSD_BOOT_PART_ACK                (0x1UL << 7)
 
 // Boot bus width
-#define SD_EXTCSD_BOOT_BUS_WIDTH_BIT           (0x3UL) // boot bus width
+#define SD_EXTCSD_BOOT_BUS_WIDTH_BIT           (0x3UL)  // boot bus width
 #define SD_EXTCSD_BOOT_BUS_1BIT                (0x0UL)
 #define SD_EXTCSD_BOOT_BUS_4BIT                (0x1UL)
 #define SD_EXTCSD_BOOT_BUS_8BIT                (0x2UL)
-#define SD_EXTCSD_RESET_BOOT_BUS_WIDTH_BIT     (0x1UL << 2) // boot bus width
+#define SD_EXTCSD_RESET_BOOT_BUS_WIDTH_BIT     (0x1UL << 2)     // boot bus width
 #define SD_EXTCSD_RESET_BOOT_BUS               (0x0UL << 2)
 #define SD_EXTCSD_RETAIN_BOOT_BUS              (0x1UL << 2)
 
@@ -621,8 +619,10 @@
 //------------------------------------------------------------------------------
 
 typedef MciCallback SdCallback;
-typedef MciCmd      SdCmd;
-typedef Mci         SdDriver;
+
+typedef MciCmd SdCmd;
+
+typedef Mci SdDriver;
 
 //------------------------------------------------------------------------------
 /// Sdcard driver structure. It holds the current command being processed and
@@ -635,7 +635,7 @@ typedef struct _SdCard {
     /// Current MCI command being processed.
     SdCmd command;
     /// Card IDentification (CID register)   
-    unsigned int cid[4];    
+    unsigned int cid[4];
     /// Card-specific data (CSD register)   
     unsigned int csd[4];
     /// Previous access block number.
@@ -674,52 +674,46 @@ typedef struct _MmcCmd6Arg {
 
 typedef struct _SdCmd6Arg {
     unsigned int accessMode:4,  /// [ 3: 0] function group 1, access mode
-                 command:4,     /// [ 7: 4] function group 2, command system
-                 reserveFG3:4,  /// [11: 8] function group 3, 0xF or 0x0
-                 reserveFG4:4,  /// [15:12] function group 4, 0xF or 0x0
-                 reserveFG5:4,  /// [19:16] function group 5, 0xF or 0x0
-                 reserveFG6:4,  /// [23:20] function group 6, 0xF or 0x0
-                 reserved:7,    /// [30:24] reserved 0
-                 mode:1;        /// [31   ] Mode, 0: Check, 1: Switch
+     command:4,                 /// [ 7: 4] function group 2, command system
+     reserveFG3:4,              /// [11: 8] function group 3, 0xF or 0x0
+     reserveFG4:4,              /// [15:12] function group 4, 0xF or 0x0
+     reserveFG5:4,              /// [19:16] function group 5, 0xF or 0x0
+     reserveFG6:4,              /// [23:20] function group 6, 0xF or 0x0
+     reserved:7,                /// [30:24] reserved 0
+     mode:1;                    /// [31   ] Mode, 0: Check, 1: Switch
 } SdCmd6Arg;
 
 //------------------------------------------------------------------------------
 //         Global functions
 //------------------------------------------------------------------------------
 
-extern unsigned char SD_Init(SdCard *pSd,
-                             SdDriver *pSdDriver);
+extern unsigned char SD_Init(SdCard * pSd, SdDriver * pSdDriver);
 
-extern unsigned char SD_Read(SdCard        *pSd,
-                             unsigned int   address,
-                             void          *pData,
+extern unsigned char SD_Read(SdCard * pSd,
+                             unsigned int address,
+                             void *pData,
                              unsigned short length,
-                             SdCallback     pCallback,
-                             void          *pArgs);
+                             SdCallback pCallback, void *pArgs);
 
-extern unsigned char SD_Write(SdCard        *pSd,
-                              unsigned int   address,
-                              void          *pData,
+extern unsigned char SD_Write(SdCard * pSd,
+                              unsigned int address,
+                              void *pData,
                               unsigned short length,
-                              SdCallback     pCallback,
-                              void          *pArgs);
+                              SdCallback pCallback, void *pArgs);
 
-extern unsigned char SD_ReadBlock(
-    SdCard *pSd,
-    unsigned int address,
-    unsigned short nbBlocks,
-    unsigned char *pData);
+extern unsigned char SD_ReadBlock(SdCard * pSd,
+                                  unsigned int address,
+                                  unsigned short nbBlocks,
+                                  unsigned char *pData);
 
-extern unsigned char SD_WriteBlock(
-    SdCard *pSd,
-    unsigned int address,
-    unsigned short nbBlocks,
-    const unsigned char *pData);
+extern unsigned char SD_WriteBlock(SdCard * pSd,
+                                   unsigned int address,
+                                   unsigned short nbBlocks,
+                                   const unsigned char *pData);
 
-extern unsigned char SD_Stop(SdCard *pSd, SdDriver *pSdDriver);
+extern unsigned char SD_Stop(SdCard * pSd, SdDriver * pSdDriver);
 
-extern unsigned char SD_HighSpeedMode(SdCard *pSd,
-                                      unsigned char cardHsMode);
+extern unsigned char SD_HighSpeedMode(SdCard * pSd, unsigned char cardHsMode);
 
 extern unsigned char MMC_SetupBootMode(SdCard * pSd,
                                        unsigned char resetBus,
@@ -729,16 +723,16 @@ extern unsigned char MMC_SetupBootMode(SdCard * pSd,
                                        unsigned char bootAck);
 
 extern unsigned char MMC_BootInit(SdCard * pSd);
+
 extern unsigned char MMC_BootRead(SdCard * pSd,
-                                  unsigned int nbBlocks,
-                                  unsigned char * pData);
+                                  unsigned int nbBlocks, unsigned char *pData);
 extern unsigned char MMC_BootStop(SdCard * pSd);
 
-extern unsigned int MMC_GetTotalSizeKB(SdCard *pSd);
+extern unsigned int MMC_GetTotalSizeKB(SdCard * pSd);
 
-extern void SD_DisplayRegisterCID(SdCard *pSd);
+extern void SD_DisplayRegisterCID(SdCard * pSd);
 
-extern void SD_DisplayRegisterCSD(SdCard *pSd);
+extern void SD_DisplayRegisterCSD(SdCard * pSd);
 
 extern void SD_DisplayRegisterECSD(SdCard * pSd);
 
@@ -746,5 +740,4 @@ extern void SD_DisplayRegisterSCR(SdCard * pSd);
 
 extern void SD_DisplaySdStatus(SdCard * pSd);
 
-#endif //#ifndef SDCARD_H
-
+#endif                          //#ifndef SDCARD_H

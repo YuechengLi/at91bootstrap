@@ -38,13 +38,17 @@
 #include "nandflash.h"
 #include "flash.h"
 #ifdef CONFIG_USER_HW_INIT
-void	user_hw_init(void);
+void user_hw_init(void);
 #endif
 
-extern void Jump(unsigned int addr); // Function import from startup.s file
+extern void Jump(unsigned int addr);    // Function import from startup.s file
+
 extern unsigned int load_SDCard();
+
 void sclk_enable(void);
+
 void LoadLinux();
+
 void LoadWince();
 
 /*------------------------------------------------------------------------------*/
@@ -55,46 +59,55 @@ void LoadWince();
 /*------------------------------------------------------------------------------*/
 int main(void)
 {
-	/* ================== 1st step: Hardware Initialization ================= */
-	/* Performs the hardware initialization */
+    /*
+     * ================== 1st step: Hardware Initialization ================= 
+     */
+    /*
+     * Performs the hardware initialization 
+     */
 #ifdef CONFIG_HW_INIT
-	hw_init();
+    hw_init();
 #endif
 
 #ifdef CONFIG_USER_HW_INIT
-	user_hw_init();
+    user_hw_init();
 #endif
 
-	/* ==================== 2nd step: Load from media ==================== */
-	/* Load from Dataflash in RAM */
+    /*
+     * ==================== 2nd step: Load from media ==================== 
+     */
+    /*
+     * Load from Dataflash in RAM 
+     */
 #if defined(CONFIG_DATAFLASH) || defined(CONFIG_DATAFLASH_CARD)
 #if defined(CONFIG_LOAD_LINUX)
     LoadLinux();
 #elif defined(CONFIG_LOAD_NK) || defined(CONFIG_LOAD_EBOOT)
     LoadWince();
 #else
-    load_df(
-			AT91C_SPI_PCS_DATAFLASH, 
-			IMG_ADDRESS, 
-			IMG_SIZE, 
-			JUMP_ADDR);
+    load_df(AT91C_SPI_PCS_DATAFLASH, IMG_ADDRESS, IMG_SIZE, JUMP_ADDR);
 #endif
 #endif
 
-	/* Load from Nandflash in RAM */
+    /*
+     * Load from Nandflash in RAM 
+     */
 #if defined(CONFIG_NANDFLASH)
 #if defined(CONFIG_LOAD_LINUX)
     LoadLinux();
 #elif defined(CONFIG_LOAD_NK) || defined(CONFIG_LOAD_EBOOT)
     LoadWince();
 #else
-    read_nandflash((unsigned char *)JUMP_ADDR, (unsigned long)IMG_ADDRESS, (int)IMG_SIZE);
+    read_nandflash((unsigned char *)JUMP_ADDR, (unsigned long)IMG_ADDRESS,
+                   (int)IMG_SIZE);
 #endif
 #endif
 
-	/* Load from Norflash in RAM */
+    /*
+     * Load from Norflash in RAM 
+     */
 #ifdef CONFIG_FLASH
-	load_norflash(IMG_ADDRESS, IMG_SIZE, JUMP_ADDR);
+    load_norflash(IMG_ADDRESS, IMG_SIZE, JUMP_ADDR);
 #endif
 
 #if defined(CONFIG_SDCARD)
@@ -106,37 +119,44 @@ int main(void)
     load_SDCard();
 #endif
 #endif
-	
-	/* ==================== 3rd step:  Process the Image =================== */
-	/* Uncompress the image */
+
+    /*
+     * ==================== 3rd step:  Process the Image =================== 
+     */
+    /*
+     * Uncompress the image 
+     */
 #ifdef CONFIG_GUNZIP
-	decompress_image((void *)IMG_ADDRESS, (void *)JUMP_ADDR, IMG_SIZE);	/* NOT IMPLEMENTED YET */
-	msg_print(MSG_DECOMPRESS);
+    decompress_image((void *)IMG_ADDRESS, (void *)JUMP_ADDR, IMG_SIZE); /* NOT IMPLEMENTED YET */
+    msg_print(MSG_DECOMPRESS);
 #endif
 
-	/* ==================== 4th step: Start the application =================== */
-	/* Set linux arguments */
+    /*
+     * ==================== 4th step: Start the application =================== 
+     */
+    /*
+     * Set linux arguments 
+     */
 #ifdef CONFIG_LINUX_ARG
-	linux_arg(LINUX_ARG);	/* NOT IMPLEMENTED YET */
-	msg_print(MSG_LINUX);
-#endif /* LINUX_ARG */
+    linux_arg(LINUX_ARG);       /* NOT IMPLEMENTED YET */
+    msg_print(MSG_LINUX);
+#endif                          /* LINUX_ARG */
 
 #ifdef CONFIG_SCLK
-	sclk_enable();
+    sclk_enable();
 #endif
 
 #ifdef WINCE
 #ifdef CONFIG_LOAD_NK
-	Jump(JUMP_ADDR+0x1000);
+    Jump(JUMP_ADDR + 0x1000);
 #else
     Jump(JUMP_ADDR);
-#endif	
+#endif
 #else
 #ifdef CONFIG_LOAD_NK
-	return (JUMP_ADDR+0x1000);
+    return (JUMP_ADDR + 0x1000);
 #else
     return JUMP_ADDR;
 #endif
 #endif
 }
-

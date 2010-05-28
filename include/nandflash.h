@@ -35,44 +35,42 @@
 
 #include "NandSpareScheme.h"
 
-typedef struct SNandInitInfo
-{
-	//unsigned short         uNandID; /* Nand Chip ID */
-	unsigned short         uNandNbBlocks;	
-	unsigned int           uNandBlockSize;
-	unsigned short         uNandSectorSize;
-	unsigned char          uNandSpareSize;
-	unsigned char          uNandBusWidth;
-	struct NandSpareScheme *pSpareScheme;
-	//char 	               name[32]		; /* Nand Name */
+typedef struct SNandInitInfo {
+    //unsigned short         uNandID; /* Nand Chip ID */
+    unsigned short uNandNbBlocks;
+    unsigned int uNandBlockSize;
+    unsigned short uNandSectorSize;
+    unsigned char uNandSpareSize;
+    unsigned char uNandBusWidth;
+    struct NandSpareScheme *pSpareScheme;
+    //char                 name[32]         ; /* Nand Name */
 } SNandInitInfo, *PSNandInitInfo;
 
 /* Group all usefull sizes for the nandflash chip */
-typedef struct _NandInfo
-{
-	unsigned int uDataNbBytes	;	/* Nb of bytes in data section */
-	unsigned int uSpareNbBytes	;	/* Nb of bytes in spare section */
-	unsigned int uSectorNbBytes	;	/* Total nb of bytes in a sector */
+typedef struct _NandInfo {
+    unsigned int uDataNbBytes;  /* Nb of bytes in data section */
+    unsigned int uSpareNbBytes; /* Nb of bytes in spare section */
+    unsigned int uSectorNbBytes;        /* Total nb of bytes in a sector */
 
-	unsigned int uNbBlocks		;	/* Nb of blocks in device */
-	unsigned int uBlockNbData	;	/* Nb of DataBytes in a block */
+    unsigned int uNbBlocks;     /* Nb of blocks in device */
+    unsigned int uBlockNbData;  /* Nb of DataBytes in a block */
 #if 0
-	unsigned int uBlockNbSectors	;	/* Nb of sector in a block */
-	unsigned int uBlockNbSpares	;	/* Nb of SpareBytes in a block */
-	unsigned int uBlockNbBytes	;	/* Total nb of bytes in a block */
+    unsigned int uBlockNbSectors;       /* Nb of sector in a block */
+    unsigned int uBlockNbSpares;        /* Nb of SpareBytes in a block */
+    unsigned int uBlockNbBytes; /* Total nb of bytes in a block */
 
-	unsigned int uNbSectors		;	/* Total nb of sectors in device */
+    unsigned int uNbSectors;    /* Total nb of sectors in device */
 #endif
-	unsigned int uNbData		;	/* Nb of DataBytes in device */
-	unsigned int uNbSpares		;	/* Nb of SpareBytes in device */
-	unsigned int uNbBytes		;	/* Total nb of bytes in device */
+    unsigned int uNbData;       /* Nb of DataBytes in device */
+    unsigned int uNbSpares;     /* Nb of SpareBytes in device */
+    unsigned int uNbBytes;      /* Total nb of bytes in device */
 
-	unsigned int uOffset		;
+    unsigned int uOffset;
 
-	unsigned int uDataBusWidth	;	/* Data Bus Width (8/16 bits) */
+    unsigned int uDataBusWidth; /* Data Bus Width (8/16 bits) */
 
-	unsigned int uBadBlockInfoOffset;       /* Bad block info offset in spare zone (in bytes) */ 
-	struct NandSpareScheme *pSpareScheme;
+    unsigned int uBadBlockInfoOffset;   /* Bad block info offset in spare zone (in bytes) */
+    struct NandSpareScheme *pSpareScheme;
 } SNandInfo, *PSNandInfo;
 
 /* Sector Info Structure */
@@ -80,7 +78,7 @@ typedef struct _NandInfo
 //{
 //    unsigned int dwReserved1;       /* Reserved - used by FAL */
 //    char  bOEMReserved;             /* For use by OEM */
-//    char  bBadBlock;	            /* Indicates if block is BAD */
+//    char  bBadBlock;              /* Indicates if block is BAD */
 //    short wReserved2;               /* Reserved - used by FAL */
 //}SSectorInfo, *PSSectorInfo;
 
@@ -94,36 +92,31 @@ typedef struct _NandInfo
 
 #define BAD_BLOCK_TAG   0xFF
 
-
-typedef struct _SectorInfo
-{
+typedef struct _SectorInfo {
     unsigned char spare[SPARE_DATA_SIZE];
 } SSectorInfo, *PSSectorInfo;
 
-
-
-
 /* Wait mode */
-#define WAIT_POOL			POOL_ON_READYBUSY		/* Default pool mode */
-#define WAIT_INTERRUPT			INTERRUPT_ON_READYBUSY		/* Default interrupt mode */
-#define	ERASE_TIMEOUT			10				/* erase maximum time in ms */
-#define RESET_TIMEOUT			10				/* reset maximum time in ms */
-#define READ_TIMEOUT			10				/* read maximum time in ms */
-#define WRITE_TIMEOUT			10				/* write maximum time in ms */
+#define WAIT_POOL			POOL_ON_READYBUSY       /* Default pool mode */
+#define WAIT_INTERRUPT			INTERRUPT_ON_READYBUSY  /* Default interrupt mode */
+#define	ERASE_TIMEOUT			10      /* erase maximum time in ms */
+#define RESET_TIMEOUT			10      /* reset maximum time in ms */
+#define READ_TIMEOUT			10      /* read maximum time in ms */
+#define WRITE_TIMEOUT			10      /* write maximum time in ms */
 
-#define POOL_ON_READYBUSY		0x01				/* Pool on ReadyBusy PIO */
-#define INTERRUPT_ON_READYBUSY		0x02				/* Interrupt on ReadyBusy PIO */
-#define POOL_ON_STATUS			0x04				/* Pool on Status byte */
+#define POOL_ON_READYBUSY		0x01    /* Pool on ReadyBusy PIO */
+#define INTERRUPT_ON_READYBUSY		0x02    /* Interrupt on ReadyBusy PIO */
+#define POOL_ON_STATUS			0x04    /* Pool on Status byte */
 
 /* Sector zones */
 #define SPARE_VALUE			0xFF
 
-#define ZONE_DATA			0x01	/* Sector data zone */
-#define ZONE_INFO			0x02	/* Sector info zone */
+#define ZONE_DATA			0x01    /* Sector data zone */
+#define ZONE_INFO			0x02    /* Sector info zone */
 
 /* Nand flash chip status codes */
-#define STATUS_READY                (0x01<<6)	/* Status code for Ready */
-#define STATUS_ERROR                (0x01<<0)	/* Status code for Error */
+#define STATUS_READY                (0x01<<6)   /* Status code for Ready */
+#define STATUS_ERROR                (0x01<<0)   /* Status code for Error */
 
 /* Nand flash commands */
 #define CMD_READ_1			0x00
@@ -153,12 +146,16 @@ typedef struct _SectorInfo
 
 /* NandFlash functions */
 extern void nandflash_hw_init(void);
+
 extern void nandflash_cfg_16bits_dbw_init(void);
+
 extern void nandflash_cfg_8bits_dbw_init(void);
+
 //extern int load_nandflash(unsigned int img_addr, unsigned int img_size, unsigned int img_dest);
 extern int load_nandflash(void);
+
 extern BOOL AT91F_NandEraseBlock0(void);
+
 extern int read_nandflash(unsigned char *dst, unsigned long offset, int len);
 
 #endif
-

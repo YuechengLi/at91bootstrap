@@ -47,37 +47,34 @@
 /// \param enablePullUp  Indicates if the pin(s) internal pull-up shall be
 ///                      configured.
 //------------------------------------------------------------------------------
-static void PIO_SetPeripheralA(
-    unsigned int pio,
-    unsigned int mask,
-    unsigned char enablePullUp)
+static void PIO_SetPeripheralA(unsigned int pio,
+                               unsigned int mask, unsigned char enablePullUp)
 {
 #if !defined(AT91C_PIOA_ASR)
     unsigned int abmr;
 #endif
 
     // Disable interrupts on the pin(s)
-    (*(volatile unsigned int *)(pio+PIO_IDR(0))) = mask;
+    (*(volatile unsigned int *)(pio + PIO_IDR(0))) = mask;
 
     // Enable the pull-up(s) if necessary
     if (enablePullUp) {
-		(*(volatile unsigned int *)(pio+PIO_PPUER(0))) = mask;
+        (*(volatile unsigned int *)(pio + PIO_PPUER(0))) = mask;
 
-    }
-    else {
-		(*(volatile unsigned int *)(pio+PIO_PPUDR(0))) = mask;
+    } else {
+        (*(volatile unsigned int *)(pio + PIO_PPUDR(0))) = mask;
 
     }
 
     // Configure pin
 #if defined(AT91C_PIOA_ASR)
-	(*(volatile unsigned int *)(pio+PIO_ASR(0))) = mask;
+    (*(volatile unsigned int *)(pio + PIO_ASR(0))) = mask;
 
 #else
-    abmr = (*(volatile unsigned int *)(pio+PIO_ABSR(0)));
-    (*(volatile unsigned int *)(pio+PIO_ABSR(0))) &= (~mask & abmr);
+    abmr = (*(volatile unsigned int *)(pio + PIO_ABSR(0)));
+    (*(volatile unsigned int *)(pio + PIO_ABSR(0))) &= (~mask & abmr);
 #endif
-	(*(volatile unsigned int *)(pio+PIO_PDR(0))) = mask;
+    (*(volatile unsigned int *)(pio + PIO_PDR(0))) = mask;
 
 }
 
@@ -90,41 +87,37 @@ static void PIO_SetPeripheralA(
 /// \param enablePullUp  Indicates if the pin(s) internal pull-up shall be
 ///                      configured.
 //------------------------------------------------------------------------------
-static void PIO_SetPeripheralB(
-    unsigned int pio,
-    unsigned int mask,
-    unsigned char enablePullUp)
+static void PIO_SetPeripheralB(unsigned int pio,
+                               unsigned int mask, unsigned char enablePullUp)
 {
 #if !defined(AT91C_PIOA_BSR)
     unsigned int abmr;
 #endif
 
     // Disable interrupts on the pin(s)
-	(*(volatile unsigned int *)(pio+PIO_IDR(0))) = mask;
-    
+    (*(volatile unsigned int *)(pio + PIO_IDR(0))) = mask;
 
     // Enable the pull-up(s) if necessary
     if (enablePullUp) {
-		(*(volatile unsigned int *)(pio+PIO_PPUER(0))) = mask;
-    }
-    else {
-		(*(volatile unsigned int *)(pio+PIO_PPUDR(0))) = mask;
+        (*(volatile unsigned int *)(pio + PIO_PPUER(0))) = mask;
+    } else {
+        (*(volatile unsigned int *)(pio + PIO_PPUDR(0))) = mask;
     }
 
     // Configure pin
 #if defined(AT91C_PIOA_BSR)
-	(*(volatile unsigned int *)(pio+PIO_BSR(0))) = mask;
-    
+    (*(volatile unsigned int *)(pio + PIO_BSR(0))) = mask;
+
 #else
-	
-    abmr = (*(volatile unsigned int *)(pio+PIO_ABSR(0)));
-    (*(volatile unsigned int *)(pio+PIO_ABSR(0))) = mask | abmr;
+
+    abmr = (*(volatile unsigned int *)(pio + PIO_ABSR(0)));
+    (*(volatile unsigned int *)(pio + PIO_ABSR(0))) = mask | abmr;
 #endif
-	
-    (*(volatile unsigned int *)(pio+PIO_PDR(0))) = mask;
+
+    (*(volatile unsigned int *)(pio + PIO_PDR(0))) = mask;
 }
 
-#if defined(AT91C_PIOA_IFDGSR) //Glitch or Debouncing filter selection supported
+#if defined(AT91C_PIOA_IFDGSR)  //Glitch or Debouncing filter selection supported
 //------------------------------------------------------------------------------
 /// Configures Glitch or Debouncing filter for input
 /// \param pio      Pointer to a PIO controller.
@@ -133,15 +126,13 @@ static void PIO_SetPeripheralB(
 /// \param clkDiv  Clock divider if Debouncing select, using the lowest 14 bits
 ///                     common for all PIO line of selecting deboucing filter
 //------------------------------------------------------------------------------
-static void PIO_SetFilter(
-    AT91S_PIO *pio,
-    unsigned int filterSel,
-    unsigned int clkDiv)
+static void PIO_SetFilter(AT91S_PIO * pio,
+                          unsigned int filterSel, unsigned int clkDiv)
 {
-    pio->PIO_DIFSR = filterSel;//set Debouncing, 0 bit field no effect
-    pio->PIO_SCIFSR = ~filterSel;//set Glitch, 0 bit field no effect
+    pio->PIO_DIFSR = filterSel; //set Debouncing, 0 bit field no effect
+    pio->PIO_SCIFSR = ~filterSel;       //set Glitch, 0 bit field no effect
 
-    pio->PIO_SCDR = clkDiv & 0x3FFF;//the lowest 14 bits work
+    pio->PIO_SCDR = clkDiv & 0x3FFF;    //the lowest 14 bits work
 }
 #endif
 
@@ -154,37 +145,32 @@ static void PIO_SetFilter(
 /// \param enablePullUp  Indicates if the internal pull-up(s) must be enabled.
 /// \param enableFilter  Indicates if the glitch filter(s) must be enabled.
 //------------------------------------------------------------------------------
-static void PIO_SetInput(
-    unsigned int pio,
-    unsigned int mask,
-    unsigned char enablePullUp,
-    unsigned char enableFilter)
+static void PIO_SetInput(unsigned int pio,
+                         unsigned int mask,
+                         unsigned char enablePullUp, unsigned char enableFilter)
 {
     // Disable interrupts
-	(*(volatile unsigned int *)(pio+PIO_IDR(0))) = mask;
-    
+    (*(volatile unsigned int *)(pio + PIO_IDR(0))) = mask;
 
     // Enable pull-up(s) if necessary
     if (enablePullUp) {
-		(*(volatile unsigned int *)(pio+PIO_PPUER(0))) = mask;
-    }
-    else {
-		(*(volatile unsigned int *)(pio+PIO_PPUDR(0))) = mask;
+        (*(volatile unsigned int *)(pio + PIO_PPUER(0))) = mask;
+    } else {
+        (*(volatile unsigned int *)(pio + PIO_PPUDR(0))) = mask;
     }
 
     // Enable filter(s) if necessary
     if (enableFilter) {
-		(*(volatile unsigned int *)(pio+PIO_IFER(0))) = mask;
-        
-    }
-    else {
-		(*(volatile unsigned int *)(pio+PIO_IFDR(0))) = mask;
-        
+        (*(volatile unsigned int *)(pio + PIO_IFER(0))) = mask;
+
+    } else {
+        (*(volatile unsigned int *)(pio + PIO_IFDR(0))) = mask;
+
     }
 
     // Configure pin as input
-	(*(volatile unsigned int *)(pio+PIO_ODR(0))) = mask;
-    (*(volatile unsigned int *)(pio+PIO_PER(0))) = mask;
+    (*(volatile unsigned int *)(pio + PIO_ODR(0))) = mask;
+    (*(volatile unsigned int *)(pio + PIO_PER(0))) = mask;
 }
 
 //------------------------------------------------------------------------------
@@ -198,51 +184,47 @@ static void PIO_SetInput(
 ///                          open-drain.
 /// \param enablePullUp  Indicates if the pin shall have its pull-up activated.
 //------------------------------------------------------------------------------
-#if defined(at91sam9263)	//this function is not used
-static void PIO_SetOutput(
-    unsigned int pio,
-    unsigned int mask,
-    unsigned char defaultValue,
-    unsigned char enableMultiDrive,
-    unsigned char enablePullUp)
+#if defined(at91sam9263)        //this function is not used
+static void PIO_SetOutput(unsigned int pio,
+                          unsigned int mask,
+                          unsigned char defaultValue,
+                          unsigned char enableMultiDrive,
+                          unsigned char enablePullUp)
 {
     // Disable interrupts
-	(*(volatile unsigned int *)(pio+PIO_IDR(0))) = mask;
+    (*(volatile unsigned int *)(pio + PIO_IDR(0))) = mask;
 
     // Enable pull-up(s) if necessary
     if (enablePullUp) {
-		(*(volatile unsigned int *)(pio+PIO_PPUER(0))) = mask;
-        
-    }
-    else {
-		(*(volatile unsigned int *)(pio+PIO_PPUDR(0))) = mask;
-        
+        (*(volatile unsigned int *)(pio + PIO_PPUER(0))) = mask;
+
+    } else {
+        (*(volatile unsigned int *)(pio + PIO_PPUDR(0))) = mask;
+
     }
 
     // Enable multi-drive if necessary
     if (enableMultiDrive) {
-		(*(volatile unsigned int *)(pio+PIO_MDER(0))) = mask;
-        
-    }
-    else {
-		(*(volatile unsigned int *)(pio+PIO_MDDR(0))) = mask;
-        
+        (*(volatile unsigned int *)(pio + PIO_MDER(0))) = mask;
+
+    } else {
+        (*(volatile unsigned int *)(pio + PIO_MDDR(0))) = mask;
+
     }
 
     // Set default value
     if (defaultValue) {
-		(*(volatile unsigned int *)(pio+PIO_SODR(0))) = mask;
-        
-    }
-    else {
-		(*(volatile unsigned int *)(pio+PIO_CODR(0))) = mask;
-        
+        (*(volatile unsigned int *)(pio + PIO_SODR(0))) = mask;
+
+    } else {
+        (*(volatile unsigned int *)(pio + PIO_CODR(0))) = mask;
+
     }
 
     // Configure pin(s) as output(s)
-	(*(volatile unsigned int *)(pio+PIO_OER(0))) = mask;
-    (*(volatile unsigned int *)(pio+PIO_PER(0))) = mask;
-    
+    (*(volatile unsigned int *)(pio + PIO_OER(0))) = mask;
+    (*(volatile unsigned int *)(pio + PIO_PER(0))) = mask;
+
 }
 #endif
 //------------------------------------------------------------------------------
@@ -258,53 +240,54 @@ static void PIO_SetOutput(
 /// \param size  Size of the Pin list (calculated using PIO_LISTSIZE).
 /// \return 1 if the pins have been configured properly; otherwise 0.
 //------------------------------------------------------------------------------
-unsigned char PIO_Configure(const Pin *list, unsigned int size)
+unsigned char PIO_Configure(const Pin * list, unsigned int size)
 {
     // Configure pins
     while (size > 0) {
-    
-        switch (list->type) {
-#if !defined(at91sam9g10)    
-            case PIO_PERIPH_A:
-                PIO_SetPeripheralA(list->pio,
-                                   list->mask,
-                                   (list->attribute & PIO_PULLUP) ? 1 : 0);
-                break;
-#endif    
-            case PIO_PERIPH_B:
-                PIO_SetPeripheralB(list->pio,
-                                   list->mask,
-                                   (list->attribute & PIO_PULLUP) ? 1 : 0);
-                break;
-#if !defined(at91sam9g10)    
-            case PIO_INPUT:
-				
-                (*(volatile unsigned int *)(AT91C_BASE_PMC+PMC_PCER)) = 1 << list->id;
-                PIO_SetInput(list->pio,
-                             list->mask,
-                             (list->attribute & PIO_PULLUP) ? 1 : 0,
-                             (list->attribute & PIO_DEGLITCH)? 1 : 0);
 
-                #if defined(AT91C_PIOA_IFDGSR) //PIO3 with Glitch or Debouncing selection
-                //if glitch input filter enabled, set it
-                if(list->attribute & PIO_DEGLITCH)//Glitch input filter enabled
-                    PIO_SetFilter(list->pio,
-                        list->inFilter.filterSel,
-                        list->inFilter.clkDivider);
-                #endif
-                break;
+        switch (list->type) {
+#if !defined(at91sam9g10)
+        case PIO_PERIPH_A:
+            PIO_SetPeripheralA(list->pio,
+                               list->mask,
+                               (list->attribute & PIO_PULLUP) ? 1 : 0);
+            break;
 #endif
-#if defined(at91sam9263)   //PIO_OUTPUT_0 and PIO_OUTPUT_1 are only used on 9263ek
-            case PIO_OUTPUT_0:
-            case PIO_OUTPUT_1:
-                PIO_SetOutput(list->pio,
-                              list->mask,
-                              (list->type == PIO_OUTPUT_1),
-                              (list->attribute & PIO_OPENDRAIN) ? 1 : 0,
-                              (list->attribute & PIO_PULLUP) ? 1 : 0);
-                break;
-#endif    
-            default: return 0;
+        case PIO_PERIPH_B:
+            PIO_SetPeripheralB(list->pio,
+                               list->mask,
+                               (list->attribute & PIO_PULLUP) ? 1 : 0);
+            break;
+#if !defined(at91sam9g10)
+        case PIO_INPUT:
+
+            (*(volatile unsigned int *)(AT91C_BASE_PMC + PMC_PCER)) =
+                1 << list->id;
+            PIO_SetInput(list->pio, list->mask,
+                         (list->attribute & PIO_PULLUP) ? 1 : 0,
+                         (list->attribute & PIO_DEGLITCH) ? 1 : 0);
+
+#if defined(AT91C_PIOA_IFDGSR)  //PIO3 with Glitch or Debouncing selection
+            //if glitch input filter enabled, set it
+            if (list->attribute & PIO_DEGLITCH) //Glitch input filter enabled
+                PIO_SetFilter(list->pio,
+                              list->inFilter.filterSel,
+                              list->inFilter.clkDivider);
+#endif
+            break;
+#endif
+#if defined(at91sam9263)        //PIO_OUTPUT_0 and PIO_OUTPUT_1 are only used on 9263ek
+        case PIO_OUTPUT_0:
+        case PIO_OUTPUT_1:
+            PIO_SetOutput(list->pio,
+                          list->mask,
+                          (list->type == PIO_OUTPUT_1),
+                          (list->attribute & PIO_OPENDRAIN) ? 1 : 0,
+                          (list->attribute & PIO_PULLUP) ? 1 : 0);
+            break;
+#endif
+        default:
+            return 0;
         }
 
         list++;
@@ -322,10 +305,10 @@ unsigned char PIO_Configure(const Pin *list, unsigned int size)
 //------------------------------------------------------------------------------
 //this function is not refered any where
 #if 0
-void PIO_Set(const Pin *pin)
+void PIO_Set(const Pin * pin)
 {
-	(*(volatile unsigned int *)(pin->pio+PIO_SODR(0))) = pin->mask;
-    
+    (*(volatile unsigned int *)(pin->pio + PIO_SODR(0))) = pin->mask;
+
 }
 #endif
 //------------------------------------------------------------------------------
@@ -336,10 +319,10 @@ void PIO_Set(const Pin *pin)
 //------------------------------------------------------------------------------
 //this function is not refered any where
 #if 0
-void PIO_Clear(const Pin *pin)
+void PIO_Clear(const Pin * pin)
 {
-	(*(volatile unsigned int *)(pin->pio+PIO_CODR(0))) = pin->mask;
-    
+    (*(volatile unsigned int *)(pin->pio + PIO_CODR(0))) = pin->mask;
+
 }
 #endif
 
@@ -353,23 +336,22 @@ void PIO_Clear(const Pin *pin)
 /// \return 1 if the Pin instance contains at least one PIO that currently has
 /// a high level; otherwise 0.
 //------------------------------------------------------------------------------
-unsigned char PIO_Get(const Pin *pin)
+unsigned char PIO_Get(const Pin * pin)
 {
     unsigned int reg;
+
     if ((pin->type == PIO_OUTPUT_0) || (pin->type == PIO_OUTPUT_1)) {
-		reg = (*(volatile unsigned int *)(pin->pio+PIO_ODSR(0)));
-        
-    }
-    else {
-		reg = (*(volatile unsigned int *)(pin->pio+PIO_PDSR(0)));
-        
+        reg = (*(volatile unsigned int *)(pin->pio + PIO_ODSR(0)));
+
+    } else {
+        reg = (*(volatile unsigned int *)(pin->pio + PIO_PDSR(0)));
+
     }
 
     if ((reg & pin->mask) == 0) {
 
         return 0;
-    }
-    else {
+    } else {
 
         return 1;
     }
@@ -386,14 +368,13 @@ unsigned char PIO_Get(const Pin *pin)
 //------------------------------------------------------------------------------
 //this function is not refered any where
 #if 0
-unsigned char PIO_GetOutputDataStatus(const Pin *pin)
+unsigned char PIO_GetOutputDataStatus(const Pin * pin)
 {
-	
-    if (((*(volatile unsigned int *)(pin->pio+PIO_ODSR(0))) & pin->mask) == 0) {
+
+    if (((*(volatile unsigned int *)(pin->pio + PIO_ODSR(0))) & pin->mask) == 0) {
 
         return 0;
-    }
-    else {
+    } else {
 
         return 1;
     }

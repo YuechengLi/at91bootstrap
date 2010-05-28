@@ -51,7 +51,6 @@
 //         Headers
 //------------------------------------------------------------------------------
 
-
 #if defined(cortexm3)
 #include <core_cm3.h>
 #endif
@@ -63,7 +62,7 @@
 #if defined(cortexm3)
 #ifdef __NVIC_PRIO_BITS
 #undef __NVIC_PRIO_BITS
-#define __NVIC_PRIO_BITS           ((SCB->AIRCR & 0x700) >> 8) 
+#define __NVIC_PRIO_BITS           ((SCB->AIRCR & 0x700) >> 8)
 #endif
 #endif
 #endif
@@ -72,13 +71,11 @@
 //         Global functions
 //------------------------------------------------------------------------------
 
-extern void IRQ_ConfigureIT(unsigned int source,
-                            unsigned int mode,         // mode for AIC, priority for NVIC
-                            void( *handler )( void )); // ISR
+extern void IRQ_ConfigureIT(unsigned int source, unsigned int mode,     // mode for AIC, priority for NVIC
+                            void (*handler) (void));    // ISR
 
 extern void IRQ_EnableIT(unsigned int source);
 
 extern void IRQ_DisableIT(unsigned int source);
 
-#endif //#ifndef IRQ_H
-
+#endif                          //#ifndef IRQ_H

@@ -69,9 +69,8 @@
 
 extern int dbg_log(const char level, const char *fmt_str, ...);
 
-#else /* CONFIG_DEBUG */
+#else                           /* CONFIG_DEBUG */
 #define dbg_log(...)
 #endif
 
 #endif /*_DEBUG_H_*/
-

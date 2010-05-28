@@ -96,7 +96,7 @@
 //------------------------------------------------------------------------------
 
 /// DMA driver callback function.
-typedef void (*DmaCallback)();
+typedef void (*DmaCallback) ();
 
 //------------------------------------------------------------------------------
 /// DMA multi buffer transfer Linker List Item structure.
@@ -128,31 +128,33 @@ typedef struct _PictureInPicture {
     unsigned short pipDestBoundarySize;
 } PictureInPicture;
 
-
 //------------------------------------------------------------------------------
 //         Global functions
 //------------------------------------------------------------------------------
-extern void DMAD_Initialize(unsigned char channel, unsigned char defaultHandler);
-                     
-extern unsigned char DMAD_Configure_Buffer(unsigned char channel, 
-                             unsigned char sourceTransferMode,
-                             unsigned char destTransferMode,
-                             DmaLinkList *lli,
-                             PictureInPicture *pip);
+extern void DMAD_Initialize(unsigned char channel,
+                            unsigned char defaultHandler);
+
+extern unsigned char DMAD_Configure_Buffer(unsigned char channel,
+                                           unsigned char sourceTransferMode,
+                                           unsigned char destTransferMode,
+                                           DmaLinkList * lli,
+                                           PictureInPicture * pip);
 
 extern unsigned char DMAD_Configure_TransferController(unsigned char channel,
-                                             unsigned int bufSize,
-                                             unsigned char sourceWidth,
-                                             unsigned char destWidth,
-                                             unsigned int sourceAddress,
-                                             unsigned int destAddress);
-                                 
-extern unsigned char DMAD_BufferTransfer(unsigned char channel, 
-                                         unsigned int size, 
-                                         DmaCallback callback, 
+                                                       unsigned int bufSize,
+                                                       unsigned char
+                                                       sourceWidth,
+                                                       unsigned char destWidth,
+                                                       unsigned int
+                                                       sourceAddress,
+                                                       unsigned int
+                                                       destAddress);
+
+extern unsigned char DMAD_BufferTransfer(unsigned char channel,
+                                         unsigned int size,
+                                         DmaCallback callback,
                                          unsigned char polling);
 
 extern unsigned char DMAD_IsFinished(unsigned char channel);
 
-#endif //#ifndef DMAD_H
-
+#endif                          //#ifndef DMAD_H

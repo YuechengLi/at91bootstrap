@@ -46,13 +46,13 @@
 #endif
 
 #if	defined(CONFIG_CPU_CLK_166MHZ)
-#define PLLA_SETTINGS   0x25ceBFa5 /* 166MHz */
-#define MASTER_CLOCK            (165999709/2) /* 166MHz MCK=83MHz*/
+#define PLLA_SETTINGS   0x25ceBFa5      /* 166MHz */
+#define MASTER_CLOCK            (165999709/2)   /* 166MHz MCK=83MHz */
 #endif
 
 #if	defined(CONFIG_CPU_CLK_180MHZ)
-#define PLLA_SETTINGS		0x2125BF1E /* 180MHz */
-#define MASTER_CLOCK		(179999198/2) /* 180MHz MCK=90MHz */
+#define PLLA_SETTINGS		0x2125BF1E      /* 180MHz */
+#define MASTER_CLOCK		(179999198/2)   /* 180MHz MCK=90MHz */
 #endif
 
 #define	TOP_OF_MEMORY		0x301000
@@ -73,8 +73,8 @@
 
 /* AC characteristics */
 /* DLYBS = tCSS= 250ns min and DLYBCT = tCSH = 250ns */
-#define DATAFLASH_TCSS		(0x1a << 16)	/* 250ns min (tCSS) <=> 12/48000000 = 250ns */
-#define DATAFLASH_TCHS		(0x1 << 24)	/* 250ns min (tCSH) <=> (64*1+SCBR)/(2*48000000) */
+#define DATAFLASH_TCSS		(0x1a << 16)    /* 250ns min (tCSS) <=> 12/48000000 = 250ns */
+#define DATAFLASH_TCHS		(0x1 << 24)     /* 250ns min (tCSH) <=> (64*1+SCBR)/(2*48000000) */
 
 #define DF_CS_SETTINGS 		(AT91C_SPI_NCPHA | (AT91C_SPI_DLYBS & DATAFLASH_TCSS) | (AT91C_SPI_DLYBCT & DATAFLASH_TCHS) | ((MASTER_CLOCK / AT91C_SPI_CLK) << 8))
 
@@ -84,14 +84,13 @@
 /* ******************************************************************* */
 #define AT91C_SMARTMEDIA_BASE	0x40000000
 
-#define AT91_SMART_MEDIA_ALE    (1 << 21)	/* our ALE is AD21 */
-#define AT91_SMART_MEDIA_CLE    (1 << 22)	/* our CLE is AD22 */
+#define AT91_SMART_MEDIA_ALE    (1 << 21)       /* our ALE is AD21 */
+#define AT91_SMART_MEDIA_CLE    (1 << 22)       /* our CLE is AD22 */
 
 #define NAND_DISABLE_CE() do { *(volatile unsigned int *)AT91C_PIOC_SODR = AT91C_PIO_PC14;} while(0)
 #define NAND_ENABLE_CE() do { *(volatile unsigned int *)AT91C_PIOC_CODR = AT91C_PIO_PC14;} while(0)
 
 #define NAND_WAIT_READY() while (!(*(volatile unsigned int *)AT91C_PIOC_PDSR & AT91C_PIO_PC13))
-
 
 /* ******************************************************************** */
 /* SMC Chip Select 3 Timings for NandFlash for MASTER_CLOCK = 100000000.*/
@@ -102,25 +101,14 @@
 #define AT91C_SM_NCS_WR_SETUP	(0 << 8)
 #define AT91C_SM_NRD_SETUP	(1 << 16)
 #define AT91C_SM_NCS_RD_SETUP	(0 << 24)
-  
+
 #define AT91C_SM_NWE_PULSE 	(3 << 0)
 #define AT91C_SM_NCS_WR_PULSE	(3 << 8)
 #define AT91C_SM_NRD_PULSE	(3 << 16)
 #define AT91C_SM_NCS_RD_PULSE	(3 << 24)
-  
+
 #define AT91C_SM_NWE_CYCLE 	(5 << 0)
 #define AT91C_SM_NRD_CYCLE	(5 << 16)
 #define AT91C_SM_TDF	        (2 << 16)
 
-#endif	/* _AT91SAM9260EK_H */
-
-
-
-
-
-
-
-
-
-
-
+#endif                          /* _AT91SAM9260EK_H */

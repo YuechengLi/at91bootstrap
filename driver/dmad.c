@@ -80,32 +80,34 @@ static Dmad dmad;
 void DMAD_Handler()
 {
     unsigned int status;
+
     unsigned char channel;
+
     DmaTransfer *pTransfer;
+
     status = DMA_GetStatus();
     // Check if the buffer transfer completed is set.
-    if(status & AT91C_BTC)
-    {
+    if (status & AT91C_BTC) {
         // Scan each channel status.
-        for(channel = 0; channel < DMA_CHANNEL_NUM; channel++) {
-            if(!(status & (DMA_BTC << channel))){
+        for (channel = 0; channel < DMA_CHANNEL_NUM; channel++) {
+            if (!(status & (DMA_BTC << channel))) {
                 continue;
             }
-            
-            dmad.transfers[channel].transferSize -= dmad.transfers[channel].bufSize;
+
+            dmad.transfers[channel].transferSize -=
+                dmad.transfers[channel].bufSize;
             // if next buffer is to be the last buffer in the transfer, then clear the automatic mode bit.
-            if(dmad.transfers[channel].transferSize <= dmad.transfers[channel].bufSize) {
+            if (dmad.transfers[channel].transferSize <=
+                dmad.transfers[channel].bufSize) {
                 DMA_ClearAutoMode(channel);
             }
             // Transfer finished
-            if(dmad.transfers[channel].transferSize == 0) {
+            if (dmad.transfers[channel].transferSize == 0) {
                 pTransfer = &(dmad.transfers[channel]);
                 pTransfer->callback();
-                DMA_DisableIt(DMA_BTC << channel); 
+                DMA_DisableIt(DMA_BTC << channel);
                 DMA_DisableChannel(channel);
-            }
-            else
-            {
+            } else {
                 // Write the KEEPON field to clear the STALL states.
                 DMA_KeeponChannel(channel);
             }
@@ -121,39 +123,40 @@ void DMAD_Handler()
 void DMAD_Initialize(unsigned char channel, unsigned char defaultHandler)
 {
     unsigned int status;
+
     unsigned int flag;
-     
+
     // Enable peripheral clock
-#if !defined(at91sam9rl64)    
-	(*(volatile unsigned int *)(AT91C_BASE_PMC+PMC_PCER)) = 1 << AT91C_ID_HDMA; 
-#endif    
-    
+#if !defined(at91sam9rl64)
+    (*(volatile unsigned int *)(AT91C_BASE_PMC + PMC_PCER)) =
+        1 << AT91C_ID_HDMA;
+#endif
+
     // Read the channel handler status to ensure the channel is a free channel.
     status = DMA_GetChannelStatus();
-    
+
     // Clear any pending interrupts on the channel.
     DMA_GetStatus();
     // Disble the channel.
     DMA_DisableChannel(channel);
-	
-	do{
-	status = DMA_GetChannelStatus();
-	}while(status&(1<<channel));
+
+    do {
+        status = DMA_GetChannelStatus();
+    } while (status & (1 << channel));
     // Disable the interrupt
     flag = 0xffffff;
     DMA_DisableIt(flag);
     // Enable DMA.
     DMA_Enable();
-    if(defaultHandler) 
-    {
+    if (defaultHandler) {
 //        IRQ_ConfigureIT(AT91C_ID_HDMA, 0, DMAD_Handler);
-		  (*(unsigned int*)(AT91C_BASE_AIC+AIC_IDCR)) = 1 << AT91C_ID_HDMA;
+        (*(unsigned int *)(AT91C_BASE_AIC + AIC_IDCR)) = 1 << AT91C_ID_HDMA;
 //        IRQ_EnableIT(AT91C_ID_HDMA);
     }
     // Initialize transfer instance.
     dmad.transfers[channel].transferSize = 0;
 }
- 
+
 //------------------------------------------------------------------------------
 /// Configure the DMA transfer buffer by giving transfer mode, it could be single 
 /// buffer or multi-buffer(LLI/auto-reload/contiguous buffers) with or without 
@@ -165,44 +168,45 @@ void DMAD_Initialize(unsigned char channel, unsigned char defaultHandler)
 /// \param pip Pointer to a PictureInPicture structure.
 //------------------------------------------------------------------------------
 unsigned char DMAD_Configure_Buffer(unsigned char channel,
-                           unsigned char sourceTransferMode,
-                           unsigned char destTransferMode,
-                           DmaLinkList *lli,
-                           PictureInPicture *pip)
+                                    unsigned char sourceTransferMode,
+                                    unsigned char destTransferMode,
+                                    DmaLinkList * lli, PictureInPicture * pip)
 {
     DmaTransfer *pTransfer = &(dmad.transfers[channel]);
+
     // Check that no transfer is pending on the channel
-    if (pTransfer-> transferSize > 0 ) {
-        
+    if (pTransfer->transferSize > 0) {
+
         return DMAD_ERROR_BUSY;
     }
     // Configure source transfer mode.
     DMA_SetSourceBufferMode(channel, sourceTransferMode, 0);
-    
+
     // Configure destination transfer mode.
     DMA_SetDestBufferMode(channel, destTransferMode, 0);
-    
-    if(lli){
+
+    if (lli) {
         DMA_SetDescriptorAddr(channel, (unsigned int)(&lli[0]));
-    }
-    else {
+    } else {
         DMA_SetDescriptorAddr(channel, 0);
     }
-    
-    if(pip){
-        #if defined(AT91C_SRC_PIP)
-        // If source picture-in-picture mode is enabled, program the DMAC_SPIP.
-        if(pip->pipSourceBoundarySize){
-        // If destination picture-in-picture mode is enabled, program the DMAC_DPIP.
-            DMA_SPIPconfiguration(channel, pip->pipSourceHoleSize, pip->pipSourceBoundarySize);
-        }
-        #endif
 
-        #if defined(AT91C_DST_PIP)
-        if(pip->pipDestBoundarySize){
-            DMA_DPIPconfiguration(channel, pip->pipDestHoleSize, pip->pipDestBoundarySize);
+    if (pip) {
+#if defined(AT91C_SRC_PIP)
+        // If source picture-in-picture mode is enabled, program the DMAC_SPIP.
+        if (pip->pipSourceBoundarySize) {
+            // If destination picture-in-picture mode is enabled, program the DMAC_DPIP.
+            DMA_SPIPconfiguration(channel, pip->pipSourceHoleSize,
+                                  pip->pipSourceBoundarySize);
         }
-        #endif
+#endif
+
+#if defined(AT91C_DST_PIP)
+        if (pip->pipDestBoundarySize) {
+            DMA_DPIPconfiguration(channel, pip->pipDestHoleSize,
+                                  pip->pipDestBoundarySize);
+        }
+#endif
     }
     return 0;
 }
@@ -217,34 +221,35 @@ unsigned char DMAD_Configure_Buffer(unsigned char channel,
 /// \param destAddress Destination transfer width.
 //------------------------------------------------------------------------------
 unsigned char DMAD_Configure_TransferController(unsigned char channel,
-                                      unsigned int bufSize,
-                                      unsigned char sourceWidth,
-                                      unsigned char destWidth,
-                                      unsigned int sourceAddress,
-                                      unsigned int destAddress)
+                                                unsigned int bufSize,
+                                                unsigned char sourceWidth,
+                                                unsigned char destWidth,
+                                                unsigned int sourceAddress,
+                                                unsigned int destAddress)
 {
     DmaTransfer *pTransfer = &(dmad.transfers[channel]);
+
     // Check that no transfer is pending on the channel
-    if (pTransfer-> transferSize > 0 ) {
-        
+    if (pTransfer->transferSize > 0) {
+
         return DMAD_ERROR_BUSY;
     }
-    pTransfer->bufSize = bufSize; 
-    
+    pTransfer->bufSize = bufSize;
+
     // Set up the transfer width and transfer size.
     DMA_SetSourceBufferSize(channel, bufSize, sourceWidth, destWidth, 0);
 
-    if(sourceAddress) {
+    if (sourceAddress) {
         // Write the starting source address.
         DMA_SetSourceAddr(channel, sourceAddress);
     }
-    if(destAddress){
+    if (destAddress) {
         // Write the starting destination address.
         DMA_SetDestinationAddr(channel, destAddress);
     }
     return 0;
-}                                 
-                           
+}
+
 //------------------------------------------------------------------------------
 /// Starts buffer transfer on the given channel
 /// \param channel Particular channel number.
@@ -252,29 +257,30 @@ unsigned char DMAD_Configure_TransferController(unsigned char channel,
 /// \param callback Optional callback function.
 /// \param polling Polling channel status enable.
 //------------------------------------------------------------------------------
-unsigned char DMAD_BufferTransfer(unsigned char channel, 
-                                  unsigned int size, 
-                                  DmaCallback callback, 
-                                  unsigned char polling)
+unsigned char DMAD_BufferTransfer(unsigned char channel,
+                                  unsigned int size,
+                                  DmaCallback callback, unsigned char polling)
 {
     DmaTransfer *pTransfer = &(dmad.transfers[channel]);
+
     // Check that no transfer is pending on the channel
-    if (pTransfer-> transferSize > 0 ) {
+    if (pTransfer->transferSize > 0) {
 
         return DMAD_ERROR_BUSY;
     }
-    pTransfer->status = DMAD_ERROR_BUSY; 
+    pTransfer->status = DMAD_ERROR_BUSY;
     pTransfer->transferSize = size;
-    pTransfer->callback = callback; 
-    
-    if(!polling){
+    pTransfer->callback = callback;
+
+    if (!polling) {
         DMA_EnableIt(DMA_BTC << channel);
     }
     // Enable the channel.
     DMA_EnableChannel(channel);
-    
-    if(polling){
-        while ((DMA_GetChannelStatus() & (DMA_ENA << channel)) == (DMA_ENA << channel));
+
+    if (polling) {
+        while ((DMA_GetChannelStatus() & (DMA_ENA << channel)) ==
+               (DMA_ENA << channel)) ;
         if (pTransfer->callback) {
             pTransfer->callback();
         }
@@ -294,8 +300,7 @@ unsigned char DMAD_IsFinished(unsigned char channel)
 
     if (dmad.transfers[channel].transferSize > 0) {
         return 0;
-    }
-    else {
+    } else {
         DMA_DisableChannel(channel);
         return 1;
     }

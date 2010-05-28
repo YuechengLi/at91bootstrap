@@ -35,4 +35,4 @@
 
 #define	AT91C_RSTC_KEY_UNLOCK	(0xA5 << 24)
 
-#endif /*RSTC_H_*/
+#endif                          /*RSTC_H_ */

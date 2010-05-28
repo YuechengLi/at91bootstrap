@@ -41,14 +41,19 @@
 //      Exported functions
 //------------------------------------------------------------------------------
 
-extern unsigned char MEDSdcard_Detect(Media *media, unsigned char mciID);
-extern unsigned char MEDSdcard_Initialize(Media *media, unsigned char mciID);
-extern unsigned char MEDSdusb_Initialize(Media *media, unsigned char mciID);
-extern void MEDSdcard_EraseAll(Media *media);
-extern void MEDSdcard_EraseBlock(Media *media, unsigned int block);
-extern SdCard* MEDSdcard_GetDriver(unsigned int slot);
+extern unsigned char MEDSdcard_Detect(Media * media, unsigned char mciID);
+
+extern unsigned char MEDSdcard_Initialize(Media * media, unsigned char mciID);
+
+extern unsigned char MEDSdusb_Initialize(Media * media, unsigned char mciID);
+
+extern void MEDSdcard_EraseAll(Media * media);
+
+extern void MEDSdcard_EraseBlock(Media * media, unsigned int block);
+
+extern SdCard *MEDSdcard_GetDriver(unsigned int slot);
 
 #define FIRSTBOOT_BLOCK_LENGTH 8
 #define FIRSTBOOT_BLOCK_SIZE 512
 
-#endif //#ifndef MEDSDCARD_H
+#endif                          //#ifndef MEDSDCARD_H

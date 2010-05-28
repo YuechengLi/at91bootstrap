@@ -39,18 +39,19 @@
 
 #ifdef CONFIG_FLASH
 
-extern void * memcpy (void * out, void * in, size_t length);
+extern void *memcpy(void *out, void *in, size_t length);
 
 /*------------------------------------------------------------------------------*/
 /* \fn    load_df								*/
 /* \brief This function loads norflash content to specified address		*/
-/*------------------------------------------------------------------------------*/	
-int load_norflash(unsigned int img_addr, unsigned int img_size, unsigned int img_dest)
+/*------------------------------------------------------------------------------*/
+int load_norflash(unsigned int img_addr, unsigned int img_size,
+                  unsigned int img_dest)
 {
-	norflash_hw_init();
+    norflash_hw_init();
 
-	memcpy((char *)img_dest, (char *)(AT91_NORFLASH_BASE + img_addr), img_size);
-	return 0;
+    memcpy((char *)img_dest, (char *)(AT91_NORFLASH_BASE + img_addr), img_size);
+    return 0;
 }
 
-#endif /* CONFIG_DATAFLASH */
+#endif                          /* CONFIG_DATAFLASH */

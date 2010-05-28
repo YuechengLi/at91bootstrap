@@ -78,148 +78,174 @@
 
 int Initial_SerialPort(void)
 {
-	int fd;
-	struct termios options;
+    int fd;
 
-	fd = open( SERIAL_DEVICE , O_RDWR | O_NOCTTY | O_NDELAY );
-	if ( fd == -1 )
-	{ 
-		/*open error!*/
-		perror("Can't open serial port!");
-		return -1;
-	}
+    struct termios options;
 
-	/*Get the current options for the port...*/
-	tcgetattr(fd, &options);
+    fd = open(SERIAL_DEVICE, O_RDWR | O_NOCTTY | O_NDELAY);
+    if (fd == -1) {
+        /*
+         * open error!
+         */
+        perror("Can't open serial port!");
+        return -1;
+    }
 
-	/*Set the baud rates to BAUDRATE...*/
-	cfsetispeed(&options,MYBAUDRATE);
-	cfsetospeed(&options,MYBAUDRATE);
-	tcsetattr(fd, TCSANOW, &options);
-	if (0 != tcgetattr(fd, &options)) 
-	{
-		perror("SetupSerial 1");
-		return -1;
-	} 
-	
-	/*
-	 * 8bit Data,no partity,1 stop bit...
-	 */
-	options.c_cflag &= ~PARENB;
-	options.c_cflag &= ~CSTOPB;
-	options.c_cflag &= ~CSIZE;
-	options.c_cflag |= CS8;
-	tcflush(fd,TCIFLUSH);
+    /*
+     * Get the current options for the port...
+     */
+    tcgetattr(fd, &options);
 
-	/***Choosing Raw Input*/
-	options.c_lflag &= ~(ICANON | ECHO | ECHOE | ISIG);
-	options.c_oflag &= ~OPOST; 
+    /*
+     * Set the baud rates to BAUDRATE...
+     */
+    cfsetispeed(&options, MYBAUDRATE);
+    cfsetospeed(&options, MYBAUDRATE);
+    tcsetattr(fd, TCSANOW, &options);
+    if (0 != tcgetattr(fd, &options)) {
+        perror("SetupSerial 1");
+        return -1;
+    }
 
-	/*
-	 * Set the new options for the port...
-	 */
-	if (0 != tcsetattr(fd, TCSANOW, &options))
-	{
- 		perror("SetupSerial error");
- 		return -1 ;
-	}
+    /*
+     * 8bit Data,no partity,1 stop bit...
+     */
+    options.c_cflag &= ~PARENB;
+    options.c_cflag &= ~CSTOPB;
+    options.c_cflag &= ~CSIZE;
+    options.c_cflag |= CS8;
+    tcflush(fd, TCIFLUSH);
 
-	return fd ;
+        /***Choosing Raw Input*/
+    options.c_lflag &= ~(ICANON | ECHO | ECHOE | ISIG);
+    options.c_oflag &= ~OPOST;
+
+    /*
+     * Set the new options for the port...
+     */
+    if (0 != tcsetattr(fd, TCSANOW, &options)) {
+        perror("SetupSerial error");
+        return -1;
+    }
+
+    return fd;
 }
 
 /******************************/
 void ClearReceiveBuffer(int fd)
 {
-	unsigned char tmp;
-	while ((read(fd,&tmp,1))>0);
-	
-	return;
+    unsigned char tmp;
+
+    while ((read(fd, &tmp, 1)) > 0) ;
+
+    return;
 }
-unsigned char filebuf[ LINESIZE+2 ];
-unsigned char outbuf[ LINESIZE+2 ];
+
+unsigned char filebuf[LINESIZE + 2];
+
+unsigned char outbuf[LINESIZE + 2];
+
 FILE *datafile;
+
 int fd;
 
-static	unsigned int	ChCnt=0;
-static	unsigned int	ChIx;
-unsigned char	GetChar(unsigned char *ch)
+static unsigned int ChCnt = 0;
+
+static unsigned int ChIx;
+
+unsigned char GetChar(unsigned char *ch)
 /* 
  * SUCCESS:	Return TRUE
  * FAILURE:	Return FALSE
  */
 {
-  
-  if(ChCnt == 0) {
-    ChCnt = fread( filebuf, sizeof(char), LINESIZE, datafile);
-    ChIx = 0;
-  }
-  if(ChCnt > 0) {
-    *ch = filebuf[ChIx++];
-    ChCnt--;
-    return TRUE;
-  } else {
-    return FALSE;	/* Reached End of File */
-  }
+
+    if (ChCnt == 0) {
+        ChCnt = fread(filebuf, sizeof (char), LINESIZE, datafile);
+        ChIx = 0;
+    }
+    if (ChCnt > 0) {
+        *ch = filebuf[ChIx++];
+        ChCnt--;
+        return TRUE;
+    } else {
+        return FALSE;           /* Reached End of File */
+    }
 }
 
 /********************************/
-void	delay()
+void delay()
 {
 }
 
-int main(int argc,char *argv[])
+int main(int argc, char *argv[])
 {
-	char *data_file_name;
-	int	len;
-	unsigned char c;
-	int complete,i,sts;
+    char *data_file_name;
 
-	printf("raw-at91 started...\r\n");
-	
-	/* open serial port1 */
-	if ( (fd = Initial_SerialPort()) == -1)  
-		return -1 ;
+    int len;
 
-	data_file_name = argv[1];
+    unsigned char c;
 
-	if((datafile=fopen(data_file_name,"rb"))==NULL)
-	{
-		perror ("Can't open file!");
-		return -1 ;
-	}
+    int complete, i, sts;
 
-	/*******************************/
-	
-	complete = 0;
-	/*	ClearReceiveBuffer(fd); */
+    printf("raw-at91 started...\r\n");
 
-	/* while((read(fd,&ack_id,1))<=0);*/
-	
-	/* printf("%c\r\n",ack_id); */
-	while(!complete)
-	{
-	  for(i=0;i < LINESIZE; i++) {		/* A line more than 1024 characters will have problems...*/
-	    if((sts = GetChar(&outbuf[i]))) {
-	      /* Sts = Success */
-	      if((c = outbuf[i]) == '\n') {	/* Found end of Line - Start Processing*/
-		outbuf[i+1] = '\0';		/* Terminate String*/
-		break;
-	      }
-	    } else {
-	      /* Sts = Failure - End of File */
-	      outbuf[i] = '\n';
-	      outbuf[i+1] = '\0';
-	      complete = 1;
-	    }
-	  }
-	  printf("%s",outbuf);		/* Inform user */
-	  len = strlen((char *)outbuf);
-	  write(fd,outbuf,strlen((char *)outbuf));
-	  for(i = 0; i < 500000000; i++ ) delay();
-	  while((read(fd,&c,1))<=0) putchar(c);
-	  printf("  ");
-	}
-	fclose(datafile);
-	close(fd);
-	return 0;
+    /*
+     * open serial port1 
+     */
+    if ((fd = Initial_SerialPort()) == -1)
+        return -1;
+
+    data_file_name = argv[1];
+
+    if ((datafile = fopen(data_file_name, "rb")) == NULL) {
+        perror("Can't open file!");
+        return -1;
+    }
+
+        /*******************************/
+
+    complete = 0;
+    /*
+     * ClearReceiveBuffer(fd); 
+     */
+
+    /*
+     * while((read(fd,&ack_id,1))<=0);
+     */
+
+    /*
+     * printf("%c\r\n",ack_id); 
+     */
+    while (!complete) {
+        for (i = 0; i < LINESIZE; i++) {        /* A line more than 1024 characters will have problems... */
+            if ((sts = GetChar(&outbuf[i]))) {
+                /*
+                 * Sts = Success 
+                 */
+                if ((c = outbuf[i]) == '\n') {  /* Found end of Line - Start Processing */
+                    outbuf[i + 1] = '\0';       /* Terminate String */
+                    break;
+                }
+            } else {
+                /*
+                 * Sts = Failure - End of File 
+                 */
+                outbuf[i] = '\n';
+                outbuf[i + 1] = '\0';
+                complete = 1;
+            }
+        }
+        printf("%s", outbuf);   /* Inform user */
+        len = strlen((char *)outbuf);
+        write(fd, outbuf, strlen((char *)outbuf));
+        for (i = 0; i < 500000000; i++)
+            delay();
+        while ((read(fd, &c, 1)) <= 0)
+            putchar(c);
+        printf("  ");
+    }
+    fclose(datafile);
+    close(fd);
+    return 0;
 }

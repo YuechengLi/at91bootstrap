@@ -37,15 +37,14 @@
 /* Write PMC register */
 static inline void write_pmc(unsigned int offset, const unsigned int value)
 {
-	writel(value, offset + AT91C_BASE_PMC);
+    writel(value, offset + AT91C_BASE_PMC);
 }
 
 /* Read PMC registers */
 static inline unsigned int read_pmc(unsigned int offset)
 {
-	return readl(offset + AT91C_BASE_PMC);
+    return readl(offset + AT91C_BASE_PMC);
 }
-
 
 //*----------------------------------------------------------------------------
 //* \fn    pmc_cfg_plla
@@ -53,28 +52,28 @@ static inline unsigned int read_pmc(unsigned int offset)
 //*----------------------------------------------------------------------------*/
 int pmc_cfg_plla(unsigned int pmc_pllar, unsigned int timeout)
 {
-	write_pmc((unsigned int)PMC_PLLAR, pmc_pllar);
+    write_pmc((unsigned int)PMC_PLLAR, pmc_pllar);
 
-	while ( (timeout--) && !(read_pmc(PMC_SR) & AT91C_PMC_LOCKA) );
-	return (timeout) ? 0 : (-1);
+    while ((timeout--) && !(read_pmc(PMC_SR) & AT91C_PMC_LOCKA)) ;
+    return (timeout) ? 0 : (-1);
 }
 
 //*----------------------------------------------------------------------------
 //* \fn    pmc_cfg_pllb
 //* \brief Configure the pll frequency to the corresponding value.
 //*----------------------------------------------------------------------------*/
-#ifndef PLLUTMI 
+#ifndef PLLUTMI
 int pmc_cfg_pllb(unsigned int pmc_pllbr, unsigned int timeout)
 {
-	write_pmc(PMC_PLLBR, pmc_pllbr);
+    write_pmc(PMC_PLLBR, pmc_pllbr);
 
-	while ( (timeout--) && !(read_pmc(PMC_SR) & AT91C_PMC_LOCKB) );
-	return (timeout) ? 0 : (-1);
+    while ((timeout--) && !(read_pmc(PMC_SR) & AT91C_PMC_LOCKB)) ;
+    return (timeout) ? 0 : (-1);
 }
 #else
 int pmc_cfg_pllutmi(unsigned int pmc_pllutmi, unsigned int timeout)
 {
-	return 0;
+    return 0;
 }
 #endif
 
@@ -84,10 +83,10 @@ int pmc_cfg_pllutmi(unsigned int pmc_pllutmi, unsigned int timeout)
 //*----------------------------------------------------------------------------*/
 int pmc_cfg_mck(unsigned int pmc_mckr, unsigned int timeout)
 {
-	write_pmc(PMC_MCKR,  pmc_mckr);
+    write_pmc(PMC_MCKR, pmc_mckr);
 
-	while ( (timeout--) && !(read_pmc(PMC_SR) & AT91C_PMC_MCKRDY) );
-	return (timeout) ? 0 : (-1);
+    while ((timeout--) && !(read_pmc(PMC_SR) & AT91C_PMC_MCKRDY)) ;
+    return (timeout) ? 0 : (-1);
 }
 
 //*----------------------------------------------------------------------------
@@ -96,8 +95,8 @@ int pmc_cfg_mck(unsigned int pmc_mckr, unsigned int timeout)
 //*----------------------------------------------------------------------------*/
 int pmc_cfg_pck(unsigned char x, unsigned int clk_sel, unsigned int prescaler)
 {
-	write_pmc(PMC_PCKR + x * 4,  clk_sel | prescaler);
-	write_pmc(PMC_SCER,  1 << (x + 8));
-	while ( !(read_pmc(PMC_SR) & (1 << (x + 8))) );
-	return 0;
+    write_pmc(PMC_PCKR + x * 4, clk_sel | prescaler);
+    write_pmc(PMC_SCER, 1 << (x + 8));
+    while (!(read_pmc(PMC_SR) & (1 << (x + 8)))) ;
+    return 0;
 }

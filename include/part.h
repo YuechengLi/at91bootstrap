@@ -102,4 +102,4 @@
 #include "at91sam9rlek.h"
 #endif
 
-#endif /* _PART_H */
+#endif                          /* _PART_H */

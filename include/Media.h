@@ -67,56 +67,53 @@
 //------------------------------------------------------------------------------
 typedef struct _Media Media;
 
-typedef void (*MediaCallback)(void *argument,
-                              unsigned char status,
-                              unsigned int  transferred,
-                              unsigned int  remaining);
+typedef void (*MediaCallback) (void *argument,
+                               unsigned char status,
+                               unsigned int transferred,
+                               unsigned int remaining);
 
-typedef unsigned char (*Media_write)(Media *media,
+typedef unsigned char (*Media_write) (Media * media,
+                                      unsigned int address,
+                                      void *data,
+                                      unsigned int length,
+                                      MediaCallback callback, void *argument);
+
+typedef unsigned char (*Media_read) (Media * media,
                                      unsigned int address,
                                      void *data,
                                      unsigned int length,
-                                     MediaCallback callback,
-                                     void *argument);
+                                     MediaCallback callback, void *argument);
 
-typedef unsigned char (*Media_read)(Media *media,
-                                    unsigned int address,
-                                    void *data,
-                                    unsigned int length,
-                                    MediaCallback callback,
-                                    void *argument);
+typedef unsigned char (*Media_cancelIo) (Media * media);
 
-typedef unsigned char (*Media_cancelIo)(Media *media);
+typedef unsigned char (*Media_lock) (Media * media,
+                                     unsigned int start,
+                                     unsigned int end,
+                                     unsigned int *pActualStart,
+                                     unsigned int *pActualEnd);
 
-typedef unsigned char (*Media_lock)(Media        *media,
-                                    unsigned int start,
-                                    unsigned int end,
-                                    unsigned int *pActualStart,
-                                    unsigned int *pActualEnd);
+typedef unsigned char (*Media_unlock) (Media * media,
+                                       unsigned int start,
+                                       unsigned int end,
+                                       unsigned int *pActualStart,
+                                       unsigned int *pActualEnd);
 
-typedef unsigned char (*Media_unlock)(Media        *media,
-                                      unsigned int start,
-                                      unsigned int end,
-                                      unsigned int *pActualStart,
-                                      unsigned int *pActualEnd);
+typedef unsigned char (*Media_ioctl) (Media * media,
+                                      unsigned char ctrl, void *buff);
 
-typedef unsigned char (*Media_ioctl)(Media *media,
-                                     unsigned char ctrl,
-                                     void *buff);
+typedef unsigned char (*Media_flush) (Media * media);
 
-typedef unsigned char (*Media_flush)(Media *media);
-
-typedef void (*Media_handler)(Media *media);
+typedef void (*Media_handler) (Media * media);
 
 //! \brief  Media transfer
 //! \see    TransferCallback
 typedef struct {
 
-    void            *data;      //!< Pointer to the data buffer
-    unsigned int    address;    //!< Address where to read/write the data
-    unsigned int    length;     //!< Size of the data to read/write
-    MediaCallback   callback;   //!< Callback to invoke when the transfer done
-    void            *argument;  //!< Callback argument
+    void *data;                 //!< Pointer to the data buffer
+    unsigned int address;       //!< Address where to read/write the data
+    unsigned int length;        //!< Size of the data to read/write
+    MediaCallback callback;     //!< Callback to invoke when the transfer done
+    void *argument;             //!< Callback argument
 
 } MEDTransfer;
 
@@ -124,25 +121,24 @@ typedef struct {
 //! \see    MEDTransfer
 struct _Media {
 
-  Media_write    write;       //!< Write method
-  Media_read     read;        //!< Read method
-  Media_cancelIo cancelIo;    //!< Cancel pending IO method
-  Media_lock     lock;        //!< lock method if possible
-  Media_unlock   unlock;      //!< unlock method if possible
-  Media_flush    flush;       //!< Flush method
-  Media_handler  handler;     //!< Interrupt handler
-  unsigned int   blockSize;   //!< Block size in bytes (1, 512, 1K, 2K ...)
-  unsigned int   baseAddress; //!< Base address of media in number of blocks
-  unsigned int   size;        //!< Size of media in number of blocks
-  MEDTransfer    transfer;    //!< Current transfer operation
-  void           *interface;  //!< Pointer to the physical interface used
-  unsigned char  bReserved:4,
-                 mappedRD:1,  //!< Mapped to memory space to read
-                 mappedWR:1,  //!< Mapped to memory space to write
-                 protected:1, //!< Protected media?
-                 removable:1; //!< Removable/Fixed media?
-  unsigned char  state;       //!< Status of media
-  unsigned short reserved;
+    Media_write write;          //!< Write method
+    Media_read read;            //!< Read method
+    Media_cancelIo cancelIo;    //!< Cancel pending IO method
+    Media_lock lock;            //!< lock method if possible
+    Media_unlock unlock;        //!< unlock method if possible
+    Media_flush flush;          //!< Flush method
+    Media_handler handler;      //!< Interrupt handler
+    unsigned int blockSize;     //!< Block size in bytes (1, 512, 1K, 2K ...)
+    unsigned int baseAddress;   //!< Base address of media in number of blocks
+    unsigned int size;          //!< Size of media in number of blocks
+    MEDTransfer transfer;       //!< Current transfer operation
+    void *interface;            //!< Pointer to the physical interface used
+    unsigned char bReserved:4, mappedRD:1,      //!< Mapped to memory space to read
+     mappedWR:1,                //!< Mapped to memory space to write
+     protected:1,               //!< Protected media?
+     removable:1;               //!< Removable/Fixed media?
+    unsigned char state;        //!< Status of media
+    unsigned short reserved;
 };
 
 /// Available medias.
@@ -167,12 +163,11 @@ extern unsigned int numMedias;
 //! \return Operation result code
 //! \see    TransferCallback
 //------------------------------------------------------------------------------
-static unsigned char MED_Write(Media         *media,
-                                      unsigned int  address,
-                                      void          *data,                                      
-                                      unsigned int  length,
-                                      MediaCallback callback,
-                                      void          *argument)
+static unsigned char MED_Write(Media * media,
+                               unsigned int address,
+                               void *data,
+                               unsigned int length,
+                               MediaCallback callback, void *argument)
 {
     return media->write(media, address, data, length, callback, argument);
 }
@@ -190,12 +185,11 @@ static unsigned char MED_Write(Media         *media,
 //! \return Operation result code
 //! \see    TransferCallback
 //------------------------------------------------------------------------------
-static unsigned char MED_Read(Media          *media,
-                                     unsigned int   address,
-                                     void           *data,                                     
-                                     unsigned int   length,
-                                     MediaCallback  callback,
-                                     void           *argument)
+static unsigned char MED_Read(Media * media,
+                              unsigned int address,
+                              void *data,
+                              unsigned int length,
+                              MediaCallback callback, void *argument)
 {
     return media->read(media, address, data, length, callback, argument);
 }
@@ -209,16 +203,15 @@ static unsigned char MED_Read(Media          *media,
 /// \param  pActualEnd  End address of the actual lock range (optional).
 /// \return 0 if successful; otherwise returns an error code.
 //------------------------------------------------------------------------------
-static unsigned char MED_Lock(Media        *media,
-                                     unsigned int start,
-                                     unsigned int end,
-                                     unsigned int *pActualStart,
-                                     unsigned int *pActualEnd)
+static unsigned char MED_Lock(Media * media,
+                              unsigned int start,
+                              unsigned int end,
+                              unsigned int *pActualStart,
+                              unsigned int *pActualEnd)
 {
-    if( media->lock ) {
+    if (media->lock) {
         return media->lock(media, start, end, pActualStart, pActualEnd);
-    }
-    else {
+    } else {
         return MED_STATUS_SUCCESS;
     }
 }
@@ -232,16 +225,15 @@ static unsigned char MED_Lock(Media        *media,
 /// \param pActualEnd  End address of the actual unlock range (optional).
 /// \return 0 if successful; otherwise returns an error code.
 //------------------------------------------------------------------------------
-static unsigned char MED_Unlock(Media        *media,
-                                       unsigned int start,
-                                       unsigned int end,
-                                       unsigned int *pActualStart,
-                                       unsigned int *pActualEnd)
+static unsigned char MED_Unlock(Media * media,
+                                unsigned int start,
+                                unsigned int end,
+                                unsigned int *pActualStart,
+                                unsigned int *pActualEnd)
 {
-    if( media->unlock ) {
+    if (media->unlock) {
         return media->unlock(media, start, end, pActualStart, pActualEnd);
-    }
-    else {
+    } else {
         return MED_STATUS_SUCCESS;
     }
 }
@@ -250,13 +242,12 @@ static unsigned char MED_Unlock(Media        *media,
 //! \brief  
 //! \param  media Pointer to the Media instance to use
 //------------------------------------------------------------------------------
-static unsigned char MED_Flush(Media *media)
+static unsigned char MED_Flush(Media * media)
 {
     if (media->flush) {
-    
+
         return media->flush(media);
-    }
-    else {
+    } else {
 
         return MED_STATUS_SUCCESS;
     }
@@ -266,10 +257,10 @@ static unsigned char MED_Flush(Media *media)
 //! \brief  Invokes the interrupt handler of the specified media
 //! \param  media Pointer to the Media instance to use
 //------------------------------------------------------------------------------
-static void MED_Handler(Media *media)
+static void MED_Handler(Media * media)
 {
     if (media->handler) {
-    
+
         media->handler(media);
     }
 }
@@ -278,7 +269,6 @@ static void MED_Handler(Media *media)
 //      Exported functions
 //------------------------------------------------------------------------------
 
-extern void MED_HandleAll(Media *medias, unsigned char numMedias);
+extern void MED_HandleAll(Media * medias, unsigned char numMedias);
 
-#endif // _MEDIA_H
-
+#endif                          // _MEDIA_H

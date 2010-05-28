@@ -79,10 +79,9 @@
 #endif
 
 #define DMA_TRANSFER_SINGLE      0
-#define DMA_TRANSFER_LLI         1  
+#define DMA_TRANSFER_LLI         1
 #define DMA_TRANSFER_RELOAD      2
 #define DMA_TRANSFER_CONTIGUOUS  3
-
 
 #define DMA_ENA                  (1 << 0)
 #define DMA_DIS                  (1 << 0)
@@ -94,29 +93,29 @@
 #define DMA_ERR                  (1 << 16)
 
 #ifdef AT91C_HDMA_SRC_DSCR
-    #define AT91C_SRC_DSCR AT91C_HDMA_SRC_DSCR
-    #define AT91C_DST_DSCR AT91C_HDMA_DST_DSCR
-    #define AT91C_SRC_INCR AT91C_HDMA_SRC_ADDRESS_MODE
-    #define AT91C_DST_INCR AT91C_HDMA_DST_ADDRESS_MODE
-    #define AT91C_SRC_PER  AT91C_HDMA_SRC_PER
-    #define AT91C_DST_PER  AT91C_HDMA_DST_PER
+#define AT91C_SRC_DSCR AT91C_HDMA_SRC_DSCR
+#define AT91C_DST_DSCR AT91C_HDMA_DST_DSCR
+#define AT91C_SRC_INCR AT91C_HDMA_SRC_ADDRESS_MODE
+#define AT91C_DST_INCR AT91C_HDMA_DST_ADDRESS_MODE
+#define AT91C_SRC_PER  AT91C_HDMA_SRC_PER
+#define AT91C_DST_PER  AT91C_HDMA_DST_PER
 #if defined(AT91C_HDMA_SRC_REP)
-    #define AT91C_SRC_REP  AT91C_HDMA_SRC_REP
+#define AT91C_SRC_REP  AT91C_HDMA_SRC_REP
 #endif
 #if defined(AT91C_HDMA_DST_REP)
-    #define AT91C_DST_REP  AT91C_HDMA_DST_REP
+#define AT91C_DST_REP  AT91C_HDMA_DST_REP
 #endif
 #if defined(AT91C_HDMA_SRC_PIP)
-    #define AT91C_SRC_PIP  AT91C_HDMA_SRC_PIP
+#define AT91C_SRC_PIP  AT91C_HDMA_SRC_PIP
 #endif
 #if defined(AT91C_HDMA_DST_PIP)
-    #define AT91C_DST_PIP  AT91C_HDMA_DST_PIP
+#define AT91C_DST_PIP  AT91C_HDMA_DST_PIP
 #endif
-    #define AT91C_FC       AT91C_HDMA_FC
-    
-    #define AT91C_BTC             (0xFF <<  0) 
-    #define AT91C_CBTC            (0xFF <<  8) 
-    #define AT91C_ERR             (0xFF << 16) 
+#define AT91C_FC       AT91C_HDMA_FC
+
+#define AT91C_BTC             (0xFF <<  0)
+#define AT91C_CBTC            (0xFF <<  8)
+#define AT91C_ERR             (0xFF << 16)
 #endif
 
 //------------------------------------------------------------------------------
@@ -130,9 +129,11 @@ extern void DMA_Enable(void);
 extern void DMA_Disable(void);
 
 extern void DMA_EnableChannel(unsigned int channel);
+
 extern void DMA_EnableChannels(unsigned int bmChannels);
 
 extern void DMA_DisableChannel(unsigned int channel);
+
 extern void DMA_DisableChannels(unsigned int bmChannels);
 
 extern void DMA_KeeponChannel(unsigned int channel);
@@ -147,9 +148,9 @@ extern unsigned int DMA_GetInterruptMask(void);
 
 extern unsigned int DMA_GetMaskedStatus(void);
 
-extern void DMA_EnableIt (unsigned int flag);
+extern void DMA_EnableIt(unsigned int flag);
 
-extern void DMA_DisableIt (unsigned int flag);
+extern void DMA_DisableIt(unsigned int flag);
 
 extern void DMA_SetSourceAddr(unsigned char channel, unsigned int address);
 
@@ -158,33 +159,33 @@ extern void DMA_SetDestinationAddr(unsigned char channel, unsigned int address);
 extern void DMA_SetDescriptorAddr(unsigned char channel, unsigned int address);
 
 extern void DMA_SetSourceBufferSize(unsigned char channel,
-                             unsigned int size, 
-                             unsigned char sourceWidth, 
-                             unsigned char desDMAdth,
-                             unsigned char done);
+                                    unsigned int size,
+                                    unsigned char sourceWidth,
+                                    unsigned char desDMAdth,
+                                    unsigned char done);
 
-extern void DMA_SetSourceBufferMode(unsigned char channel, 
-                             unsigned char transferMode,
-                             unsigned char addressingType);
-                             
-extern void DMA_SetDestBufferMode(unsigned char channel, 
-                             unsigned char transferMode,
-                             unsigned char addressingType);
-                             
+extern void DMA_SetSourceBufferMode(unsigned char channel,
+                                    unsigned char transferMode,
+                                    unsigned char addressingType);
+
+extern void DMA_SetDestBufferMode(unsigned char channel,
+                                  unsigned char transferMode,
+                                  unsigned char addressingType);
+
 extern void DMA_SetConfiguration(unsigned char channel, unsigned int value);
 
 #if defined(AT91C_SRC_PIP)
-extern void DMA_SPIPconfiguration(unsigned char channel, 
-                     unsigned int pipHole, unsigned int pipBoundary);
+extern void DMA_SPIPconfiguration(unsigned char channel,
+                                  unsigned int pipHole,
+                                  unsigned int pipBoundary);
 #endif
 
 #if defined(AT91C_DST_PIP)
-extern void DMA_DPIPconfiguration(unsigned char channel, 
-                     unsigned int pipHole, unsigned int pipBoundary);
+extern void DMA_DPIPconfiguration(unsigned char channel,
+                                  unsigned int pipHole,
+                                  unsigned int pipBoundary);
 #endif
 
-extern void DMA_SetFlowControl(unsigned char channel,
-                             unsigned int flow);
+extern void DMA_SetFlowControl(unsigned char channel, unsigned int flow);
 
-
-#endif //#ifndef DMA_H
+#endif                          //#ifndef DMA_H

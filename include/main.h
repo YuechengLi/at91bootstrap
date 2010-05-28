@@ -35,7 +35,7 @@
 #define _MAIN_H
 #include	<stdlib.h>
 
-typedef enum _BOOL {FALSE, TRUE} BOOL;
+typedef enum _BOOL { FALSE, TRUE } BOOL;
 
 #ifndef inline
 #define inline __inline
@@ -45,15 +45,14 @@ typedef enum _BOOL {FALSE, TRUE} BOOL;
 #define __asm__ __asm
 #endif
 
-
 #define writel(value, address) \
 	(*(volatile unsigned int *)(address)) = (value)
 #define readl(address) \
 	(*(volatile unsigned int *)(address))
 
-
 #define I_CACHE		(1<<12)
 
 extern void hw_init(void);
-extern div_t	udiv(unsigned int dividend, unsigned int divisor);
-#endif /* _MAIN_H */
+
+extern div_t udiv(unsigned int dividend, unsigned int divisor);
+#endif                          /* _MAIN_H */

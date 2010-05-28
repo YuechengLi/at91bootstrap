@@ -9,4 +9,4 @@
 #ifndef PATH_MAX
 #define PATH_MAX 1024
 #endif
-#endif /* __KCONFIG_FOO_H */
+#endif                          /* __KCONFIG_FOO_H */

@@ -36,7 +36,7 @@
 
 #ifndef AT91C_AIC_SRCTYPE_INT_HIGH_LEVEL
     /// Interrupt is internal and uses a logical 1 level.
-    #define AT91C_AIC_SRCTYPE_INT_HIGH_LEVEL AT91C_AIC_SRCTYPE_INT_LEVEL_SENSITIVE
+#define AT91C_AIC_SRCTYPE_INT_HIGH_LEVEL AT91C_AIC_SRCTYPE_INT_LEVEL_SENSITIVE
 #endif
 
 //------------------------------------------------------------------------------
@@ -57,15 +57,14 @@
 /// \param handler  Interrupt handler function.
 //------------------------------------------------------------------------------
 void IRQ_ConfigureIT(unsigned int source,
-                     unsigned int mode,
-                     void( *handler )( void ))
+                     unsigned int mode, void (*handler) (void))
 {
     // Disable the interrupt first
     AT91C_BASE_AIC->AIC_IDCR = 1 << source;
 
     // Configure mode and handler
     AT91C_BASE_AIC->AIC_SMR[source] = mode;
-    AT91C_BASE_AIC->AIC_SVR[source] = (unsigned int) handler;
+    AT91C_BASE_AIC->AIC_SVR[source] = (unsigned int)handler;
 
     // Clear interrupt
     AT91C_BASE_AIC->AIC_ICCR = 1 << source;
@@ -88,4 +87,3 @@ void IRQ_DisableIT(unsigned int source)
 {
     AT91C_BASE_AIC->AIC_IDCR = 1 << source;
 }
-

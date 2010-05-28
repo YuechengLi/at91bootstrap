@@ -52,7 +52,6 @@
 /// -# MCI_SetBusWidth : Configure the  MCI SDCBUS in the MCI_SDCR register.
 //------------------------------------------------------------------------------
 
-
 #ifndef MCI_H
 #define MCI_H
 
@@ -105,7 +104,6 @@
 /// Stop data transfer
 #define MCI_STOP_TRANSFER       2
 
-
 /// MCI SD Bus Width 1-bit
 #define MCI_SDCBUS_1BIT (0 << 7)
 /// MCI SD Bus Width 4-bit
@@ -124,7 +122,7 @@
 //------------------------------------------------------------------------------
 
 /// MCI end-of-transfer callback function.
-typedef void (*MciCallback)(unsigned char status, void *pCommand);
+typedef void (*MciCallback) (unsigned char status, void *pCommand);
 
 //------------------------------------------------------------------------------
 /// MCI Transfer Request prepared by the application upper layer. This structure
@@ -144,14 +142,14 @@ typedef struct _MciCmd {
     /// Number of blocks to be transfered
     unsigned short nbBlock;
     /// Response buffer.
-    unsigned int  *pResp;
+    unsigned int *pResp;
     /// Optional user-provided callback function.
     MciCallback callback;
     /// Optional argument to the callback function.
     void *pArg;
 
     /// SD card response type.
-    unsigned char  resType;
+    unsigned char resType;
     /// Indicate if there is data transfer
     unsigned char dataTran;
     /// Indicate if continue to transfer data
@@ -187,33 +185,29 @@ typedef struct {
 //         Global functions
 //------------------------------------------------------------------------------
 
-extern void MCI_Init(
-    Mci *pMci,
-    unsigned int pMciHw,
-    unsigned char mciId,
-    unsigned int mode,
-    unsigned int bPolling);
+extern void MCI_Init(Mci * pMci,
+                     unsigned int pMciHw,
+                     unsigned char mciId,
+                     unsigned int mode, unsigned int bPolling);
 
-extern unsigned int MCI_GetSpeed(Mci *pMci, unsigned int *mciDiv);
+extern unsigned int MCI_GetSpeed(Mci * pMci, unsigned int *mciDiv);
 
-extern unsigned int MCI_SetSpeed(Mci *pMci,
+extern unsigned int MCI_SetSpeed(Mci * pMci,
                                  unsigned int mciSpeed,
-                                 unsigned int mciLimit,
-                                 unsigned int mck);
+                                 unsigned int mciLimit, unsigned int mck);
 
-extern unsigned char MCI_SendCommand(Mci *pMci, MciCmd *pMciCmd);
+extern unsigned char MCI_SendCommand(Mci * pMci, MciCmd * pMciCmd);
 
-extern void MCI_Handler(Mci *pMci);
+extern void MCI_Handler(Mci * pMci);
 
-extern unsigned char MCI_IsTxComplete(Mci *pMci);
+extern unsigned char MCI_IsTxComplete(Mci * pMci);
 
-extern unsigned char MCI_CheckBusy(Mci *pMci);
+extern unsigned char MCI_CheckBusy(Mci * pMci);
 
-extern void MCI_Close(Mci *pMci);
+extern void MCI_Close(Mci * pMci);
 
 extern void MCI_EnableHsMode(Mci * pMci, unsigned char hsEnable);
 
-extern void MCI_SetBusWidth(Mci *pMci, unsigned char busWidth);
+extern void MCI_SetBusWidth(Mci * pMci, unsigned char busWidth);
 
-#endif //#ifndef MCI_H
-
+#endif                          //#ifndef MCI_H

@@ -71,14 +71,13 @@
 /* ******************************************************************* */
 #define AT91C_SMARTMEDIA_BASE	0x40000000
 
-#define AT91_SMART_MEDIA_ALE    (1 << 21)	/* our ALE is AD21 */
-#define AT91_SMART_MEDIA_CLE    (1 << 22)	/* our CLE is AD22 */
+#define AT91_SMART_MEDIA_ALE    (1 << 21)       /* our ALE is AD21 */
+#define AT91_SMART_MEDIA_CLE    (1 << 22)       /* our CLE is AD22 */
 
 #define NAND_DISABLE_CE() do { *(volatile unsigned int *)AT91C_PIOC_SODR = AT91C_PIO_PC14;} while(0)
 #define NAND_ENABLE_CE() do { *(volatile unsigned int *)AT91C_PIOC_CODR = AT91C_PIO_PC14;} while(0)
 
 #define NAND_WAIT_READY() while (!(*(volatile unsigned int *)AT91C_PIOC_PDSR & AT91C_PIO_PC13))
-
 
 /* ******************************************************************** */
 /* SMC Chip Select 3 Timings for NandFlash for MASTER_CLOCK = 133000000.*/
@@ -89,12 +88,12 @@
 #define AT91C_SM_NCS_WR_SETUP	(0 << 8)
 #define AT91C_SM_NRD_SETUP	(2 << 16)
 #define AT91C_SM_NCS_RD_SETUP	(0 << 24)
-  
+
 #define AT91C_SM_NWE_PULSE 	(4 << 0)
 #define AT91C_SM_NCS_WR_PULSE	(4 << 8)
 #define AT91C_SM_NRD_PULSE	(4 << 16)
 #define AT91C_SM_NCS_RD_PULSE	(4 << 24)
-  
+
 #define AT91C_SM_NWE_CYCLE 	(7 << 0)
 #define AT91C_SM_NRD_CYCLE	(7 << 16)
 
@@ -103,7 +102,7 @@
 #define OP_BOOTSTRAP_MCI_on
 #define BOARD_SD_PIN_CD \
     {1 << 9, AT91C_BASE_PIOC, AT91C_ID_PIOC, PIO_INPUT, PIO_PULLUP}
-	
+
 #define BOARD_SD_PINS \
     {0x0000003B, AT91C_BASE_PIOA, AT91C_ID_PIOA, PIO_PERIPH_B, PIO_PULLUP}, \
     {1 << 8, AT91C_BASE_PIOA, AT91C_ID_PIOA, PIO_PERIPH_A, PIO_DEFAULT}
@@ -111,7 +110,7 @@
 /// List of second MCI slot pins definitions.
 #define BOARD_SD_MCI1_PINS  \
     {0xec0, AT91C_BASE_PIOA, AT91C_ID_PIOA, PIO_PERIPH_A, PIO_PULLUP}, \
-    {1 << 8, AT91C_BASE_PIOA, AT91C_ID_PIOA, PIO_PERIPH_A, PIO_DEFAULT}	
+    {1 << 8, AT91C_BASE_PIOA, AT91C_ID_PIOA, PIO_PERIPH_A, PIO_DEFAULT}
 
 #define at91sam9g20
-#endif	/* _AT91SAM9G20EK_H */
+#endif                          /* _AT91SAM9G20EK_H */

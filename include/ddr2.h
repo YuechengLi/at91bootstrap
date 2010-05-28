@@ -36,6 +36,7 @@
 /* To be defined */
 #define AT91C_SDRAM 		((volatile unsigned int *)AT91C_EBI_SDRAM)
 extern int ddr2_init(unsigned int sdramc_cr, unsigned int sdramc_tr);
+
 extern void ddr2_hw_init(void);
 
 #endif

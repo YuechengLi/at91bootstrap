@@ -40,13 +40,13 @@
 /* Write SDDRC register */
 static inline void write_sddrc(unsigned int offset, const unsigned int value)
 {
-	writel(value, offset + AT91C_BASE_SDDRC);
+    writel(value, offset + AT91C_BASE_SDDRC);
 }
 
 /* Read SDDRC registers */
 static inline unsigned int read_sddrc(unsigned int offset)
 {
-	return readl(offset + AT91C_BASE_SDDRC);
+    return readl(offset + AT91C_BASE_SDDRC);
 }
 
 //*----------------------------------------------------------------------------
@@ -55,74 +55,112 @@ static inline unsigned int read_sddrc(unsigned int offset)
 //*----------------------------------------------------------------------------
 int sddrc_init(unsigned int sdramc_cr, unsigned int sdramc_tr)
 {
-	volatile unsigned int i;
+    volatile unsigned int i;
 
-	/* Performs the hardware initialization */
-	sddrc_hw_init();
+    /*
+     * Performs the hardware initialization 
+     */
+    sddrc_hw_init();
 
-	/* 32 bit mode, SDRAM type */
-	write_sddrc(SDDRC_MDR, 0x00000000);
+    /*
+     * 32 bit mode, SDRAM type 
+     */
+    write_sddrc(SDDRC_MDR, 0x00000000);
 
-	/* CFG Control Register */
-	write_sddrc(SDDRC_CR, sdramc_cr);
+    /*
+     * CFG Control Register 
+     */
+    write_sddrc(SDDRC_CR, sdramc_cr);
 
-	/* inhibit low power */
-	write_sddrc(SDDRC_LPR, 0x00000000);
+    /*
+     * inhibit low power 
+     */
+    write_sddrc(SDDRC_LPR, 0x00000000);
 
-	/* sleep */
-	for (i = 0; i < 1000;i++);
+    /*
+     * sleep 
+     */
+    for (i = 0; i < 1000; i++) ;
 
-	/* nop */
-	write_sddrc(SDDRC_MR, AT91C_MODE_NOP_CMD);
-	writel(0x00000000, AT91C_SDRAM);
+    /*
+     * nop 
+     */
+    write_sddrc(SDDRC_MR, AT91C_MODE_NOP_CMD);
+    writel(0x00000000, AT91C_SDRAM);
 
-	/* nop */
-	write_sddrc(SDDRC_MR, AT91C_MODE_NOP_CMD);
-	writel(0x00000000, AT91C_SDRAM);
+    /*
+     * nop 
+     */
+    write_sddrc(SDDRC_MR, AT91C_MODE_NOP_CMD);
+    writel(0x00000000, AT91C_SDRAM);
 
-	/* nop */
-	write_sddrc(SDDRC_MR, AT91C_MODE_NOP_CMD);
-	writel(0x00000000, AT91C_SDRAM);
+    /*
+     * nop 
+     */
+    write_sddrc(SDDRC_MR, AT91C_MODE_NOP_CMD);
+    writel(0x00000000, AT91C_SDRAM);
 
-	/* precharge all banks */
-	write_sddrc(SDDRC_MR, AT91C_MODE_PRCGALL_CMD);
-	writel(0x00000000, AT91C_SDRAM);
+    /*
+     * precharge all banks 
+     */
+    write_sddrc(SDDRC_MR, AT91C_MODE_PRCGALL_CMD);
+    writel(0x00000000, AT91C_SDRAM);
 
-	/* sleep */
-	for (i = 0; i < 1000;i++);
+    /*
+     * sleep 
+     */
+    for (i = 0; i < 1000; i++) ;
 
-	/* auto refresh */
-	write_sddrc(SDDRC_MR, AT91C_MODE_RFSH_CMD);
-	writel(0x00000000, AT91C_SDRAM);
+    /*
+     * auto refresh 
+     */
+    write_sddrc(SDDRC_MR, AT91C_MODE_RFSH_CMD);
+    writel(0x00000000, AT91C_SDRAM);
 
-	/* sleep */
-	for (i = 0; i < 1000;i++);
+    /*
+     * sleep 
+     */
+    for (i = 0; i < 1000; i++) ;
 
-	/* auto refresh */
-	write_sddrc(SDDRC_MR, AT91C_MODE_RFSH_CMD);
-	writel(0x00000000, AT91C_SDRAM);
+    /*
+     * auto refresh 
+     */
+    write_sddrc(SDDRC_MR, AT91C_MODE_RFSH_CMD);
+    writel(0x00000000, AT91C_SDRAM);
 
-	/* sleep */
-	for (i = 0; i < 1000;i++);
+    /*
+     * sleep 
+     */
+    for (i = 0; i < 1000; i++) ;
 
-	/* lmr */
-	write_sddrc(SDDRC_MR, AT91C_MODE_LMR_CMD);
-	writel(0x5a5a5b5b, AT91C_SDRAM + 20);
+    /*
+     * lmr 
+     */
+    write_sddrc(SDDRC_MR, AT91C_MODE_LMR_CMD);
+    writel(0x5a5a5b5b, AT91C_SDRAM + 20);
 
-	/* auto refresh */
-	write_sddrc(SDDRC_MR, AT91C_MODE_NORMAL_CMD);
-	writel(0x00000000, AT91C_SDRAM);
+    /*
+     * auto refresh 
+     */
+    write_sddrc(SDDRC_MR, AT91C_MODE_NORMAL_CMD);
+    writel(0x00000000, AT91C_SDRAM);
 
-	/* refresh timer */
-	write_sddrc(SDDRC_RTR, sdramc_tr);
+    /*
+     * refresh timer 
+     */
+    write_sddrc(SDDRC_RTR, sdramc_tr);
 
-	/* disable high speed */
-	write_sddrc(SDDRC_HS, 0x00000000);
+    /*
+     * disable high speed 
+     */
+    write_sddrc(SDDRC_HS, 0x00000000);
 
-	/* sleep */
-	for (i = 0; i < 1000;i++);
+    /*
+     * sleep 
+     */
+    for (i = 0; i < 1000; i++) ;
 
-	return 0;
+    return 0;
 }
 
-#endif /* CFG_SDDRC */
+#endif                          /* CFG_SDDRC */

@@ -48,6 +48,7 @@
 static unsigned char CountBitsInByte(unsigned char byte)
 {
     unsigned char count = 0;
+
     while (byte > 0) {
 
         if (byte & 1) {
@@ -67,8 +68,8 @@ static unsigned char CountBitsInByte(unsigned char byte)
 static unsigned char CountBitsInCode256(unsigned char *code)
 {
     return CountBitsInByte(code[0])
-           + CountBitsInByte(code[1])
-           + CountBitsInByte(code[2]);
+        + CountBitsInByte(code[1])
+        + CountBitsInByte(code[2]);
 }
 
 //------------------------------------------------------------------------------
@@ -79,15 +80,20 @@ static unsigned char CountBitsInCode256(unsigned char *code)
 static void Compute256(const unsigned char *data, unsigned char *code)
 {
     unsigned int i;
+
     unsigned char columnSum = 0;
+
     unsigned char evenLineCode = 0;
+
     unsigned char oddLineCode = 0;
+
     unsigned char evenColumnCode = 0;
+
     unsigned char oddColumnCode = 0;
 
     // Xor all bytes together to get the column sum;
     // At the same time, calculate the even and odd line codes
-    for (i=0; i < 256; i++) {
+    for (i = 0; i < 256; i++) {
 
         columnSum ^= data[i];
 
@@ -130,7 +136,7 @@ static void Compute256(const unsigned char *data, unsigned char *code)
 
     // At this point, we have the line parities, and the column sum. First, We
     // must caculate the parity group values on the column sum.
-    for (i=0; i < 8; i++) {
+    for (i = 0; i < 8; i++) {
 
         if (columnSum & 1) {
 
@@ -150,7 +156,7 @@ static void Compute256(const unsigned char *data, unsigned char *code)
     code[1] = 0;
     code[2] = 0;
 
-    for (i=0; i < 4; i++) {
+    for (i = 0; i < 4; i++) {
 
         code[0] <<= 2;
         code[1] <<= 2;
@@ -165,7 +171,6 @@ static void Compute256(const unsigned char *data, unsigned char *code)
 
             code[0] |= 1;
         }
-
         // Line 2
         if ((oddLineCode & 0x08) != 0) {
 
@@ -175,7 +180,6 @@ static void Compute256(const unsigned char *data, unsigned char *code)
 
             code[1] |= 1;
         }
-
         // Column
         if ((oddColumnCode & 0x04) != 0) {
 
@@ -198,7 +202,7 @@ static void Compute256(const unsigned char *data, unsigned char *code)
     code[2] = ~code[2];
 #if 0
     TRACE_DEBUG("Computed code = %02X %02X %02X\n\r",
-              code[0], code[1], code[2]);
+                code[0], code[1], code[2]);
 #endif
 }
 
@@ -209,13 +213,14 @@ static void Compute256(const unsigned char *data, unsigned char *code)
 /// \param data  Data buffer to check.
 /// \param originalCode  Hamming code to use for verifying the data.
 //------------------------------------------------------------------------------
-static unsigned char Verify256(
-    unsigned char *data,
-    const unsigned char *originalCode)
+static unsigned char Verify256(unsigned char *data,
+                               const unsigned char *originalCode)
 {
     // Calculate new code
     unsigned char computedCode[3];
+
     unsigned char correctionCode[3];
+
     Compute256(data, computedCode);
 
     // Xor both codes together
@@ -225,7 +230,7 @@ static unsigned char Verify256(
 
 #if 0
     TRACE_DEBUG("Correction code = %02X %02X %02X\n\r",
-              correctionCode[0], correctionCode[1], correctionCode[2]);
+                correctionCode[0], correctionCode[1], correctionCode[2]);
 #endif
 
     // If all bytes are 0, there is no error
@@ -240,7 +245,9 @@ static unsigned char Verify256(
 
         // Get byte and bit indexes
         unsigned char byte = correctionCode[0] & 0x80;
+
         unsigned char bit = (correctionCode[2] >> 5) & 0x04;
+
         byte |= (correctionCode[0] << 1) & 0x40;
         byte |= (correctionCode[0] << 2) & 0x20;
         byte |= (correctionCode[0] << 3) & 0x10;
@@ -284,10 +291,8 @@ static unsigned char Verify256(
 /// \param size  Data size in bytes.
 /// \param code  Codes buffer.
 //------------------------------------------------------------------------------
-void Hamming_Compute256x(
-    const unsigned char *data,
-    unsigned int size,
-    unsigned char *code)
+void Hamming_Compute256x(const unsigned char *data,
+                         unsigned int size, unsigned char *code)
 {
 #if 0
     TRACE_DEBUG("Hamming_Compute256x()\n\r");
@@ -312,12 +317,11 @@ void Hamming_Compute256x(
 /// \param size  Size of the data in bytes.
 /// \param code  Original codes.
 //------------------------------------------------------------------------------
-unsigned char Hamming_Verify256x(
-    unsigned char *data,
-    unsigned int size,
-    const unsigned char *code)
+unsigned char Hamming_Verify256x(unsigned char *data,
+                                 unsigned int size, const unsigned char *code)
 {
     unsigned char error;
+
     unsigned char result = 0;
 
     while (size > 0) {
@@ -326,8 +330,7 @@ unsigned char Hamming_Verify256x(
         if (error == Hamming_ERROR_SINGLEBIT) {
 
             result = Hamming_ERROR_SINGLEBIT;
-        }
-        else if (error) {
+        } else if (error) {
 
             return error;
         }
@@ -339,4 +342,3 @@ unsigned char Hamming_Verify256x(
 
     return result;
 }
-

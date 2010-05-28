@@ -47,10 +47,11 @@ unsigned int numMedias = 0;
 //! \see    S_media
 //------------------------------------------------------------------------------
 #if 0
-void MED_HandleAll(Media *pMedia, unsigned char bNumMedia)
+void MED_HandleAll(Media * pMedia, unsigned char bNumMedia)
 {
     // Check each media for interrupts to handle
     unsigned int i;
+
     for (i = 0; i < bNumMedia; i++) {
 
         MED_Handler(&(pMedia[i]));

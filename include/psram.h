@@ -55,5 +55,4 @@
 #if	defined(CONFIG_PSRAM)
 extern void psram_hw_init(void);
 #endif
-#endif /* PSRAM_H_ */
-
+#endif                          /* PSRAM_H_ */

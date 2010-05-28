@@ -43,17 +43,17 @@
 #if	defined(CONFIG_CPU_CLK_200MHZ)
 
 #if	defined(CONFIG_CRYSTAL_16_36766MHZ)
-	#define MASTER_CLOCK		(199919000/2)
-	#define PLL_LOCK_TIMEOUT	1000000
-	#define PLLA_SETTINGS		0x20AABF0E
-	#define PLLB_SETTINGS		0x10483F0E
+#define MASTER_CLOCK		(199919000/2)
+#define PLL_LOCK_TIMEOUT	1000000
+#define PLLA_SETTINGS		0x20AABF0E
+#define PLLB_SETTINGS		0x10483F0E
 #endif
 
 #if	defined(CONFIG_CRYSTAL_18_432MHZ)
-	#define MASTER_CLOCK		(198656000/2)
-	#define PLL_LOCK_TIMEOUT	1000000
-	#define PLLA_SETTINGS		0x2060BF09
-	#define PLLB_SETTINGS		0x10483F0E
+#define MASTER_CLOCK		(198656000/2)
+#define PLL_LOCK_TIMEOUT	1000000
+#define PLLA_SETTINGS		0x2060BF09
+#define PLLB_SETTINGS		0x10483F0E
 #endif
 
 #endif
@@ -61,18 +61,17 @@
 #if	defined(CONFIG_CPU_CLK_240MHZ)
 
 #if	defined(CONFIG_CRYSTAL_16_36766MHZ)
-#error	"240 MHz not supported for a 16.36766 MHz crystal (Only 200 MHz)" 
+#error	"240 MHz not supported for a 16.36766 MHz crystal (Only 200 MHz)"
 #endif
 
 #if	defined(CONFIG_CRYSTAL_18_432MHZ)
-	#define MASTER_CLOCK		(240000000/2)
-	#define PLL_LOCK_TIMEOUT	1000000
-	#define PLLA_SETTINGS		0x2271BF30 // 00100 01001110001 10 111111 00110000b
-	#define PLLB_SETTINGS		0x10483F0E
+#define MASTER_CLOCK		(240000000/2)
+#define PLL_LOCK_TIMEOUT	1000000
+#define PLLA_SETTINGS		0x2271BF30      // 00100 01001110001 10 111111 00110000b
+#define PLLB_SETTINGS		0x10483F0E
 #endif
 
 #endif
-
 
 #define	TOP_OF_MEMORY		0x314000
 
@@ -89,8 +88,8 @@
 
 /* AC characteristics */
 /* DLYBS = tCSS= 250ns min and DLYBCT = tCSH = 250ns */
-#define DATAFLASH_TCSS		(0x1a << 16)	/* 250ns min (tCSS) <=> 12/48000000 = 250ns */
-#define DATAFLASH_TCHS		(0x1 << 24)	/* 250ns min (tCSH) <=> (64*1+SCBR)/(2*48000000) */
+#define DATAFLASH_TCSS		(0x1a << 16)    /* 250ns min (tCSS) <=> 12/48000000 = 250ns */
+#define DATAFLASH_TCHS		(0x1 << 24)     /* 250ns min (tCSH) <=> (64*1+SCBR)/(2*48000000) */
 
 #define DF_CS_SETTINGS 		(AT91C_SPI_NCPHA | (AT91C_SPI_DLYBS & DATAFLASH_TCSS) | (AT91C_SPI_DLYBCT & DATAFLASH_TCHS) | ((MASTER_CLOCK / AT91C_SPI_CLK) << 8))
 
@@ -107,8 +106,8 @@
 /* ******************************************************************* */
 #define AT91C_SMARTMEDIA_BASE	0x40000000
 
-#define AT91_SMART_MEDIA_ALE    (1 << 21)	/* our ALE is AD21 */
-#define AT91_SMART_MEDIA_CLE    (1 << 22)	/* our CLE is AD22 */
+#define AT91_SMART_MEDIA_ALE    (1 << 21)       /* our ALE is AD21 */
+#define AT91_SMART_MEDIA_CLE    (1 << 22)       /* our CLE is AD22 */
 
 #define NAND_DISABLE_CE() do { *(volatile unsigned int *)AT91C_PIOD_SODR = AT91C_PIO_PD15;} while(0)
 #define NAND_ENABLE_CE()  do { *(volatile unsigned int *)AT91C_PIOD_CODR = AT91C_PIO_PD15;} while(0)
@@ -130,12 +129,12 @@
 #define AT91C_SM_NCS_WR_SETUP	(1 << 8)
 #define AT91C_SM_NRD_SETUP	(1 << 16)
 #define AT91C_SM_NCS_RD_SETUP	(1 << 24)
-  
+
 #define AT91C_SM_NWE_PULSE 	(3 << 0)
 #define AT91C_SM_NCS_WR_PULSE	(3 << 8)
 #define AT91C_SM_NRD_PULSE	(3 << 16)
 #define AT91C_SM_NCS_RD_PULSE	(3 << 24)
-  
+
 #define AT91C_SM_NWE_CYCLE 	(5 << 0)
 #define AT91C_SM_NRD_CYCLE	(5 << 16)
 
@@ -144,7 +143,7 @@
 #define OP_BOOTSTRAP_MCI_on
 #define BOARD_SD_PIN_CD \
     {1 << 16, AT91C_BASE_PIOE, AT91C_ID_PIOCDE, PIO_INPUT, PIO_PULLUP}
-	
+
 #define BOARD_SD_PINS \
     {0x0000003B, AT91C_BASE_PIOA, AT91C_ID_PIOA, PIO_PERIPH_A, PIO_PULLUP}, \
     {1 << 12, AT91C_BASE_PIOA, AT91C_ID_PIOA, PIO_PERIPH_A, PIO_DEFAULT}
@@ -154,10 +153,10 @@
 
 #define BOARD_SD_MCI1_PIN_CD \
     {1 << 18, AT91C_BASE_PIOE, AT91C_ID_PIOCDE, PIO_INPUT, PIO_PULLUP}
-	
+
 #define BOARD_SD_MCI1_PINS  \
     {0xf80, AT91C_BASE_PIOA, AT91C_ID_PIOA, PIO_PERIPH_A, PIO_PULLUP}, \
-    {1 << 6, AT91C_BASE_PIOA, AT91C_ID_PIOA, PIO_PERIPH_A, PIO_DEFAULT}	
+    {1 << 6, AT91C_BASE_PIOA, AT91C_ID_PIOA, PIO_PERIPH_A, PIO_DEFAULT}
 
 #define at91sam9263
-#endif	/* _AT91SAM9263EK_H */
+#endif                          /* _AT91SAM9263EK_H */

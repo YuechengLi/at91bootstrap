@@ -39,7 +39,9 @@
 	(mck / (baud * 16) + 1) : ((mck) / (baud * 16))
 
 extern void dbgu_init(unsigned int);
+
 extern void dbgu_print(const char *ptr);
+
 extern char dbgu_getc(void);
 
 #endif /*_DEBUG_H_*/

@@ -48,17 +48,19 @@
 #ifndef CONFIG_THUMB
 static inline unsigned int get_cp15(void)
 {
-	unsigned int value;
-	__asm__("mrc p15, 0, %0, c1, c0, 0" : "=r" (value));
-	return value;
+    unsigned int value;
+
+ __asm__("mrc p15, 0, %0, c1, c0, 0":"=r"(value));
+    return value;
 }
 
 static inline void set_cp15(unsigned int value)
 {
-	__asm__("mcr p15, 0, %0, c1, c0, 0" : : "r" (value));
+ __asm__("mcr p15, 0, %0, c1, c0, 0": :"r"(value));
 }
 #else
 int get_cp15(void);
+
 void set_cp15(unsigned int value);
 #endif
 
@@ -71,91 +73,116 @@ void set_cp15(unsigned int value);
 /*----------------------------------------------------------------------------*/
 void hw_init(void)
 {
-	unsigned int cp15;
+    unsigned int cp15;
 
-	/* Configure PIOs */
-	const struct pio_desc hw_pio[] = {
+    /*
+     * Configure PIOs 
+     */
+    const struct pio_desc hw_pio[] = {
 #ifdef CONFIG_DEBUG
-		{"RXD", AT91C_PIN_PB(12), 0, PIO_DEFAULT, PIO_PERIPH_A},
-		{"TXD", AT91C_PIN_PB(13), 0, PIO_DEFAULT, PIO_PERIPH_A},
+        {"RXD", AT91C_PIN_PB(12), 0, PIO_DEFAULT, PIO_PERIPH_A},
+        {"TXD", AT91C_PIN_PB(13), 0, PIO_DEFAULT, PIO_PERIPH_A},
 #endif
-		{(char *) 0, 0, 0, PIO_DEFAULT, PIO_PERIPH_A},
-	};
+        {(char *)0, 0, 0, PIO_DEFAULT, PIO_PERIPH_A},
+    };
 
-	/* Disable watchdog */
-	writel(AT91C_WDTC_WDDIS, AT91C_BASE_WDTC + WDTC_WDMR);
+    /*
+     * Disable watchdog 
+     */
+    writel(AT91C_WDTC_WDDIS, AT91C_BASE_WDTC + WDTC_WDMR);
 
-	/* At this stage the main oscillator is supposed to be enabled
-	 * PCK = MCK = MOSC */
-	writel(0x00, AT91C_BASE_PMC + PMC_PLLICPR);
+    /*
+     * At this stage the main oscillator is supposed to be enabled
+     * * PCK = MCK = MOSC 
+     */
+    writel(0x00, AT91C_BASE_PMC + PMC_PLLICPR);
 
-	/* Configure PLLA = MOSC * (PLL_MULA + 1) / PLL_DIVA */
-	pmc_cfg_plla(PLLA_SETTINGS, PLL_LOCK_TIMEOUT);
+    /*
+     * Configure PLLA = MOSC * (PLL_MULA + 1) / PLL_DIVA 
+     */
+    pmc_cfg_plla(PLLA_SETTINGS, PLL_LOCK_TIMEOUT);
 
-	/* PCK = PLLA/2 = 3 * MCK */
-	pmc_cfg_mck(BOARD_PRESCALER, PLL_LOCK_TIMEOUT);
+    /*
+     * PCK = PLLA/2 = 3 * MCK 
+     */
+    pmc_cfg_mck(BOARD_PRESCALER, PLL_LOCK_TIMEOUT);
 
-	/* Switch MCK on PLLA output */
-	pmc_cfg_mck(0x1302, PLL_LOCK_TIMEOUT);
+    /*
+     * Switch MCK on PLLA output 
+     */
+    pmc_cfg_mck(0x1302, PLL_LOCK_TIMEOUT);
 
-	/* Configure PLLB */
-	//pmc_cfg_pllutmi(PLLUTMI_SETTINGS, PLL_LOCK_TIMEOUT);
+    /*
+     * Configure PLLB 
+     */
+    //pmc_cfg_pllutmi(PLLUTMI_SETTINGS, PLL_LOCK_TIMEOUT);
 
-	/* Enable External Reset */
-	writel(AT91C_RSTC_KEY_UNLOCK || AT91C_RSTC_URSTEN, AT91C_BASE_RSTC + RSTC_RMR);
+    /*
+     * Enable External Reset 
+     */
+    writel(AT91C_RSTC_KEY_UNLOCK
+           || AT91C_RSTC_URSTEN, AT91C_BASE_RSTC + RSTC_RMR);
 
-	/* Configure CP15 */
-	cp15 = get_cp15();
-	//cp15 |= I_CACHE;
-	set_cp15(cp15);
+    /*
+     * Configure CP15 
+     */
+    cp15 = get_cp15();
+    //cp15 |= I_CACHE;
+    set_cp15(cp15);
 
-	/* Configure the PIO controller */
-	pio_setup(hw_pio);
+    /*
+     * Configure the PIO controller 
+     */
+    pio_setup(hw_pio);
 
 #ifdef CONFIG_DEBUG
 
-	/* Enable Debug messages on the DBGU */
-	dbgu_init(BAUDRATE(MASTER_CLOCK, 115200));
+    /*
+     * Enable Debug messages on the DBGU 
+     */
+    dbgu_init(BAUDRATE(MASTER_CLOCK, 115200));
 
-	dbgu_print("Start AT91Bootstrap...\n\r");
-#endif /* CONFIG_VERBOSE */
+    dbgu_print("Start AT91Bootstrap...\n\r");
+#endif                          /* CONFIG_VERBOSE */
 
 #ifdef CONFIG_DDR2
-	/* Configure DDRAM Controller */
-	ddramc_hw_init();
-#endif /* CONFIG_DDR2 */
+    /*
+     * Configure DDRAM Controller 
+     */
+    ddramc_hw_init();
+#endif                          /* CONFIG_DDR2 */
 }
-#endif /* CONFIG_HW_INIT */
+#endif                          /* CONFIG_HW_INIT */
 
 #ifdef CONFIG_DDR2
-static	SDdramConfig ddram_config = {	
-	.ddramc_mdr  = (AT91C_DDRC2_DBW_16_BITS | AT91C_DDRC2_MD_DDR2_SDRAM),
-		
-	.ddramc_cr   = (AT91C_DDRC2_NC_DDR10_SDR9  |     	// 10 column bits (1K)
-			AT91C_DDRC2_NR_14          |     	// 14 row bits    (8K)
-			AT91C_DDRC2_CAS_3          |     	// CAS Latency 3
-			AT91C_DDRC2_DLL_RESET_DISABLED),	// DLL not reset
+static SDdramConfig ddram_config = {
+    .ddramc_mdr = (AT91C_DDRC2_DBW_16_BITS | AT91C_DDRC2_MD_DDR2_SDRAM),
 
-	.ddramc_rtr  = 	0x24B,
+    .ddramc_cr = (AT91C_DDRC2_NC_DDR10_SDR9 |   // 10 column bits (1K)
+                  AT91C_DDRC2_NR_14 |   // 14 row bits    (8K)
+                  AT91C_DDRC2_CAS_3 |   // CAS Latency 3
+                  AT91C_DDRC2_DLL_RESET_DISABLED),      // DLL not reset
 
-	.ddramc_t0pr = (AT91C_DDRC2_TRAS_6  |		//  6 * 7.5 = 45   ns
-			AT91C_DDRC2_TRCD_2  |		//  2 * 7.5 = 22.5 ns
-			AT91C_DDRC2_TWR_2   |		//  2 * 7.5 = 15   ns
-			AT91C_DDRC2_TRC_8  |		//  8 * 7.5 = 75   ns
-			AT91C_DDRC2_TRP_2   |		//  2 * 7.5 = 22.5 ns
-			AT91C_DDRC2_TRRD_1  |		//  1 * 7.5 = 7.5   ns
-			AT91C_DDRC2_TWTR_1  |		//  1 clock cycle
-			AT91C_DDRC2_TMRD_2),		//  2 clock cycles
-		
-	.ddramc_t1pr = (AT91C_DDRC2_TXP_2  |		//  2 * 7.5 = 15 ns
-			200 << 16           |		// 200 clock cycles, TXSRD: Exit self refresh delay to Read command
-			16 << 8             |		// 16 * 7.5 = 120 ns TXSNR: Exit self refresh delay to non read command
-			AT91C_DDRC2_TRFC_14 << 0),	// 14 * 7.5 = 142 ns (must be 140 ns for 1Gb DDR)
+    .ddramc_rtr = 0x24B,
 
-	.ddramc_t2pr = (AT91C_DDRC2_TRTP_1   |		//  1 * 7.5 = 7.5 ns
-			AT91C_DDRC2_TRPA_0   |		//  0 * 7.5 = 0 ns
-			AT91C_DDRC2_TXARDS_7 |		//  7 clock cycles
-			AT91C_DDRC2_TXARD_2),		//  2 clock cycles
+    .ddramc_t0pr = (AT91C_DDRC2_TRAS_6 |        //  6 * 7.5 = 45   ns
+                    AT91C_DDRC2_TRCD_2 |        //  2 * 7.5 = 22.5 ns
+                    AT91C_DDRC2_TWR_2 | //  2 * 7.5 = 15   ns
+                    AT91C_DDRC2_TRC_8 | //  8 * 7.5 = 75   ns
+                    AT91C_DDRC2_TRP_2 | //  2 * 7.5 = 22.5 ns
+                    AT91C_DDRC2_TRRD_1 |        //  1 * 7.5 = 7.5   ns
+                    AT91C_DDRC2_TWTR_1 |        //  1 clock cycle
+                    AT91C_DDRC2_TMRD_2),        //  2 clock cycles
+
+    .ddramc_t1pr = (AT91C_DDRC2_TXP_2 | //  2 * 7.5 = 15 ns
+                    200 << 16 | // 200 clock cycles, TXSRD: Exit self refresh delay to Read command
+                    16 << 8 |   // 16 * 7.5 = 120 ns TXSNR: Exit self refresh delay to non read command
+                    AT91C_DDRC2_TRFC_14 << 0),  // 14 * 7.5 = 142 ns (must be 140 ns for 1Gb DDR)
+
+    .ddramc_t2pr = (AT91C_DDRC2_TRTP_1 |        //  1 * 7.5 = 7.5 ns
+                    AT91C_DDRC2_TRPA_0 |        //  0 * 7.5 = 0 ns
+                    AT91C_DDRC2_TXARDS_7 |      //  7 clock cycles
+                    AT91C_DDRC2_TXARD_2),       //  2 clock cycles
 };
 
 /*------------------------------------------------------------------------------*/
@@ -164,23 +191,33 @@ static	SDdramConfig ddram_config = {
 /*------------------------------------------------------------------------------*/
 void ddramc_hw_init(void)
 {
-	// ENABLE DDR2 clock 
-	writel(AT91C_PMC_DDR, AT91C_BASE_PMC + PMC_SCER);
+    // ENABLE DDR2 clock 
+    writel(AT91C_PMC_DDR, AT91C_BASE_PMC + PMC_SCER);
 
-	/* DDRAM2 controller */
-	ddram_init(AT91C_BASE_DDR2C, AT91C_DDR2, &ddram_config);
+    /*
+     * DDRAM2 controller 
+     */
+    ddram_init(AT91C_BASE_DDR2C, AT91C_DDR2, &ddram_config);
 
-	/* Setup Smart Media, first enable the address range of CS3 in HMATRIX user interface */
-	writel(readl(AT91C_BASE_CCFG + CCFG_EBICSA) | AT91C_EBI_CS1A_SDRAMC, AT91C_BASE_CCFG + CCFG_EBICSA);
-	
-	/* EBI IO in 1.8V mode */
-	writel(readl(AT91C_BASE_CCFG + CCFG_EBICSA) & ~(1<<16), AT91C_BASE_CCFG + CCFG_EBICSA);
-	
-	/* EBI DDRAM controller */
-	ddram_init(AT91C_BASE_DDR2CP1, AT91C_EBI_CS1, &ddram_config);
+    /*
+     * Setup Smart Media, first enable the address range of CS3 in HMATRIX user interface 
+     */
+    writel(readl(AT91C_BASE_CCFG + CCFG_EBICSA) | AT91C_EBI_CS1A_SDRAMC,
+           AT91C_BASE_CCFG + CCFG_EBICSA);
+
+    /*
+     * EBI IO in 1.8V mode 
+     */
+    writel(readl(AT91C_BASE_CCFG + CCFG_EBICSA) & ~(1 << 16),
+           AT91C_BASE_CCFG + CCFG_EBICSA);
+
+    /*
+     * EBI DDRAM controller 
+     */
+    ddram_init(AT91C_BASE_DDR2CP1, AT91C_EBI_CS1, &ddram_config);
 
 }
-#endif /* CONFIG_DDR2 */
+#endif                          /* CONFIG_DDR2 */
 
 #ifdef CONFIG_DATAFLASH
 #if	defined(CONFIG_DATAFLASH_RECOVERY)
@@ -200,22 +237,24 @@ void df_recovery(AT91PS_DF pDf)
 /*------------------------------------------------------------------------------*/
 void df_hw_init(void)
 {
-	/* Configure PIOs */
-	const struct pio_desc df_pio[] = {
-		{"MISO",  AT91C_PIN_PB(0), 0, PIO_DEFAULT, PIO_PERIPH_A},
-		{"MOSI",  AT91C_PIN_PB(1), 0, PIO_DEFAULT, PIO_PERIPH_A},
-		{"SPCK",  AT91C_PIN_PB(2), 0, PIO_DEFAULT, PIO_PERIPH_A},
-		{"NPCS0", AT91C_PIN_PB(3), 0, PIO_DEFAULT, PIO_PERIPH_A},
-		{"NPCS1", AT91C_PIN_PC(11), 0, PIO_DEFAULT, PIO_PERIPH_B},
-		{(char *) 0, 0, 0, PIO_DEFAULT, PIO_PERIPH_A},
-	};
+    /*
+     * Configure PIOs 
+     */
+    const struct pio_desc df_pio[] = {
+        {"MISO", AT91C_PIN_PB(0), 0, PIO_DEFAULT, PIO_PERIPH_A},
+        {"MOSI", AT91C_PIN_PB(1), 0, PIO_DEFAULT, PIO_PERIPH_A},
+        {"SPCK", AT91C_PIN_PB(2), 0, PIO_DEFAULT, PIO_PERIPH_A},
+        {"NPCS0", AT91C_PIN_PB(3), 0, PIO_DEFAULT, PIO_PERIPH_A},
+        {"NPCS1", AT91C_PIN_PC(11), 0, PIO_DEFAULT, PIO_PERIPH_B},
+        {(char *)0, 0, 0, PIO_DEFAULT, PIO_PERIPH_A},
+    };
 
-	/* Configure the PIO controller */
-	pio_setup(df_pio);
+    /*
+     * Configure the PIO controller 
+     */
+    pio_setup(df_pio);
 }
-#endif /* CONFIG_DATAFLASH */
-
-
+#endif                          /* CONFIG_DATAFLASH */
 
 #ifdef CONFIG_NANDFLASH
 /*------------------------------------------------------------------------------*/
@@ -234,31 +273,47 @@ static void nand_recovery(void)
 /*------------------------------------------------------------------------------*/
 void nandflash_hw_init(void)
 {
-	/* Configure PIOs */
-	const struct pio_desc nand_pio[] = {
-		{"RDY_BSY", AT91C_PIN_PC(8), 0, PIO_PULLUP, PIO_INPUT},
-		{"NANDCS",  AT91C_PIN_PC(14), 0, PIO_PULLUP, PIO_OUTPUT},
-		{(char *) 0, 0, 0,  PIO_DEFAULT, PIO_PERIPH_A},
-	};
+    /*
+     * Configure PIOs 
+     */
+    const struct pio_desc nand_pio[] = {
+        {"RDY_BSY", AT91C_PIN_PC(8), 0, PIO_PULLUP, PIO_INPUT},
+        {"NANDCS", AT91C_PIN_PC(14), 0, PIO_PULLUP, PIO_OUTPUT},
+        {(char *)0, 0, 0, PIO_DEFAULT, PIO_PERIPH_A},
+    };
 
-	/* Setup Smart Media, first enable the address range of CS3 in HMATRIX user interface */
-	writel(readl(AT91C_BASE_CCFG + CCFG_EBICSA) | AT91C_EBI_CS3A_SM, AT91C_BASE_CCFG + CCFG_EBICSA);
-	
-	/* EBI IO in 1.8V mode */
-	writel(readl(AT91C_BASE_CCFG + CCFG_EBICSA) & ~(1<<16), AT91C_BASE_CCFG + CCFG_EBICSA);
-	 
-	/* Configure SMC CS3 */
- 	writel((AT91C_SM_NWE_SETUP | AT91C_SM_NCS_WR_SETUP | AT91C_SM_NRD_SETUP | AT91C_SM_NCS_RD_SETUP), AT91C_BASE_SMC + SMC_SETUP3);
-  	writel((AT91C_SM_NWE_PULSE | AT91C_SM_NCS_WR_PULSE | AT91C_SM_NRD_PULSE | AT91C_SM_NCS_RD_PULSE), AT91C_BASE_SMC + SMC_PULSE3);
-	writel((AT91C_SM_NWE_CYCLE | AT91C_SM_NRD_CYCLE)						, AT91C_BASE_SMC + SMC_CYCLE3);
-	writel((AT91C_SMC_READMODE | AT91C_SMC_WRITEMODE | AT91C_SMC_NWAITM_NWAIT_DISABLE | 
-  		AT91C_SMC_DBW_WIDTH_SIXTEEN_BITS | AT91C_SM_TDF)						, AT91C_BASE_SMC + SMC_CTRL3);
+    /*
+     * Setup Smart Media, first enable the address range of CS3 in HMATRIX user interface 
+     */
+    writel(readl(AT91C_BASE_CCFG + CCFG_EBICSA) | AT91C_EBI_CS3A_SM,
+           AT91C_BASE_CCFG + CCFG_EBICSA);
 
-	/* Configure the PIO controller */
-	writel((1 << AT91C_ID_PIOC), (PMC_PCER + AT91C_BASE_PMC));
-	pio_setup(nand_pio);
-	
-	nand_recovery();
+    /*
+     * EBI IO in 1.8V mode 
+     */
+    writel(readl(AT91C_BASE_CCFG + CCFG_EBICSA) & ~(1 << 16),
+           AT91C_BASE_CCFG + CCFG_EBICSA);
+
+    /*
+     * Configure SMC CS3 
+     */
+    writel((AT91C_SM_NWE_SETUP | AT91C_SM_NCS_WR_SETUP | AT91C_SM_NRD_SETUP |
+            AT91C_SM_NCS_RD_SETUP), AT91C_BASE_SMC + SMC_SETUP3);
+    writel((AT91C_SM_NWE_PULSE | AT91C_SM_NCS_WR_PULSE | AT91C_SM_NRD_PULSE |
+            AT91C_SM_NCS_RD_PULSE), AT91C_BASE_SMC + SMC_PULSE3);
+    writel((AT91C_SM_NWE_CYCLE | AT91C_SM_NRD_CYCLE),
+           AT91C_BASE_SMC + SMC_CYCLE3);
+    writel((AT91C_SMC_READMODE | AT91C_SMC_WRITEMODE |
+            AT91C_SMC_NWAITM_NWAIT_DISABLE | AT91C_SMC_DBW_WIDTH_SIXTEEN_BITS |
+            AT91C_SM_TDF), AT91C_BASE_SMC + SMC_CTRL3);
+
+    /*
+     * Configure the PIO controller 
+     */
+    writel((1 << AT91C_ID_PIOC), (PMC_PCER + AT91C_BASE_PMC));
+    pio_setup(nand_pio);
+
+    nand_recovery();
 }
 
 /*------------------------------------------------------------------------------*/
@@ -267,7 +322,8 @@ void nandflash_hw_init(void)
 /*------------------------------------------------------------------------------*/
 void nandflash_cfg_16bits_dbw_init(void)
 {
-	writel(readl(AT91C_BASE_SMC + SMC_CTRL3) | AT91C_SMC_DBW_WIDTH_SIXTEEN_BITS, AT91C_BASE_SMC + SMC_CTRL3);
+    writel(readl(AT91C_BASE_SMC + SMC_CTRL3) | AT91C_SMC_DBW_WIDTH_SIXTEEN_BITS,
+           AT91C_BASE_SMC + SMC_CTRL3);
 }
 
 /*------------------------------------------------------------------------------*/
@@ -276,21 +332,25 @@ void nandflash_cfg_16bits_dbw_init(void)
 /*------------------------------------------------------------------------------*/
 void nandflash_cfg_8bits_dbw_init(void)
 {
-	writel((readl(AT91C_BASE_SMC + SMC_CTRL3) & ~(AT91C_SMC_DBW)) | AT91C_SMC_DBW_WIDTH_EIGTH_BITS, AT91C_BASE_SMC + SMC_CTRL3);
+    writel((readl(AT91C_BASE_SMC + SMC_CTRL3) & ~(AT91C_SMC_DBW)) |
+           AT91C_SMC_DBW_WIDTH_EIGTH_BITS, AT91C_BASE_SMC + SMC_CTRL3);
 }
 
-#endif /* #ifdef CONFIG_NANDFLASH */
+#endif                          /* #ifdef CONFIG_NANDFLASH */
 
 #ifdef CONFIG_SCLK
 void sclk_enable(void)
 {
-	volatile int i;
-	unsigned int dwRegSave;
-	
-	(*(volatile unsigned int*)AT91C_SYS_SLCKSEL) = AT91C_SLCKSEL_OSC32EN | AT91C_SLCKSEL_RCEN;
-	for (i=0; i<0x100000; i++); //wait for a slow clock  startup time
-	
-	(*(volatile unsigned int*)AT91C_SYS_SLCKSEL) = AT91C_SLCKSEL_OSC32EN | AT91C_SLCKSEL_RCEN | AT91C_SLCKSEL_OSCSEL;
-	for (i=0; i<0x1000; i++);
+    volatile int i;
+
+    unsigned int dwRegSave;
+
+    (*(volatile unsigned int *)AT91C_SYS_SLCKSEL) =
+        AT91C_SLCKSEL_OSC32EN | AT91C_SLCKSEL_RCEN;
+    for (i = 0; i < 0x100000; i++) ;    //wait for a slow clock  startup time
+
+    (*(volatile unsigned int *)AT91C_SYS_SLCKSEL) =
+        AT91C_SLCKSEL_OSC32EN | AT91C_SLCKSEL_RCEN | AT91C_SLCKSEL_OSCSEL;
+    for (i = 0; i < 0x1000; i++) ;
 }
 #endif

@@ -42,8 +42,8 @@
 //------------------------------------------------------------------------------
 void DMA_Config(unsigned int flag)
 {
-	(*(volatile unsigned int *)(AT91C_BASE_HDMA+HDMA_GCFG)) = flag;
-    
+    (*(volatile unsigned int *)(AT91C_BASE_HDMA + HDMA_GCFG)) = flag;
+
 }
 
 //------------------------------------------------------------------------------
@@ -51,7 +51,7 @@ void DMA_Config(unsigned int flag)
 //------------------------------------------------------------------------------
 void DMA_Enable(void)
 {
-	(*(volatile unsigned int *)(AT91C_BASE_HDMA+HDMA_EN)) = AT91C_HDMA_ENABLE;
+    (*(volatile unsigned int *)(AT91C_BASE_HDMA + HDMA_EN)) = AT91C_HDMA_ENABLE;
 }
 
 //------------------------------------------------------------------------------
@@ -59,26 +59,27 @@ void DMA_Enable(void)
 //------------------------------------------------------------------------------
 void DMA_Disable(void)
 {
-	(*(volatile unsigned int *)(AT91C_BASE_HDMA+HDMA_EN)) = ~(unsigned int)AT91C_HDMA_ENABLE;
-    
+    (*(volatile unsigned int *)(AT91C_BASE_HDMA + HDMA_EN)) =
+        ~(unsigned int)AT91C_HDMA_ENABLE;
+
 }
 
 //-----------------------------------------------------------------------------
 /// Enable DMA interrupt
 /// \param flag IT to be enabled
 //-----------------------------------------------------------------------------
-void DMA_EnableIt (unsigned int flag)
+void DMA_EnableIt(unsigned int flag)
 {
-	(*(volatile unsigned int *)(AT91C_BASE_HDMA+HDMA_EBCIER)) = flag;
+    (*(volatile unsigned int *)(AT91C_BASE_HDMA + HDMA_EBCIER)) = flag;
 }
 
 //-----------------------------------------------------------------------------
 /// Disable DMA interrupt
 /// \param flag IT to be enabled
 //-----------------------------------------------------------------------------
-void DMA_DisableIt (unsigned int flag)
+void DMA_DisableIt(unsigned int flag)
 {
-	(*(volatile unsigned int *)(AT91C_BASE_HDMA+HDMA_EBCIDR)) = flag;
+    (*(volatile unsigned int *)(AT91C_BASE_HDMA + HDMA_EBCIDR)) = flag;
 }
 
 //-----------------------------------------------------------------------------
@@ -86,8 +87,8 @@ void DMA_DisableIt (unsigned int flag)
 //-----------------------------------------------------------------------------
 unsigned int DMA_GetStatus(void)
 {
-	
-    return (*(volatile unsigned int *)(AT91C_BASE_HDMA+HDMA_EBCISR));
+
+    return (*(volatile unsigned int *)(AT91C_BASE_HDMA + HDMA_EBCISR));
 }
 
 //-----------------------------------------------------------------------------
@@ -95,8 +96,8 @@ unsigned int DMA_GetStatus(void)
 //-----------------------------------------------------------------------------
 unsigned int DMA_GetInterruptMask(void)
 {
-	
-    return (*(volatile unsigned int *)(AT91C_BASE_HDMA+HDMA_EBCIMR));
+
+    return (*(volatile unsigned int *)(AT91C_BASE_HDMA + HDMA_EBCIMR));
 }
 
 //-----------------------------------------------------------------------------
@@ -106,10 +107,10 @@ unsigned int DMA_GetInterruptMask(void)
 unsigned int DMA_GetMaskedStatus(void)
 {
     unsigned int status;
-	
-    status = (*(volatile unsigned int *)(AT91C_BASE_HDMA+HDMA_EBCISR));
-	
-    status &= (*(volatile unsigned int *)(AT91C_BASE_HDMA+HDMA_EBCIMR));
+
+    status = (*(volatile unsigned int *)(AT91C_BASE_HDMA + HDMA_EBCISR));
+
+    status &= (*(volatile unsigned int *)(AT91C_BASE_HDMA + HDMA_EBCIMR));
     return status;
 }
 
@@ -119,11 +120,13 @@ unsigned int DMA_GetMaskedStatus(void)
 //------------------------------------------------------------------------------
 void DMA_EnableChannel(unsigned int channel)
 {
-    (*(volatile unsigned int *)(AT91C_BASE_HDMA+HDMA_CHER)) |= DMA_ENA << channel;    
+    (*(volatile unsigned int *)(AT91C_BASE_HDMA + HDMA_CHER)) |=
+        DMA_ENA << channel;
 }
+
 void DMA_EnableChannels(unsigned int bmChannels)
 {
-	(*(volatile unsigned int *)(AT91C_BASE_HDMA+HDMA_CHER)) = bmChannels;
+    (*(volatile unsigned int *)(AT91C_BASE_HDMA + HDMA_CHER)) = bmChannels;
 }
 
 //------------------------------------------------------------------------------
@@ -132,12 +135,14 @@ void DMA_EnableChannels(unsigned int bmChannels)
 //------------------------------------------------------------------------------
 void DMA_DisableChannel(unsigned int channel)
 {
-    (*(volatile unsigned int *)(AT91C_BASE_HDMA+HDMA_CHDR)) |= DMA_DIS << channel;
-    
+    (*(volatile unsigned int *)(AT91C_BASE_HDMA + HDMA_CHDR)) |=
+        DMA_DIS << channel;
+
 }
+
 void DMA_DisableChannels(unsigned int bmChannels)
 {
-    (*(volatile unsigned int *)(AT91C_BASE_HDMA+HDMA_CHDR)) = bmChannels;
+    (*(volatile unsigned int *)(AT91C_BASE_HDMA + HDMA_CHDR)) = bmChannels;
 }
 
 //------------------------------------------------------------------------------
@@ -146,7 +151,8 @@ void DMA_DisableChannels(unsigned int bmChannels)
 //------------------------------------------------------------------------------
 void DMA_KeeponChannel(unsigned int channel)
 {
-    (*(volatile unsigned int *)(AT91C_BASE_HDMA+HDMA_CHER)) |= DMA_KEEPON << channel;
+    (*(volatile unsigned int *)(AT91C_BASE_HDMA + HDMA_CHER)) |=
+        DMA_KEEPON << channel;
 }
 
 //------------------------------------------------------------------------------
@@ -155,8 +161,9 @@ void DMA_KeeponChannel(unsigned int channel)
 //------------------------------------------------------------------------------
 void DMA_ClearAutoMode(unsigned int channel)
 {
-    
-    (*(volatile unsigned int *)(AT91C_BASE_HDMA_CH_0+channel*40 + HDMA_CTRLB)) &= 0x7FFFFFFF;
+
+    (*(volatile unsigned int *)
+     (AT91C_BASE_HDMA_CH_0 + channel * 40 + HDMA_CTRLB)) &= 0x7FFFFFFF;
 }
 
 //------------------------------------------------------------------------------
@@ -164,7 +171,7 @@ void DMA_ClearAutoMode(unsigned int channel)
 //------------------------------------------------------------------------------
 unsigned int DMA_GetChannelStatus(void)
 {
-   return(*(volatile unsigned int *)(AT91C_BASE_HDMA+HDMA_CHSR));
+    return (*(volatile unsigned int *)(AT91C_BASE_HDMA + HDMA_CHSR));
 }
 
 //-----------------------------------------------------------------------------
@@ -174,15 +181,15 @@ unsigned int DMA_GetChannelStatus(void)
 //-----------------------------------------------------------------------------
 void DMA_SetSourceAddr(unsigned char channel, unsigned int address)
 {
-	if (((unsigned int)(address)&0xFFF00000))
-	{
-		(*(volatile unsigned int *)(AT91C_BASE_HDMA_CH_0+channel*40 + HDMA_SADDR)) = address;
-	}
-	else
-	{
-		(*(volatile unsigned int *)(AT91C_BASE_HDMA_CH_0+channel*40 + HDMA_SADDR)) = address + CHIP_SRAM0_BASEADDR;
-	}
-    
+    if (((unsigned int)(address) & 0xFFF00000)) {
+        (*(volatile unsigned int *)
+         (AT91C_BASE_HDMA_CH_0 + channel * 40 + HDMA_SADDR)) = address;
+    } else {
+        (*(volatile unsigned int *)
+         (AT91C_BASE_HDMA_CH_0 + channel * 40 + HDMA_SADDR)) =
+            address + CHIP_SRAM0_BASEADDR;
+    }
+
 }
 
 //-----------------------------------------------------------------------------
@@ -192,15 +199,15 @@ void DMA_SetSourceAddr(unsigned char channel, unsigned int address)
 //-----------------------------------------------------------------------------
 void DMA_SetDestinationAddr(unsigned char channel, unsigned int address)
 {
-	if (((unsigned int)(address)&0xFFF00000))
-	{
-		(*(volatile unsigned int *)(AT91C_BASE_HDMA_CH_0+channel*40 + HDMA_DADDR)) = address;
-	}
-	else
-	{
-		(*(volatile unsigned int *)(AT91C_BASE_HDMA_CH_0+channel*40 + HDMA_DADDR)) = address + CHIP_SRAM0_BASEADDR;
-	}
-    
+    if (((unsigned int)(address) & 0xFFF00000)) {
+        (*(volatile unsigned int *)
+         (AT91C_BASE_HDMA_CH_0 + channel * 40 + HDMA_DADDR)) = address;
+    } else {
+        (*(volatile unsigned int *)
+         (AT91C_BASE_HDMA_CH_0 + channel * 40 + HDMA_DADDR)) =
+            address + CHIP_SRAM0_BASEADDR;
+    }
+
 }
 
 //-----------------------------------------------------------------------------
@@ -210,16 +217,15 @@ void DMA_SetDestinationAddr(unsigned char channel, unsigned int address)
 //-----------------------------------------------------------------------------
 void DMA_SetDescriptorAddr(unsigned char channel, unsigned int address)
 {
-	if (((unsigned int)(address)&0xFFF00000))
-	{
-		(*(volatile unsigned int *)(AT91C_BASE_HDMA_CH_0+channel*40 + HDMA_DSCR)) = address;
-	}
-	else
-	{
-		(*(volatile unsigned int *)(AT91C_BASE_HDMA_CH_0+channel*40 + HDMA_DSCR)) = address + CHIP_SRAM0_BASEADDR;
-	}
+    if (((unsigned int)(address) & 0xFFF00000)) {
+        (*(volatile unsigned int *)
+         (AT91C_BASE_HDMA_CH_0 + channel * 40 + HDMA_DSCR)) = address;
+    } else {
+        (*(volatile unsigned int *)
+         (AT91C_BASE_HDMA_CH_0 + channel * 40 + HDMA_DSCR)) =
+            address + CHIP_SRAM0_BASEADDR;
+    }
 }
-
 
 //-----------------------------------------------------------------------------
 /// Set DMA control A register used by a HDMA channel.
@@ -230,17 +236,15 @@ void DMA_SetDescriptorAddr(unsigned char channel, unsigned int address)
 /// \param done Transfer done field.
 //-----------------------------------------------------------------------------
 void DMA_SetSourceBufferSize(unsigned char channel,
-                             unsigned int size, 
-                             unsigned char sourceWidth, 
-                             unsigned char destWidth,
-                             unsigned char done)
+                             unsigned int size,
+                             unsigned char sourceWidth,
+                             unsigned char destWidth, unsigned char done)
 {
-    (*(volatile unsigned int *)(AT91C_BASE_HDMA_CH_0+channel*40 + HDMA_CTRLA)) = (size |
-                                                   sourceWidth << 24 |
-                                                   destWidth << 28 |
-                                                   done << 31);
+    (*(volatile unsigned int *)
+     (AT91C_BASE_HDMA_CH_0 + channel * 40 + HDMA_CTRLA)) =
+        (size | sourceWidth << 24 | destWidth << 28 | done << 31);
 }
-                                
+
 //-----------------------------------------------------------------------------
 /// Set DMA transfer mode for source used by a HDMA channel.
 /// \param channel Particular channel number.
@@ -248,44 +252,47 @@ void DMA_SetSourceBufferSize(unsigned char channel,
 /// \param addressingType Type of addrassing mode
 ///                       0 : incrementing, 1: decrementing, 2: fixed.
 //-----------------------------------------------------------------------------
-void DMA_SetSourceBufferMode(unsigned char channel, 
+void DMA_SetSourceBufferMode(unsigned char channel,
                              unsigned char transferMode,
                              unsigned char addressingType)
 {
     unsigned int value;
-    
-    
-    
-    value = (*(volatile unsigned int *)(AT91C_BASE_HDMA_CH_0+channel*40 + HDMA_CTRLB));
-    value &= ~ (AT91C_SRC_DSCR | AT91C_SRC_INCR | 1<<31);
-    switch(transferMode){
-        case DMA_TRANSFER_SINGLE:
-             value |= AT91C_SRC_DSCR | addressingType << 24;
-             break;
-        case DMA_TRANSFER_LLI:
-             value |= addressingType << 24;
-             break;
-        case DMA_TRANSFER_RELOAD:
-        case DMA_TRANSFER_CONTIGUOUS:
-             value |= AT91C_SRC_DSCR | addressingType << 24 | 1<<31;
-             break;
-    }             
-    (*(volatile unsigned int *)(AT91C_BASE_HDMA_CH_0+channel*40 + HDMA_CTRLB)) = value;
-    
-    if(transferMode == DMA_TRANSFER_RELOAD || transferMode == DMA_TRANSFER_CONTIGUOUS){
-        value = (*(volatile unsigned int *)(AT91C_BASE_HDMA_CH_0+channel*40 + HDMA_CFG));
-        #if defined(AT91C_SRC_REP)
+
+    value = (*(volatile unsigned int *)
+             (AT91C_BASE_HDMA_CH_0 + channel * 40 + HDMA_CTRLB));
+    value &= ~(AT91C_SRC_DSCR | AT91C_SRC_INCR | 1 << 31);
+    switch (transferMode) {
+    case DMA_TRANSFER_SINGLE:
+        value |= AT91C_SRC_DSCR | addressingType << 24;
+        break;
+    case DMA_TRANSFER_LLI:
+        value |= addressingType << 24;
+        break;
+    case DMA_TRANSFER_RELOAD:
+    case DMA_TRANSFER_CONTIGUOUS:
+        value |= AT91C_SRC_DSCR | addressingType << 24 | 1 << 31;
+        break;
+    }
+    (*(volatile unsigned int *)
+     (AT91C_BASE_HDMA_CH_0 + channel * 40 + HDMA_CTRLB)) = value;
+
+    if (transferMode == DMA_TRANSFER_RELOAD
+        || transferMode == DMA_TRANSFER_CONTIGUOUS) {
+        value = (*(volatile unsigned int *)
+                 (AT91C_BASE_HDMA_CH_0 + channel * 40 + HDMA_CFG));
+#if defined(AT91C_SRC_REP)
         value &= ~(unsigned int)AT91C_SRC_REP;
         // When automatic mode is activated, the source address and the control register are reloaded from previous transfer.
-        if(transferMode == DMA_TRANSFER_RELOAD) {
+        if (transferMode == DMA_TRANSFER_RELOAD) {
             value |= AT91C_SRC_REP;
         }
-        #endif
-		
-        (*(volatile unsigned int *)(AT91C_BASE_HDMA_CH_0+channel*40 + HDMA_CFG)) = value;
-    }
-    else {
-        (*(volatile unsigned int *)(AT91C_BASE_HDMA_CH_0+channel*40 + HDMA_CFG)) = 0;
+#endif
+
+        (*(volatile unsigned int *)
+         (AT91C_BASE_HDMA_CH_0 + channel * 40 + HDMA_CFG)) = value;
+    } else {
+        (*(volatile unsigned int *)
+         (AT91C_BASE_HDMA_CH_0 + channel * 40 + HDMA_CFG)) = 0;
     }
 }
 
@@ -296,41 +303,44 @@ void DMA_SetSourceBufferMode(unsigned char channel,
 /// \param addressingType Type of addrassing mode
 ///                       0 : incrementing, 1: decrementing, 2: fixed.
 //-----------------------------------------------------------------------------
-void DMA_SetDestBufferMode(unsigned char channel, 
-                             unsigned char transferMode,
-                             unsigned char addressingType)
+void DMA_SetDestBufferMode(unsigned char channel,
+                           unsigned char transferMode,
+                           unsigned char addressingType)
 {
     unsigned int value;
-    
-    
-    
-    value = (*(volatile unsigned int *)(AT91C_BASE_HDMA_CH_0+channel*40 + HDMA_CTRLB));
+
+    value = (*(volatile unsigned int *)
+             (AT91C_BASE_HDMA_CH_0 + channel * 40 + HDMA_CTRLB));
     value &= ~(unsigned int)(AT91C_DST_DSCR | AT91C_DST_INCR);
-    
-    switch(transferMode){
-        case DMA_TRANSFER_SINGLE:
-        case DMA_TRANSFER_RELOAD:
-        case DMA_TRANSFER_CONTIGUOUS:
-             value |= AT91C_DST_DSCR | addressingType << 28;
-             break;
-        case DMA_TRANSFER_LLI:
-             value |= addressingType << 28;
-             break;
-    }             
-    (*(volatile unsigned int *)(AT91C_BASE_HDMA_CH_0+channel*40 + HDMA_CTRLB)) = value;
-    if(transferMode == DMA_TRANSFER_RELOAD || transferMode == DMA_TRANSFER_CONTIGUOUS){
-        value = (*(volatile unsigned int *)(AT91C_BASE_HDMA_CH_0+channel*40 + HDMA_CFG));
-        #if defined(AT91C_DST_REP)
+
+    switch (transferMode) {
+    case DMA_TRANSFER_SINGLE:
+    case DMA_TRANSFER_RELOAD:
+    case DMA_TRANSFER_CONTIGUOUS:
+        value |= AT91C_DST_DSCR | addressingType << 28;
+        break;
+    case DMA_TRANSFER_LLI:
+        value |= addressingType << 28;
+        break;
+    }
+    (*(volatile unsigned int *)
+     (AT91C_BASE_HDMA_CH_0 + channel * 40 + HDMA_CTRLB)) = value;
+    if (transferMode == DMA_TRANSFER_RELOAD
+        || transferMode == DMA_TRANSFER_CONTIGUOUS) {
+        value = (*(volatile unsigned int *)
+                 (AT91C_BASE_HDMA_CH_0 + channel * 40 + HDMA_CFG));
+#if defined(AT91C_DST_REP)
         value &= ~(unsigned int)AT91C_DST_REP;
         // When automatic mode is activated, the source address and the control register are reloaded from previous transfer.
-        if(transferMode == DMA_TRANSFER_RELOAD) {
+        if (transferMode == DMA_TRANSFER_RELOAD) {
             value |= AT91C_DST_REP;
         }
-        #endif
-        (*(volatile unsigned int *)(AT91C_BASE_HDMA_CH_0+channel*40 + HDMA_CFG)) = value;
-    }
-    else {
-        (*(volatile unsigned int *)(AT91C_BASE_HDMA_CH_0+channel*40 + HDMA_CFG)) = 0;
+#endif
+        (*(volatile unsigned int *)
+         (AT91C_BASE_HDMA_CH_0 + channel * 40 + HDMA_CFG)) = value;
+    } else {
+        (*(volatile unsigned int *)
+         (AT91C_BASE_HDMA_CH_0 + channel * 40 + HDMA_CFG)) = 0;
     }
 }
 
@@ -341,7 +351,8 @@ void DMA_SetDestBufferMode(unsigned char channel,
 //------------------------------------------------------------------------------
 void DMA_SetConfiguration(unsigned char channel, unsigned int value)
 {
-    (*(volatile unsigned int *)(AT91C_BASE_HDMA_CH_0+channel*40 + HDMA_CFG)) = value;
+    (*(volatile unsigned int *)(AT91C_BASE_HDMA_CH_0 + channel * 40 + HDMA_CFG))
+        = value;
 }
 
 #if defined(AT91C_SRC_PIP)
@@ -351,18 +362,20 @@ void DMA_SetConfiguration(unsigned char channel, unsigned int value)
 /// \param pipHole stop on done mode.
 /// \param pipBoundary lock mode.
 //------------------------------------------------------------------------------
-void DMA_SPIPconfiguration(unsigned char channel, 
-                           unsigned int pipHole, 
-                           unsigned int pipBoundary)
-                     
+void DMA_SPIPconfiguration(unsigned char channel,
+                           unsigned int pipHole, unsigned int pipBoundary)
 {
     unsigned int value;
-    
-    value = (*(volatile unsigned int *)(AT91C_BASE_HDMA_CH_0+channel*40 + HDMA_CTRLB));
+
+    value = (*(volatile unsigned int *)
+             (AT91C_BASE_HDMA_CH_0 + channel * 40 + HDMA_CTRLB));
     value &= ~(unsigned int)AT91C_SRC_PIP;
     value |= AT91C_SRC_PIP;
-    (*(volatile unsigned int *)(AT91C_BASE_HDMA_CH_0+channel*40 + HDMA_CTRLB)) = value;
-    (*(volatile unsigned int *)(AT91C_BASE_HDMA_CH_0+channel*40 + HDMA_SPIP)) = (pipHole + 1) | pipBoundary <<16;
+    (*(volatile unsigned int *)
+     (AT91C_BASE_HDMA_CH_0 + channel * 40 + HDMA_CTRLB)) = value;
+    (*(volatile unsigned int *)
+     (AT91C_BASE_HDMA_CH_0 + channel * 40 + HDMA_SPIP)) =
+        (pipHole + 1) | pipBoundary << 16;
 }
 #endif
 
@@ -373,19 +386,21 @@ void DMA_SPIPconfiguration(unsigned char channel,
 /// \param pipHole stop on done mode.
 /// \param pipBoundary lock mode.
 //------------------------------------------------------------------------------
-void DMA_DPIPconfiguration(unsigned char channel, 
-                           unsigned int pipHole, 
-                           unsigned int pipBoundary)
-                     
+void DMA_DPIPconfiguration(unsigned char channel,
+                           unsigned int pipHole, unsigned int pipBoundary)
 {
     unsigned int value;
-    
-    value = (*(volatile unsigned int *)(AT91C_BASE_HDMA_CH_0+channel*40 + HDMA_CTRLB));
+
+    value = (*(volatile unsigned int *)
+             (AT91C_BASE_HDMA_CH_0 + channel * 40 + HDMA_CTRLB));
     value &= ~(unsigned int)AT91C_DST_PIP;
     value |= AT91C_DST_PIP;
-    (*(volatile unsigned int *)(AT91C_BASE_HDMA_CH_0+channel*40 + HDMA_CTRLB)) = value;
-	
-    (*(volatile unsigned int *)(AT91C_BASE_HDMA_CH_0+channel*40 + HDMA_DPIP)) = (pipHole + 1) | pipBoundary <<16;
+    (*(volatile unsigned int *)
+     (AT91C_BASE_HDMA_CH_0 + channel * 40 + HDMA_CTRLB)) = value;
+
+    (*(volatile unsigned int *)
+     (AT91C_BASE_HDMA_CH_0 + channel * 40 + HDMA_DPIP)) =
+        (pipHole + 1) | pipBoundary << 16;
 }
 #endif
 
@@ -397,17 +412,16 @@ void DMA_DPIPconfiguration(unsigned char channel,
 /// \param destWidth Single transfer width for destination.
 /// \param done Transfer done field.
 //-----------------------------------------------------------------------------
-void DMA_SetFlowControl(unsigned char channel,
-                             unsigned int flow)
+void DMA_SetFlowControl(unsigned char channel, unsigned int flow)
 {
     unsigned int value;
 
-    
-
-    value = (*(volatile unsigned int *)(AT91C_BASE_HDMA_CH_0+channel*40 + HDMA_CTRLB));
+    value = (*(volatile unsigned int *)
+             (AT91C_BASE_HDMA_CH_0 + channel * 40 + HDMA_CTRLB));
     value &= ~(unsigned int)AT91C_FC;
-    value |= flow << 21;       
-    (*(volatile unsigned int *)(AT91C_BASE_HDMA_CH_0+channel*40 + HDMA_CTRLB)) = value;
+    value |= flow << 21;
+    (*(volatile unsigned int *)
+     (AT91C_BASE_HDMA_CH_0 + channel * 40 + HDMA_CTRLB)) = value;
 }
 
 #endif

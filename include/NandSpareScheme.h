@@ -50,7 +50,6 @@
 ///      spare scheme.
 //------------------------------------------------------------------------------
 
-
 #ifndef NANDSPARESCHEME_H
 #define NANDSPARESCHEME_H
 
@@ -78,47 +77,42 @@ struct NandSpareScheme {
 //------------------------------------------------------------------------------
 
 extern struct NandSpareScheme Spare_256;
+
 extern struct NandSpareScheme Spare_512;
+
 extern struct NandSpareScheme Spare_2048;
+
 //extern const struct NandSpareScheme nandSpareScheme4096;
 
 //------------------------------------------------------------------------------
 //         Exported functions
 //------------------------------------------------------------------------------
 
-extern void NandSpareScheme_ReadBadBlockMarker(
-    const struct NandSpareScheme *scheme,
-    const unsigned char *spare,
-    unsigned char *marker);
+extern void NandSpareScheme_ReadBadBlockMarker(const struct NandSpareScheme
+                                               *scheme,
+                                               const unsigned char *spare,
+                                               unsigned char *marker);
 
-extern void NandSpareScheme_WriteBadBlockMarker(
-    const struct NandSpareScheme *scheme,
-    unsigned char *spare,
-    unsigned char marker);
+extern void NandSpareScheme_WriteBadBlockMarker(const struct NandSpareScheme
+                                                *scheme, unsigned char *spare,
+                                                unsigned char marker);
 
-extern void NandSpareScheme_ReadEcc(
-    struct NandSpareScheme *scheme,
-    unsigned char *spare,
-    unsigned char *ecc);
+extern void NandSpareScheme_ReadEcc(struct NandSpareScheme *scheme,
+                                    unsigned char *spare, unsigned char *ecc);
 
-extern void NandSpareScheme_WriteEcc(
-    const struct NandSpareScheme *scheme,
-    unsigned char *spare,
-    const unsigned char *ecc);
+extern void NandSpareScheme_WriteEcc(const struct NandSpareScheme *scheme,
+                                     unsigned char *spare,
+                                     const unsigned char *ecc);
 
-extern void NandSpareScheme_ReadExtra(
-    const struct NandSpareScheme *scheme,
-    const unsigned char *spare,
-    void *extra,
-    unsigned char size,
-    unsigned char offset);
+extern void NandSpareScheme_ReadExtra(const struct NandSpareScheme *scheme,
+                                      const unsigned char *spare,
+                                      void *extra,
+                                      unsigned char size, unsigned char offset);
 
-extern void NandSpareScheme_WriteExtra(
-    const struct NandSpareScheme *scheme,
-    unsigned char *spare,
-    const void *extra,
-    unsigned char size,
-    unsigned char offset);
+extern void NandSpareScheme_WriteExtra(const struct NandSpareScheme *scheme,
+                                       unsigned char *spare,
+                                       const void *extra,
+                                       unsigned char size,
+                                       unsigned char offset);
 
-#endif //#ifndef NANDSPARESCHEME_H
-
+#endif                          //#ifndef NANDSPARESCHEME_H

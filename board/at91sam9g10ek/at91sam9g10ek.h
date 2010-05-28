@@ -52,8 +52,8 @@
 
 /* AC characteristics */
 /* DLYBS = tCSS= 250ns min and DLYBCT = tCSH = 250ns */
-#define DATAFLASH_TCSS		(0x1a << 16)	/* 250ns min (tCSS) <=> 12/48000000 = 250ns */
-#define DATAFLASH_TCHS		(0x1 << 24)	/* 250ns min (tCSH) <=> (64*1+SCBR)/(2*48000000) */
+#define DATAFLASH_TCSS		(0x1a << 16)    /* 250ns min (tCSS) <=> 12/48000000 = 250ns */
+#define DATAFLASH_TCHS		(0x1 << 24)     /* 250ns min (tCSH) <=> (64*1+SCBR)/(2*48000000) */
 
 #endif
 
@@ -65,12 +65,12 @@
 #define PLLA_SETTINGS		0x20D8BF10
 #define PLLB_SETTINGS		0x10483F0E
 
-#define DATAFLASH_TCSS		(0xf << 16)	/* 250ns min (tCSS) <=> 12/48000000 = 250ns */
-#define DATAFLASH_TCHS		(0x2 << 24)	/* 250ns min (tCSH) <=> (64*1+SCBR)/(2*48000000) */
+#define DATAFLASH_TCSS		(0xf << 16)     /* 250ns min (tCSS) <=> 12/48000000 = 250ns */
+#define DATAFLASH_TCHS		(0x2 << 24)     /* 250ns min (tCSH) <=> (64*1+SCBR)/(2*48000000) */
 
 #endif
 
-#if	defined(CONFIG_CPU_CLK_266MHZ)	/* 133 MHz */
+#if	defined(CONFIG_CPU_CLK_266MHZ)  /* 133 MHz */
 #define	MCK_133
 
 #define MASTER_CLOCK		(266000000/2)
@@ -79,8 +79,8 @@
 #define PLLA_SETTINGS		0x22DF3F33
 #define PLLB_SETTINGS		0x107C3F18
 
-#define DATAFLASH_TCSS		(0xf << 16)	/* 250ns min (tCSS) <=> 12/48000000 = 250ns */
-#define DATAFLASH_TCHS		(0x2 << 24)	/* 250ns min (tCSH) <=> (64*1+SCBR)/(2*48000000) */
+#define DATAFLASH_TCSS		(0xf << 16)     /* 250ns min (tCSS) <=> 12/48000000 = 250ns */
+#define DATAFLASH_TCHS		(0x2 << 24)     /* 250ns min (tCSH) <=> (64*1+SCBR)/(2*48000000) */
 
 #endif
 
@@ -103,14 +103,13 @@
 /* ******************************************************************* */
 #define AT91C_SMARTMEDIA_BASE	0x40000000
 
-#define AT91_SMART_MEDIA_ALE    (1 << 22)	/* our ALE is AD22 */
-#define AT91_SMART_MEDIA_CLE    (1 << 21)	/* our CLE is AD21 */
+#define AT91_SMART_MEDIA_ALE    (1 << 22)       /* our ALE is AD22 */
+#define AT91_SMART_MEDIA_CLE    (1 << 21)       /* our CLE is AD21 */
 
 #define NAND_DISABLE_CE() do { *(volatile unsigned int *)AT91C_PIOC_SODR = AT91C_PIO_PC14;} while(0)
 #define NAND_ENABLE_CE() do { *(volatile unsigned int *)AT91C_PIOC_CODR = AT91C_PIO_PC14;} while(0)
 
 #define NAND_WAIT_READY() while (!(*(volatile unsigned int *)AT91C_PIOC_PDSR & AT91C_PIO_PC15))
-
 
 /* ******************************************************************** */
 /* SMC Chip Select 3 Timings for NandFlash for MASTER_CLOCK = 100000000.*/
@@ -121,12 +120,12 @@
 #define AT91C_SM_NCS_WR_SETUP	(0 << 8)
 #define AT91C_SM_NRD_SETUP	(1 << 16)
 #define AT91C_SM_NCS_RD_SETUP	(0 << 24)
-  
+
 #define AT91C_SM_NWE_PULSE 	(3 << 0)
 #define AT91C_SM_NCS_WR_PULSE	(3 << 8)
 #define AT91C_SM_NRD_PULSE	(3 << 16)
 #define AT91C_SM_NCS_RD_PULSE	(3 << 24)
-  
+
 #define AT91C_SM_NWE_CYCLE 	(5 << 0)
 #define AT91C_SM_NRD_CYCLE	(5 << 16)
 
@@ -136,14 +135,11 @@
 
 #define BOARD_SD_PIN_CD \
     {1 << 15, AT91C_BASE_PIOA, AT91C_ID_PIOA, PIO_INPUT, PIO_PULLUP}
-	
+
 #define BOARD_SD_PINS \
     {0x00000073, AT91C_BASE_PIOA, AT91C_ID_PIOA, PIO_PERIPH_B, PIO_PULLUP}, \
     {1 << 2, AT91C_BASE_PIOA, AT91C_ID_PIOA, PIO_PERIPH_B, PIO_DEFAULT}
 
-
-
 #define at91sam9g10
 
-
-#endif	/* _AT91SAM9G10EK_H */
+#endif                          /* _AT91SAM9G10EK_H */
