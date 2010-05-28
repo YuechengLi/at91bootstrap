@@ -76,6 +76,7 @@ set JUMP_ADDR=0x20000000
 set IMG_ADDRESS=0x80000
 set IMG_SIZE=0x40000
 set CONFIG_LOAD_EBOOT=Y
+set CONFIG_DEBUG=
 goto :build
 
 :9260_nandflash_cekernel
@@ -86,6 +87,7 @@ set JUMP_ADDR=0x20067000
 set IMG_ADDRESS=0x200000
 set IMG_SIZE=0x2000000
 set CONFIG_LOAD_NK=Y
+set CONFIG_DEBUG=
 goto :build
 
 :9260_nandflash_uboot
@@ -96,6 +98,7 @@ set JUMP_ADDR=0x23F00000
 set IMG_ADDRESS=0x20000
 set IMG_SIZE=0x40000
 set CONFIG_LOAD_UBOOT=Y
+set CONFIG_DEBUG=
 goto :build
 
 :9260_nandflash_linuxkernel
@@ -109,6 +112,7 @@ set CONFIG_LOAD_LINUX=Y
 set OS_MEM_BANK=0x20000000
 set OS_MEM_SIZE=0x4000000
 set MACH_TYPE=0x44B
+set CONFIG_DEBUG=
 goto :build
 
 :9260_nandflash_gettingstarted
@@ -118,6 +122,7 @@ set CONFIG_NANDFLASH=Y
 set JUMP_ADDR=0x20000000
 set IMG_ADDRESS=0x20000
 set IMG_SIZE=0x40000
+set CONFIG_DEBUG=
 goto :build
 
 :9260_nandflash_massstorage
@@ -127,6 +132,7 @@ set CONFIG_NANDFLASH=Y
 set JUMP_ADDR=0x20000000
 set IMG_ADDRESS=0x20000
 set IMG_SIZE=0x40000
+set CONFIG_DEBUG=
 goto :build
 
 :9261_dataflash_eboot
@@ -820,7 +826,7 @@ set CONFIG_SDCARD=Y
 set JUMP_ADDR=0x23F00000
 set CONFIG_CPU_CLK_266MHZ=Y
 set CONFIG_LOAD_UBOOT=Y
-set CONFIG_DEBUG=
+set CONFIG_DEBUG=Y
 goto :build
 
 :9g10_sdcard_linuxkernel
