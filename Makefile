@@ -229,7 +229,7 @@ INCL=board/$(BOARD)
 #AT91_CUSTOM_FLAGS:=-mcpu=arm926ej-s
 GC_SECTIONS=--gc-sections
 
-CPPFLAGS=-g -Os -Wall 	-I$(INCL) -Iinclude	\
+CPPFLAGS=-ffunction-sections -g -Os -Wall 	-I$(INCL) -Iinclude	\
 	-DAT91BOOTSTRAP_VERSION=\"$(VERSION)\"	\
 	$(NO_DWARF_CFI_ASM) \
 	$(AT91_CUSTOM_FLAGS) 
@@ -273,7 +273,8 @@ gen_bin: $(OBJS)
 	$(if $(wildcard $(BINDIR)),,mkdir -p $(BINDIR))
 	@echo "  LD        "$(BOOT_NAME).elf
 	@$(LD) $(LDFLAGS) -n -o $(BINDIR)/$(BOOT_NAME).elf $(OBJS)
-	@$(OBJCOPY) --strip-debug --strip-unneeded $(BINDIR)/$(BOOT_NAME).elf -O binary $(BINDIR)/$(BOOT_NAME).bin
+#	@$(OBJCOPY) --strip-debug --strip-unneeded $(BINDIR)/$(BOOT_NAME).elf -O binary $(BINDIR)/$(BOOT_NAME).bin
+	@$(OBJCOPY) --strip-all $(BINDIR)/$(BOOT_NAME).elf -O binary $(BINDIR)/$(BOOT_NAME).bin
 
 %.o : %.c .config
 	@echo "  CC        "$<
