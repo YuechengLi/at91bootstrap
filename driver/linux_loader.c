@@ -295,11 +295,11 @@ void LoadLinux()
     load_SDCard();
 #endif
 
-    hdr = (image_header_t *)BIN_LOAD_ADDR;
-    //if (ntohl(hdr->ih_magic) != IMAGE_MAGIC) {
-    //    dbg_log(1, "Bad Image Magic Number found!\n\r");
-    //    return;
-    //}
+    hdr = (image_header_t *)JUMP_ADDR;
+    if (ntohl(hdr->ih_magic) != IMAGE_MAGIC) {
+        dbg_log(1, "Bad Image Magic Number found!\n\r");
+        return;
+    }
 
     len = ntohl(hdr->ih_size);
     load_addr = ntohl(hdr->ih_load);
@@ -315,9 +315,9 @@ void LoadLinux()
 
     //clean_environment();
 
-    //dbg_log(1, "relocating linux kernel to proper address, dst: %x, src: %x, len: %d\n\r",
-    //        load_addr, (unsigned long)BIN_LOAD_ADDR + sizeof(image_header_t), len);
-    memcpy((void *)load_addr, (void *)((unsigned long)BIN_LOAD_ADDR + sizeof(image_header_t)),
+    dbg_log(1, "relocating linux kernel to proper address, dst: %x, src: %x, len: %d\n\r",
+            load_addr, (unsigned long)JUMP_ADDR + sizeof(image_header_t), len);
+    memcpy((void *)load_addr, (void *)((unsigned long)JUMP_ADDR + sizeof(image_header_t)),
            len);
     //dbg_log(1, "... %d bytes data transferred!\n\r", len);
 
