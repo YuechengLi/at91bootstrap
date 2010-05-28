@@ -1083,7 +1083,7 @@ FRESULT create_name (
 	const XCHAR **path	/* Pointer to pointer to the segment in the path string */
 )
 {
-#if !defined(CONFIG_AT91SAM9G10EK) && defined(WINCE)
+#if !(defined(CONFIG_AT91SAM9G10EK) && defined(WINCE))
 #ifdef _EXCVT
 	static const BYTE cvt[] = _EXCVT;
 #endif
@@ -1278,9 +1278,7 @@ FRESULT create_name (
 
 	sfn[11] = c;		/* Store NT flag, File name is created */
 #endif
-#endif
-
-#if defined(CONFIG_AT91SAM9G10EK) && defined(WINCE)
+#else
     dj->fn[0] = 'i';
 	dj->fn[1] = 'm';
 	dj->fn[2] = 'a';
