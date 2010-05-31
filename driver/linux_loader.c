@@ -327,14 +327,14 @@ void LoadLinux()
 
     hdr = (image_header_t *) JUMP_ADDR;
     if (ntohl(hdr->ih_magic) != IMAGE_MAGIC) {
-        dbg_log(1, "Bad Image Magic Number found!\n\r");
+        dbg_log(1, "Bad Image Magic Number found! %d\n\r", ntohl(hdr->ih_magic));
         return;
     }
 
     len = ntohl(hdr->ih_size);
     load_addr = ntohl(hdr->ih_load);
     ep = ntohl(hdr->ih_ep);
-    //dbg_log(1, "Image size: %d, load_addr: %x, ep: %x\n\r", len, load_addr, ep);
+    dbg_log(1, "Image size: %d, load_addr: %x, ep: %x\n\r", len, load_addr, ep);
 
     //if (hdr->ih_comp != 0) {
     //    dbg_log(1, "Compressed U-Boot Image has not been supported yet!\n\r");
