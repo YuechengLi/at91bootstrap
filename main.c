@@ -152,7 +152,7 @@ int main(void)
 #else
     Jump(JUMP_ADDR);
 #endif
-#else
+#else /* !WINCE */
 #ifdef CONFIG_LOAD_NK
     return (JUMP_ADDR + 0x1000);
 #else
