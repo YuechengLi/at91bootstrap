@@ -41,3 +41,6 @@ COBJS-$(CONFIG_NANDFLASH) += $(DRIVERS_SRC)/NandSpareScheme.o
 
 COBJS-$(CONFIG_LOAD_LINUX) += $(DRIVERS_SRC)/linux_loader.o
 
+COBJS-$(CONFIG_LOAD_NK) += $(DRIVERS_SRC)/wince_loader.o
+COBJS-$(CONFIG_LOAD_EBOOT) += $(DRIVERS_SRC)/wince_loader.o
+
