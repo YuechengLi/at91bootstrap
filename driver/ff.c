@@ -1108,7 +1108,7 @@ FRESULT create_name(DIR * dj,   /* Pointer to the directory object */
                     const XCHAR ** path /* Pointer to pointer to the segment in the path string */
     )
 {
-#if !(defined(CONFIG_AT91SAM9G10EK) && defined(WINCE))
+#if !(defined(CONFIG_AT91SAM9G10EK))
 #ifdef _EXCVT
     static const BYTE cvt[] = _EXCVT;
 #endif
