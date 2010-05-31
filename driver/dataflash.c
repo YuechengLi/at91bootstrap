@@ -393,25 +393,13 @@ static int df_read(AT91PS_DF pDf,
 static int df_download(AT91PS_DF pDf, unsigned int img_addr,
                        unsigned int img_size, unsigned int img_dest)
 {
-#if	defined(CONFIG_VERBOSE)
-    msg_print(MSG_PROMPT);
-    msg_print_status(MSG_FROM, IMG_ADDRESS);
-    msg_print_status(MSG_TO, JUMP_ADDR);
-    msg_print_status(MSG_SIZE, img_size);
-    msg_print(MSG_NEWLINE);
-    msg_print(MSG_PROMPT);
-#endif
     /*
      * read bytes in the dataflash 
      */
     if (df_read(pDf, img_addr, (unsigned char *)img_dest, img_size) == FAILURE) {
-        //msg_print(MSG_FAILURE);
+        dbg_log(1, "df_read, failed!\r\n");
         return FAILURE;
     }
-#if	defined(CONFIG_VERBOSE)
-    msg_print(MSG_SUCCESS);
-    msg_print(MSG_NEWLINE);
-#endif
 
     /*
      * wait the dataflash ready status 
@@ -532,32 +520,6 @@ static int df_init(AT91PS_DF pDf)
     return status;
 }
 
-#if	defined(CONFIG_APP_CHECK)
-/*------------------------------------------------------------------------------*/
-/* \fn    df_is_boot_valid							*/
-/* \brief Check that the first bytes of the buffer are valid ARM vectors	*/
-/*------------------------------------------------------------------------------*/
-static unsigned int df_is_boot_valid(unsigned char *buffer)
-{
-    int i = 3;
-
-    /*
-     * Verify if the 28 first bytes of the sram correspond to ARM vectors
-     * The sixth ARM vector contain the size of the code 
-     */
-    while (i < 28) {
-
-        if (i != 23) {
-
-            if ((buffer[i] != 0xEA) && (buffer[i] != 0xE5))
-                return FAILURE;
-        }
-        i += 4;
-    }
-    return SUCCESS;
-}
-#endif
-
 int burn_df(unsigned int pcs, unsigned int addr, unsigned int size,
             unsigned int offset)
 {
@@ -587,10 +549,6 @@ int load_df(unsigned int pcs, unsigned int img_addr, unsigned int img_size,
 
     AT91PS_DF pDf = (AT91PS_DF) & sDF;
 
-#if defined(CONFIG_APP_CHECK)
-    unsigned int *rxBuffer = (unsigned int *)img_dest;
-#endif
-
     unsigned int status;
 
     pDf->bSemaphore = UNLOCKED;
@@ -610,24 +568,6 @@ int load_df(unsigned int pcs, unsigned int img_addr, unsigned int img_size,
     df_recovery(pDf);
 #endif
 
-#if	defined(CONFIG_APP_CHECK)
-    df_continuous_read(pDf, (char *)rxBuffer, 32, img_addr);
-    df_wait_ready(pDf);
-    //msg_print(MSG_PROMPT);
-    if (df_is_boot_valid((unsigned char *)rxBuffer) == FAILURE) {
-#if 0
-        msg_print(MSG_INVALID);
-        msg_print(MSG_BOOT);
-        msg_print(MSG_NEWLINE);
-#endif
-        return FAILURE;
-    } else {
-#if 0
-        msg_print(MSG_VALID);
-        msg_print(MSG_NEWLINE);
-#endif
-    }
-#endif
     status = df_download(pDf, img_addr, img_size, img_dest);
     return status;
 }
