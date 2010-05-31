@@ -2237,7 +2237,7 @@ static unsigned short SdMmcInit(SdCard * pSd, SdDriver * pSdDriver)
 
                 return error;
             }
-#if !(defined(CONFIG_AT91SAM9G10EK) && defined(WINCE))
+#if !(defined(CONFIG_AT91SAM9G10EK))
             do {
                 error = Cmd1(pSd, 1, &isHdSupport);
             }
@@ -2322,7 +2322,7 @@ static unsigned short SdMmcInit(SdCard * pSd, SdDriver * pSdDriver)
 
     // If the card support EXT_CSD, read it!
 
-#if !(defined(CONFIG_AT91SAM9G10EK) && defined(WINCE))
+#if !(defined(CONFIG_AT91SAM9G10EK))
     // Get extended information of the card
     SdMmcUpdateInformation(pSd, 0, 0);
 
