@@ -587,7 +587,9 @@ int load_df(unsigned int pcs, unsigned int img_addr, unsigned int img_size,
 
     AT91PS_DF pDf = (AT91PS_DF) & sDF;
 
+#if defined(CONFIG_APP_CHECK)
     unsigned int *rxBuffer = (unsigned int *)img_dest;
+#endif
 
     unsigned int status;
 
