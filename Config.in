@@ -114,8 +114,8 @@ config CONFIG_OS_IMAGE_NAME
 
 config CONFIG_OS_IMAGE_NAME
 	depends on CONFIG_SDCARD && !CONFIG_AT91SAM9G10EK
-	string "Linux Kernel Image Name on SD Card"
-	default "linux.img"
+	string "Binary Name on SD Card"
+	default "image.bin"
 
 config CONFIG_OS_IMG_SIZE
 	string "OS Image Size"
