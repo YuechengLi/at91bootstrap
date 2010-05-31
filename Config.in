@@ -278,6 +278,7 @@ config CONFIG_GLBDRV_ADDR
 	
 config CONFIG_APP_CHECK
 	bool "Check if application has a valid exception vector table"
+	depends on !CONFIG_LOAD_LINUX && !CONFIG_LOAD_NK && !CONFIG_LOAD_EBOOT
 	default y
 	help
 	  Let bootstrap disassemble the first 7 double words
