@@ -631,6 +631,7 @@ int read_nandflash(unsigned char *dst, unsigned long offset, int len)
         dbg_log(DEBUG_INFO, "\n\r-E- No NandFlash detected !!!\n\r");
         return -1;
     }
+	dbg_log(1, "Copy %d bytes from %d to %d\r\n", len, offset, dst);
 
     /*
      * Initialize NandInfo Structure 
@@ -652,6 +653,7 @@ int read_nandflash(unsigned char *dst, unsigned long offset, int len)
     length = len;
 
     while (length > 0) {
+		dbg_log(1, "+");
         /*
          * Read a buffer corresponding to a block in the origin file 
          */
@@ -710,6 +712,7 @@ int read_nandflash(unsigned char *dst, unsigned long offset, int len)
          */
         length -= sizeToRead;
     }
+	dbg_log(1, "\r\n");
 
     return 0;
 }
