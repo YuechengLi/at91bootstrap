@@ -228,6 +228,7 @@ config CONFIG_JUMP_ADDR
 	default "0x73F00000" if CONFIG_AT91SAM9M10EK
 	default "0x23F00000"
 	help
+	  The entry point to which the bootstrap will pass control.
 
 config CONFIG_JUMP_ADDR
 	string
@@ -245,6 +246,7 @@ config CONFIG_JUMP_ADDR
 	default "0x20069000" if CONFIG_AT91SAM9G10EK
 	default "0x23F00000"
 	help
+	  The entry point to which the bootstrap will pass control.
 	
 config CONFIG_JUMP_ADDR
 	string
@@ -262,6 +264,7 @@ config CONFIG_JUMP_ADDR
 	default "0x22000000" if CONFIG_AT91SAM9G10EK
 	default "0x22000000"
 	help
+	  The entry point to which the bootstrap will pass control.
 
 config CONFIG_JUMP_ADDR
 	string
@@ -272,6 +275,7 @@ config CONFIG_JUMP_ADDR
 	default "0x70000000" if CONFIG_AT91SAM9G45EKES
 	default "0x20000000"
 	help
+	  The entry point to which the bootstrap will pass control.
 
 config CONFIG_GLBDRV_ADDR
 	string
