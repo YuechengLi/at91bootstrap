@@ -183,8 +183,8 @@ void set_nk_settings()
     *(unsigned int *)(GLBDRV_ADDR + 0x854) = 4; // BUS_DIVIDER
 #endif
 #ifdef CONFIG_AT91SAM9261EK
-    *(unsigned int *)(GLBDRV_ADDR + 0x850) = 200;       // CORE_FREQUENCY
-    *(unsigned int *)(GLBDRV_ADDR + 0x854) = 4; // BUS_DIVIDER
+    *(unsigned int *)(GLBDRV_ADDR + 0x84C) = 200;       // CORE_FREQUENCY
+    *(unsigned int *)(GLBDRV_ADDR + 0x850) = 4; // BUS_DIVIDER
 #endif
 #ifdef CONFIG_AT91SAM9263EK
     *(unsigned int *)(GLBDRV_ADDR + 0x850) = 200;       // CORE_FREQUENCY
