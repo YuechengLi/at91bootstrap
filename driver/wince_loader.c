@@ -93,9 +93,9 @@ typedef struct {
 #define EBOOT_FLASH_SETTINGS_ADDR	(0xE0000000|0x180000)
 #endif
 #ifdef AT91SAM9260
-#define BOOTLOADER_FLASH_CONFIG_ADDR 0x300000
-#define EBOOT_FLASH_CODE_ADDR		(0xE0000000|0x80000)
-#define EBOOT_FLASH_SETTINGS_ADDR	(0xE0000000|0x180000)
+#define BOOTLOADER_FLASH_CONFIG_ADDR 0x200000
+#define EBOOT_FLASH_CODE_ADDR		(0xE0000000|0x4000)
+#define EBOOT_FLASH_SETTINGS_ADDR	(0xE0000000|0x25000)
 #endif
 #endif
 
@@ -178,6 +178,18 @@ void set_nk_settings()
     *(unsigned int *)(GLBDRV_ADDR + 0x808) = 'SGRA';    // SIGNATURE
     *(unsigned short *)(GLBDRV_ADDR + 0x80C) = 0x1;     // OALVERSION
     *(unsigned short *)(GLBDRV_ADDR + 0x80E) = 0x1;     // BSPVERSION
+#ifdef CONFIG_AT91SAM9260EK
+    *(unsigned int *)(GLBDRV_ADDR + 0x850) = 200;       // CORE_FREQUENCY
+    *(unsigned int *)(GLBDRV_ADDR + 0x854) = 4; // BUS_DIVIDER
+#endif
+#ifdef CONFIG_AT91SAM9261EK
+    *(unsigned int *)(GLBDRV_ADDR + 0x850) = 200;       // CORE_FREQUENCY
+    *(unsigned int *)(GLBDRV_ADDR + 0x854) = 4; // BUS_DIVIDER
+#endif
+#ifdef CONFIG_AT91SAM9263EK
+    *(unsigned int *)(GLBDRV_ADDR + 0x850) = 200;       // CORE_FREQUENCY
+    *(unsigned int *)(GLBDRV_ADDR + 0x854) = 4; // BUS_DIVIDER
+#endif
 #ifdef CONFIG_AT91SAM9G10EK
     *(unsigned int *)(GLBDRV_ADDR + 0x850) = 200;       // CORE_FREQUENCY
     *(unsigned int *)(GLBDRV_ADDR + 0x854) = 2; // BUS_DIVIDER

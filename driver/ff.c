@@ -1352,17 +1352,17 @@ FRESULT create_name(DIR * dj,   /* Pointer to the directory object */
     sfn[11] = c;                /* Store NT flag, File name is created */
 #endif
 #else
-    dj->fn[0] = 'i';
-    dj->fn[1] = 'm';
-    dj->fn[2] = 'a';
-    dj->fn[3] = 'g';
-    dj->fn[4] = 'e';
+    dj->fn[0] = 'I';
+    dj->fn[1] = 'M';
+    dj->fn[2] = 'A';
+    dj->fn[3] = 'G';
+    dj->fn[4] = 'E';
     dj->fn[5] = ' ';
     dj->fn[6] = ' ';
     dj->fn[7] = ' ';
-    dj->fn[8] = 'b';
-    dj->fn[9] = 'i';
-    dj->fn[10] = 'n';
+    dj->fn[8] = 'B';
+    dj->fn[9] = 'I';
+    dj->fn[10] = 'N';
     dj->fn[11] = 0x14;
 #endif
 
