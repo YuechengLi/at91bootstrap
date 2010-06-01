@@ -713,7 +713,7 @@ set CONFIG_SDCARD=Y
 set JUMP_ADDR=0x23F00000
 set CONFIG_CPU_CLK_266MHZ=Y
 set CONFIG_LOAD_UBOOT=Y
-REM set CONFIG_DEBUG=
+set CONFIG_DEBUG=
 goto :build
 
 :9g10_sdcard_linuxkernel
