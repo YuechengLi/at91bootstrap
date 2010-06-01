@@ -1,7 +1,7 @@
 @echo off
 set all_ek_list=9260 9261 9263 9rl 9g10 9g20 9g45 9m10
 set all_mem_list=dataflash nandflash sdcard
-set all_image_list=eboot cekernel uboot linuxkernel gettingstarted massstorage
+set all_image_list=eboot cekernel uboot linuxkernel gettingstarted
 set ek_list=""
 set mem_list=""
 set image_list=""
@@ -10,7 +10,7 @@ if "%3"=="" (
     echo Usage: build EK_TYPE MEMORY_TYPE IMAGE_TYPE
     echo        EK_TYPE: 9260 9261 9263 9rl 9g10 9g20 9g45 9m10 all
     echo        MEMORY_TYPE: dataflash nandflash sdcard all
-    echo        IMAGE_TYPE: eboot cekernel uboot linuxkernel gettingstarted massstorage all
+    echo        IMAGE_TYPE: eboot cekernel uboot linuxkernel gettingstarted all
     goto :EOF
 )
 
