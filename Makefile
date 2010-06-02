@@ -131,13 +131,7 @@ LINUX_IMG_NAND_OFFSET := $(strip $(subst ",,$(CONFIG_LINUX_IMG_NAND_OFFSET)))
 
 LINUX_KERNEL_ARG_STRING := $(strip $(subst ",,$(CONFIG_LINUX_KERNEL_ARG_STRING)))
 
-JUMP_ADDR := $(strip $(subst ",,$(CONFIG_JUMP_ADDR)))
-
 GLBDRV_ADDR := $(strip $(subst ",,$(CONFIG_GLBDRV_ADDR)))
-
-BOOTSTRAP_MAXSIZE := $(strip $(subst ",,$(CONFIG_BOOTSTRAP_MAXSIZE)))
-
-CARD_SUFFIX = $(strip $(subst ",,$(CONFIG_CARD_SUFFIX)))
 
 # Board definitions
 
@@ -387,8 +381,6 @@ config-clean:
 clean:
 	find . -type f \( -name .depend \
 		-o -name '*.srec' \
-		-o -name '*.elf' \
-		-o -name '*.map' \
 		-o -name '*.o' \
 		-o -name '*~' \) \
 		-print0 \
@@ -396,7 +388,7 @@ clean:
 	rm -fr $(obj)
 
 distclean: clean config-clean
-	rm -fr $(BINDIR)
+#	rm -fr $(BINDIR)
 	rm -fr .config .config.cmd .config.old
 	rm -fr .auto.deps
 	rm -f .installed

@@ -1,96 +1,63 @@
 #!/bin/sh
+rm -f binaries/*
 rm -rf log
 mkdir -p log/FAIL
 skip=0
-rm -f .config
-
-if [ -f ../gcc.sh ] ; then
-source ../gcc.sh
-else
-	echo "You need to supply a good Makefile environment similar to:"
-	cat gcc.sh
-	exit 0
-fi
-
-MAKEFLAGS="CROSS_COMPILE=${CROSS_COMPILE} CONFIG_NO_DWARF_CFI_ASM=y"
 
 function build()
 {
-	if [ ${skip} == "0" ] ; then
-		make $1_defconfig
-		make oldconfig
-		make update
-		make 	> log/$1.log 2>&1 || mv log/$1.log log/FAIL/$1.log.FAIL
-	fi
-# ${MAKEFLAGS}
+	make distclean
+	make $1_defconfig
+	make > log/$1.log 2>&1 || mv log/$1.log log/FAIL/$1.log.FAIL
 }
 
+#build	at91cap9adk
+#build	at91cap9df
+#build	at91cap9f
 
-if [ "$1" == "" ] ; then
+#build	at91cap9stk
+#build	at91cap9stkdf
+#build	at91cap9stkf
 
-make	clean
+build	at91sam9g20df
+build	at91sam9g20sd
+build	at91sam9g20nf
 
-build	at91cap9adk
-build	at91cap9df
-build	at91cap9f
+build	at91sam9g10df
+build	at91sam9g10sd
+build	at91sam9g10nf
 
-build	at91cap9stk
-build	at91cap9stkdf
-build	at91cap9stkf
+build	at91sam9g45dfes
+build	at91sam9g45sdes
+build	at91sam9g45nfes
 
-build	at91sam9g20dfc
- build	at91sam9g20df
- build	at91sam9g20ek
- build	at91sam9g20nf
+build	at91sam9g45df
+build	at91sam9g45sd
+build	at91sam9g45nf
 
- build	at91sam9g10df
- build	at91sam9g10ek
- build	at91sam9g10nf
+build	at91sam9m10df
+build	at91sam9m10sd
+build	at91sam9m10nf
 
- build	at91sam9g45dfes
- build	at91sam9g45ekes
- build	at91sam9g45nfes
+build	at91sam9rldf
+build	at91sam9rlsd
+build	at91sam9rlnf
 
- build	at91sam9g45df
- build	at91sam9g45ek
- build	at91sam9g45nf
+#build	at91sam9xedfc
+#build	at91sam9xedf
+#build	at91sam9xeek
+#build	at91sam9xenf
 
- build	at91sam9m10df
- build	at91sam9m10ek
- build	at91sam9m10nf
-
- build	at91sam9rldf
- build	at91sam9rlek
- build	at91sam9rlnf
-
-build	at91sam9xedfc
-build	at91sam9xedf
-build	at91sam9xeek
-build	at91sam9xenf
-
-build	at91sam9260dfc
 build	at91sam9260df
-build	at91sam9260ek
 build	at91sam9260nf
 
-build	afeb9260
-
 build	at91sam9261df
-build	at91sam9261dfc
-build	at91sam9261ek
 build	at91sam9261nf
 
-build	at91sam9263dfc
-build	at91sam9263ek
+build	at91sam9263df
 build	at91sam9263nf
 
-elif [ "$1" == "FAIL" ] ; then
-
-echo "All builds"
-
-else
-
-build	$1
-
-fi
+echo
+echo
+echo "### Done!"
 
