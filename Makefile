@@ -395,7 +395,11 @@ distclean: clean config-clean
 	rm -f ..*.tmp
 	rm -f .configured
 
-PHONY+=distrib config-clean clean distclean
+mrproper: distclean
+	rm -fr $(BINDIR)
+	rm -fr log
+
+PHONY+=distrib config-clean clean distclean mrproper
 
 tarball: distrib
 	rm -fr ../source/at91bootstrap-$(VERSION)
