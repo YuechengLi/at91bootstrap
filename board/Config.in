@@ -293,12 +293,6 @@ config CONFIG_TOP_OF_MEMORY
 	default "0x301000"	if CONFIG_AFEB9260
 	help
 
-config CONFIG_BOOTSTRAP_MAXSIZE
-	string
-	default "4096"	if CONFIG_AT91SAM9260EK
-	default "4096"	if CONFIG_AFEB9260
-	default "23000"
-
 choice
 	prompt "Crystal Frequency"
 	default CONFIG_CRYSTAL_18_432MHZ
