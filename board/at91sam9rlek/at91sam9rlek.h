@@ -43,6 +43,8 @@
 
 #ifdef CONFIG_CPU_CLK_200MHZ
 
+#define MCK_100
+
 #define MASTER_CLOCK		(100000000)
 #define	TOP_OF_MEMORY		0x310000
 #define PLL_LOCK_TIMEOUT	1000000
@@ -57,6 +59,9 @@
 #endif
 
 #ifdef CONFIG_CPU_CLK_266MHZ
+
+#define MCK_133
+
 /* 133 MHz Bus clock */
 #define MASTER_CLOCK		(133000000)
 #define PLL_LOCK_TIMEOUT	1000000
