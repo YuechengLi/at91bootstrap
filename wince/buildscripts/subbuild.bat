@@ -4,6 +4,7 @@ call clean.bat
 set STACK_CHECK_DISABLE=1
 set OS_IMAGE_NAME="image.bin"
 set CONFIG_DEBUG=Y
+set RESOURCEONLYDLL=1
 
 %1 :%2
 

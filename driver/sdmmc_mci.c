@@ -2460,6 +2460,8 @@ static unsigned short SdMmcInit(SdCard * pSd, SdDriver * pSdDriver)
 
         SdMmcUpdateInformation(pSd, isHsSupport, 1);
     }
+#else
+    pSd->transSpeed = (1000 * 25) * 1000;
 #endif
     return 0;
 }
