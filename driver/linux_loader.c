@@ -96,6 +96,17 @@
 #ifdef CONFIG_SDCARD
 #define LINUX_KERNEL_ARG_STRING "mem=128M console=ttyS0,115200 root=/dev/mmcblk0p2 rootdelay=2"
 #endif
+#ifdef CONFIG_AT91SAM9M10EKES
+#ifdef CONFIG_DATAFLASH
+#define LINUX_KERNEL_ARG_STRING "mem=64M console=ttyS0,115200 mtdparts=atmel_nand:4M(bootstrap),60M(rootfs),-(spare) root=/dev/mtdblock1 rw rootfstype=jffs2"
+#endif
+#ifdef CONFIG_NANDFLASH
+#define LINUX_KERNEL_ARG_STRING "mem=64M console=ttyS0,115200 mtdparts=atmel_nand:4M(bootstrap),60M(rootfs),-(spare) root=/dev/mtdblock1 rw rootfstype=jffs2"
+#endif
+#ifdef CONFIG_SDCARD
+#define LINUX_KERNEL_ARG_STRING "mem=128M console=ttyS0,115200 root=/dev/mmcblk0p2 rootdelay=2"
+#endif
+#endif
 
 #endif
 
@@ -346,8 +357,8 @@ void LoadLinux()
     //clean_environment();
 
     dbg_log(1,
-            "relocating linux kernel to proper address, dst: %x, src: %x, len: %d\n\r",
-            load_addr, (unsigned long)JUMP_ADDR + sizeof (image_header_t), len);
+            "relocating linux kernel to proper address, dst: %x, src: %x, len: %d, machid: %d\n\r",
+            load_addr, (unsigned long)JUMP_ADDR + sizeof (image_header_t), len, MACH_TYPE);
     memcpy((void *)load_addr,
            (void *)((unsigned long)JUMP_ADDR + sizeof (image_header_t)), len);
     //dbg_log(1, "... %d bytes data transferred!\n\r", len);

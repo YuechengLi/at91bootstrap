@@ -75,7 +75,12 @@
 
 #ifdef AT91SAM9M10
 #include "AT91SAM9G45_inc.h"
+#ifdef CONFIG_AT91SAM9M10EK
 #include "at91sam9m10ek.h"
+#endif
+#ifdef CONFIG_AT91SAM9M10EKES
+#include "at91sam9m10ekes.h"
+#endif
 #endif
 
 #ifdef AT91SAM9261
