@@ -212,6 +212,10 @@ void set_nk_settings()
     *(unsigned int *)(GLBDRV_ADDR + 0x850) = 400;       // CORE_FREQUENCY
     *(unsigned int *)(GLBDRV_ADDR + 0x854) = 2; // BUS_DIVIDER
 #endif
+#ifdef CONFIG_AT91SAM9G45EKES
+    *(unsigned int *)(GLBDRV_ADDR + 0x850) = 400;       // CORE_FREQUENCY
+    *(unsigned int *)(GLBDRV_ADDR + 0x854) = 2; // BUS_DIVIDER
+#endif
 #ifdef CONFIG_AT91SAM9M10EKES
     *(unsigned int *)(GLBDRV_ADDR + 0x850) = 400;       // CORE_FREQUENCY
     *(unsigned int *)(GLBDRV_ADDR + 0x854) = 2; // BUS_DIVIDER

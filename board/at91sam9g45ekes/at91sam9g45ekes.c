@@ -30,6 +30,10 @@
  * Creation            : NFe Jan 2008
  *-----------------------------------------------------------------------------
  */
+#if defined(WINCE) && !defined(CONFIG_AT91SAM9G45EKES)
+
+#else
+
 #include "part.h"
 #include "gpio.h"
 #include "pmc.h"
@@ -45,24 +49,13 @@
 #include "dataflash.h"
 #endif
 
-#ifndef CONFIG_THUMB
-static inline unsigned int get_cp15(void)
-{
-    unsigned int value;
-
- __asm__("mrc p15, 0, %0, c1, c0, 0":"=r"(value));
-    return value;
-}
-
-static inline void set_cp15(unsigned int value)
-{
- __asm__("mcr p15, 0, %0, c1, c0, 0": :"r"(value));
-}
-#else
 int get_cp15(void);
 
 void set_cp15(unsigned int value);
-#endif
+
+int get_cpsr(void);
+
+void set_cpsr(unsigned int value);
 
 #ifdef CONFIG_HW_INIT
 /*----------------------------------------------------------------------------*/
@@ -136,14 +129,12 @@ void hw_init(void)
     pio_setup(hw_pio);
 
 #ifdef CONFIG_DEBUG
-
     /*
      * Enable Debug messages on the DBGU 
      */
     dbgu_init(BAUDRATE(MASTER_CLOCK, 115200));
-
     dbgu_print("Start AT91Bootstrap...\n\r");
-#endif                          /* CONFIG_VERBOSE */
+#endif
 
 #ifdef CONFIG_DDR2
     /*
@@ -155,35 +146,7 @@ void hw_init(void)
 #endif                          /* CONFIG_HW_INIT */
 
 #ifdef CONFIG_DDR2
-static SDdramConfig ddram_config = {
-    .ddramc_mdr = (AT91C_DDRC2_DBW_16_BITS | AT91C_DDRC2_MD_DDR2_SDRAM),
-
-    .ddramc_cr = (AT91C_DDRC2_NC_DDR10_SDR9 |   // 10 column bits (1K)
-                  AT91C_DDRC2_NR_14 |   // 14 row bits    (8K)
-                  AT91C_DDRC2_CAS_3 |   // CAS Latency 3
-                  AT91C_DDRC2_DLL_RESET_DISABLED),      // DLL not reset
-
-    .ddramc_rtr = 0x24B,
-
-    .ddramc_t0pr = (AT91C_DDRC2_TRAS_6 |        //  6 * 7.5 = 45   ns
-                    AT91C_DDRC2_TRCD_2 |        //  2 * 7.5 = 22.5 ns
-                    AT91C_DDRC2_TWR_2 | //  2 * 7.5 = 15   ns
-                    AT91C_DDRC2_TRC_8 | //  8 * 7.5 = 75   ns
-                    AT91C_DDRC2_TRP_2 | //  2 * 7.5 = 22.5 ns
-                    AT91C_DDRC2_TRRD_1 |        //  1 * 7.5 = 7.5   ns
-                    AT91C_DDRC2_TWTR_1 |        //  1 clock cycle
-                    AT91C_DDRC2_TMRD_2),        //  2 clock cycles
-
-    .ddramc_t1pr = (AT91C_DDRC2_TXP_2 | //  2 * 7.5 = 15 ns
-                    200 << 16 | // 200 clock cycles, TXSRD: Exit self refresh delay to Read command
-                    16 << 8 |   // 16 * 7.5 = 120 ns TXSNR: Exit self refresh delay to non read command
-                    AT91C_DDRC2_TRFC_14 << 0),  // 14 * 7.5 = 142 ns (must be 140 ns for 1Gb DDR)
-
-    .ddramc_t2pr = (AT91C_DDRC2_TRTP_1 |        //  1 * 7.5 = 7.5 ns
-                    AT91C_DDRC2_TRPA_0 |        //  0 * 7.5 = 0 ns
-                    AT91C_DDRC2_TXARDS_7 |      //  7 clock cycles
-                    AT91C_DDRC2_TXARD_2),       //  2 clock cycles
-};
+static SDdramConfig ddram_config;
 
 /*------------------------------------------------------------------------------*/
 /* \fn    ddramc_hw_init							*/
@@ -191,6 +154,35 @@ static SDdramConfig ddram_config = {
 /*------------------------------------------------------------------------------*/
 void ddramc_hw_init(void)
 {
+    ddram_config.ddramc_mdr =
+        (AT91C_DDRC2_DBW_16_BITS | AT91C_DDRC2_MD_DDR2_SDRAM);
+
+    ddram_config.ddramc_cr = (AT91C_DDRC2_NC_DDR10_SDR9 |       // 10 column bits (1K)
+                              AT91C_DDRC2_NR_14 |       // 14 row bits    (8K)
+                              AT91C_DDRC2_CAS_3 |       // CAS Latency 3
+                              AT91C_DDRC2_DLL_RESET_DISABLED);  // DLL not reset
+
+    ddram_config.ddramc_rtr = 0x24B;
+
+    ddram_config.ddramc_t0pr = (AT91C_DDRC2_TRAS_6 |    //  6 * 7.5 = 45   ns
+                                AT91C_DDRC2_TRCD_2 |    //  2 * 7.5 = 22.5 ns
+                                AT91C_DDRC2_TWR_2 |     //  2 * 7.5 = 15   ns
+                                AT91C_DDRC2_TRC_8 |     //  8 * 7.5 = 75   ns
+                                AT91C_DDRC2_TRP_2 |     //  2 * 7.5 = 22.5 ns
+                                AT91C_DDRC2_TRRD_1 |    //  1 * 7.5 = 7.5   ns
+                                AT91C_DDRC2_TWTR_1 |    //  1 clock cycle
+                                AT91C_DDRC2_TMRD_2);    //  2 clock cycles
+
+    ddram_config.ddramc_t1pr = (AT91C_DDRC2_TXP_2 |     //  2 * 7.5 = 15 ns
+                                200 << 16 |     // 200 clock cycles, TXSRD: Exit self refresh delay to Read command
+                                16 << 8 |       // 16 * 7.5 = 120 ns TXSNR: Exit self refresh delay to non read command
+                                AT91C_DDRC2_TRFC_14 << 0);      // 14 * 7.5 = 142 ns (must be 140 ns for 1Gb DDR)
+
+    ddram_config.ddramc_t2pr = (AT91C_DDRC2_TRTP_1 |    //  1 * 7.5 = 7.5 ns
+                                AT91C_DDRC2_TRPA_0 |    //  0 * 7.5 = 0 ns
+                                AT91C_DDRC2_TXARDS_7 |  //  7 clock cycles
+                                AT91C_DDRC2_TXARD_2);   //  2 clock cycles
+
     // ENABLE DDR2 clock 
     writel(AT91C_PMC_DDR, AT91C_BASE_PMC + PMC_SCER);
 
@@ -343,7 +335,7 @@ void sclk_enable(void)
 {
     volatile int i;
 
-    unsigned int dwRegSave;
+    //unsigned int dwRegSave;
 
     (*(volatile unsigned int *)AT91C_SYS_SLCKSEL) =
         AT91C_SLCKSEL_OSC32EN | AT91C_SLCKSEL_RCEN;
@@ -354,3 +346,5 @@ void sclk_enable(void)
     for (i = 0; i < 0x1000; i++) ;
 }
 #endif
+
+#endif                          /* CONFIG_AT91SAM9G45EKES */

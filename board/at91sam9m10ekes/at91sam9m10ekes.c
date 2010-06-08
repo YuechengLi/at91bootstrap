@@ -347,4 +347,4 @@ void sclk_enable(void)
 }
 #endif
 
-#endif                          /* CONFIG_AT91SAM9M10EK */
+#endif                          /* CONFIG_AT91SAM9M10EKES */

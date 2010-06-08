@@ -1,5 +1,5 @@
 @echo off
-set all_ek_list=9260 9261 9263 9rl 9g10 9g20 9g45 9m10
+set all_ek_list=9260 9261 9263 9rl 9g10 9g20 9g45 9m10 9g45ekes 9m10ekes
 set all_mem_list=dataflash nandflash sdcard
 set all_image_list=eboot cekernel uboot linuxkernel gettingstarted
 set ek_list=""
@@ -8,7 +8,7 @@ set image_list=""
 
 if "%3"=="" (
     echo Usage: build EK_TYPE MEMORY_TYPE IMAGE_TYPE
-    echo        EK_TYPE: 9260 9261 9263 9rl 9g10 9g20 9g45 9m10 all
+    echo        EK_TYPE: 9260 9261 9263 9rl 9g10 9g20 9g45 9m10 9g45ekes 9m10ekes all
     echo        MEMORY_TYPE: dataflash nandflash sdcard all
     echo        IMAGE_TYPE: eboot cekernel uboot linuxkernel gettingstarted all
     goto :EOF
@@ -66,7 +66,7 @@ if %image_list%=="" (
 )
 
 :BUILD
-set ek_mem_list=9260_dataflash 9260_nandflash 9261_dataflash 9261_nandflash 9263_dataflash 9263_nandflash 9263_sdcard 9rl_dataflash  9rl_nandflash  9rl_sdcard 9g10_dataflash 9g10_nandflash 9g10_sdcard 9g20_dataflash 9g20_nandflash 9g20_sdcard 9g45_dataflash 9g45_nandflash 9g45_sdcard 9m10_dataflash 9m10_nandflash 9m10_sdcard
+set ek_mem_list=9260_dataflash 9260_nandflash 9261_dataflash 9261_nandflash 9263_dataflash 9263_nandflash 9263_sdcard 9rl_dataflash  9rl_nandflash  9rl_sdcard 9g10_dataflash 9g10_nandflash 9g10_sdcard 9g20_dataflash 9g20_nandflash 9g20_sdcard 9g45_dataflash 9g45_nandflash 9g45_sdcard 9m10_dataflash 9m10_nandflash 9m10_sdcard 9g45ekes_dataflash 9g45ekes_nandflash 9g45ekes_sdcard 9m10ekes_dataflash 9m10ekes_nandflash 9m10ekes_sdcard
 
 for %%i in (%ek_list%) do (
     for %%j in (%mem_list%) do (
