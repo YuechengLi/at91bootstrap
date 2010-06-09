@@ -17,7 +17,7 @@
 #define LINUX_KERNEL_ARG_STRING "mem=64M console=ttyS0,115200 root=/dev/mtdblock1 rw rootfstype=jffs2"
 #endif
 #ifdef CONFIG_SDCARD
-#define LINUX_KERNEL_ARG_STRING "mem=128M console=ttyS0,115200 root=/dev/mmcblk0p2 rootdelay=2"
+#define LINUX_KERNEL_ARG_STRING "mem=64M console=ttyS0,115200 root=/dev/mmcblk0p2 rootdelay=2"
 #endif
 #endif
 #ifdef CONFIG_AT91SAM9261EK
@@ -28,7 +28,7 @@
 #define LINUX_KERNEL_ARG_STRING "mem=64M console=ttyS0,115200 root=/dev/mtdblock1 rw rootfstype=jffs2"
 #endif
 #ifdef CONFIG_SDCARD
-#define LINUX_KERNEL_ARG_STRING "mem=128M console=ttyS0,115200 root=/dev/mmcblk0p2 rootdelay=2"
+#define LINUX_KERNEL_ARG_STRING "mem=64M console=ttyS0,115200 root=/dev/mmcblk0p2 rootdelay=2"
 #endif
 #endif
 #ifdef CONFIG_AT91SAM9263EK
@@ -39,7 +39,7 @@
 #define LINUX_KERNEL_ARG_STRING "mem=64M console=ttyS0,115200 root=/dev/mtdblock1 rw rootfstype=jffs2"
 #endif
 #ifdef CONFIG_SDCARD
-#define LINUX_KERNEL_ARG_STRING "mem=128M console=ttyS0,115200 root=/dev/mmcblk0p2 rootdelay=2"
+#define LINUX_KERNEL_ARG_STRING "mem=64M console=ttyS0,115200 root=/dev/mmcblk0p2 rootdelay=2"
 #endif
 #endif
 #ifdef CONFIG_AT91SAM9RLEK
@@ -50,7 +50,7 @@
 #define LINUX_KERNEL_ARG_STRING "mem=64M console=ttyS0,115200 root=/dev/mtdblock1 rw rootfstype=jffs2"
 #endif
 #ifdef CONFIG_SDCARD
-#define LINUX_KERNEL_ARG_STRING "mem=128M console=ttyS0,115200 root=/dev/mmcblk0p2 rootdelay=2"
+#define LINUX_KERNEL_ARG_STRING "mem=64M console=ttyS0,115200 root=/dev/mmcblk0p2 rootdelay=2"
 #endif
 #endif
 #ifdef CONFIG_AT91SAM9G10EK
@@ -61,7 +61,7 @@
 #define LINUX_KERNEL_ARG_STRING "mem=64M console=ttyS0,115200 root=/dev/mtdblock1 rw rootfstype=jffs2"
 #endif
 #ifdef CONFIG_SDCARD
-#define LINUX_KERNEL_ARG_STRING "mem=128M console=ttyS0,115200 root=/dev/mmcblk0p2 rootdelay=2"
+#define LINUX_KERNEL_ARG_STRING "mem=64M console=ttyS0,115200 root=/dev/mmcblk0p2 rootdelay=2"
 #endif
 #endif
 #ifdef CONFIG_AT91SAM9G20EK
@@ -72,15 +72,15 @@
 #define LINUX_KERNEL_ARG_STRING "mem=64M console=ttyS0,115200 root=/dev/mtdblock1 rw rootfstype=jffs2"
 #endif
 #ifdef CONFIG_SDCARD
-#define LINUX_KERNEL_ARG_STRING "mem=128M console=ttyS0,115200 root=/dev/mmcblk0p2 rootdelay=2"
+#define LINUX_KERNEL_ARG_STRING "mem=64M console=ttyS0,115200 root=/dev/mmcblk0p2 rootdelay=2"
 #endif
 #endif
 #ifdef CONFIG_AT91SAM9G45EK
 #ifdef CONFIG_DATAFLASH
-#define LINUX_KERNEL_ARG_STRING "mem=64M console=ttyS0,115200 mtdparts=atmel_nand:4M(bootstrap),60M(rootfs),-(spare) root=/dev/mtdblock1 rw rootfstype=jffs2"
+#define LINUX_KERNEL_ARG_STRING "mem=128M console=ttyS0,115200 mtdparts=atmel_nand:4M(bootstrap),60M(rootfs),-(spare) root=/dev/mtdblock1 rw rootfstype=jffs2"
 #endif
 #ifdef CONFIG_NANDFLASH
-#define LINUX_KERNEL_ARG_STRING "mem=64M console=ttyS0,115200 mtdparts=atmel_nand:4M(bootstrap),60M(rootfs),-(spare) root=/dev/mtdblock1 rw rootfstype=jffs2"
+#define LINUX_KERNEL_ARG_STRING "mem=128M console=ttyS0,115200 mtdparts=atmel_nand:4M(bootstrap),60M(rootfs),-(spare) root=/dev/mtdblock1 rw rootfstype=jffs2"
 #endif
 #ifdef CONFIG_SDCARD
 #define LINUX_KERNEL_ARG_STRING "mem=128M console=ttyS0,115200 root=/dev/mmcblk0p2 rootdelay=2"
@@ -94,15 +94,15 @@
 #define LINUX_KERNEL_ARG_STRING "mem=64M console=ttyS0,115200 mtdparts=atmel_nand:4M(bootstrap),60M(rootfs),-(spare) root=/dev/mtdblock1 rw rootfstype=jffs2"
 #endif
 #ifdef CONFIG_SDCARD
-#define LINUX_KERNEL_ARG_STRING "mem=128M console=ttyS0,115200 root=/dev/mmcblk0p2 rootdelay=2"
+#define LINUX_KERNEL_ARG_STRING "mem=64M console=ttyS0,115200 root=/dev/mmcblk0p2 rootdelay=2"
 #endif
 #endif
 #ifdef CONFIG_AT91SAM9G45EKES
 #ifdef CONFIG_DATAFLASH
-#define LINUX_KERNEL_ARG_STRING "mem=64M console=ttyS0,115200 mtdparts=atmel_nand:4M(bootstrap),60M(rootfs),-(spare) root=/dev/mtdblock1 rw rootfstype=jffs2"
+#define LINUX_KERNEL_ARG_STRING "mem=128M console=ttyS0,115200 mtdparts=atmel_nand:4M(bootstrap),60M(rootfs),-(spare) root=/dev/mtdblock1 rw rootfstype=jffs2"
 #endif
 #ifdef CONFIG_NANDFLASH
-#define LINUX_KERNEL_ARG_STRING "mem=64M console=ttyS0,115200 mtdparts=atmel_nand:4M(bootstrap),60M(rootfs),-(spare) root=/dev/mtdblock1 rw rootfstype=jffs2"
+#define LINUX_KERNEL_ARG_STRING "mem=128M console=ttyS0,115200 mtdparts=atmel_nand:4M(bootstrap),60M(rootfs),-(spare) root=/dev/mtdblock1 rw rootfstype=jffs2"
 #endif
 #ifdef CONFIG_SDCARD
 #define LINUX_KERNEL_ARG_STRING "mem=128M console=ttyS0,115200 root=/dev/mmcblk0p2 rootdelay=2"
@@ -116,7 +116,7 @@
 #define LINUX_KERNEL_ARG_STRING "mem=64M console=ttyS0,115200 mtdparts=atmel_nand:4M(bootstrap),60M(rootfs),-(spare) root=/dev/mtdblock1 rw rootfstype=jffs2"
 #endif
 #ifdef CONFIG_SDCARD
-#define LINUX_KERNEL_ARG_STRING "mem=128M console=ttyS0,115200 root=/dev/mmcblk0p2 rootdelay=2"
+#define LINUX_KERNEL_ARG_STRING "mem=64M console=ttyS0,115200 root=/dev/mmcblk0p2 rootdelay=2"
 #endif
 #endif
 
