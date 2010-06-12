@@ -82,7 +82,7 @@ CONFIG_LOAD_LINUX=y
 #
 CONFIG_OS_MEM_BANK="0x20000000"
 CONFIG_OS_MEM_SIZE="0x4000000"
-CONFIG_LINUX_KERNEL_ARG_STRING="mem=64M console=ttyS0,115200 mtdparts=atmel_nand:4M(bootstrap),60M(rootfs),-(spare) root=/dev/mtdblock1 rw rootfstype=jffs2"
+CONFIG_LINUX_KERNEL_ARG_STRING="mem=64M console=ttyS0,115200 root=/dev/mmcblk0p2 rootdelay=2"
 CONFIG_OS_IMAGE_NAME="image.bin"
 CONFIG_OS_IMG_SIZE="0x280000"
 CONFIG_IMG_ADDRESS="0x00000000"
