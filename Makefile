@@ -261,7 +261,18 @@ TARGETS=$(obj) $(AT91BOOTSTRAP)
 
 PHONY:=all gen_bin
 
-all: gen_bin ChkFileSize
+all: PrintFlags gen_bin ChkFileSize
+
+PrintFlags:
+	@echo ASFLAGS
+	@echo =======
+	@echo $(ASFLAGS) && echo
+	@echo CPPFLAGS
+	@echo ========
+	@echo $(CPPFLAGS) && echo
+	@echo LDFLAGS
+	@echo =======
+	@echo $(LDFLAGS) && echo
 
 gen_bin: $(OBJS)
 	$(if $(wildcard $(BINDIR)),,mkdir -p $(BINDIR))
