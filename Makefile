@@ -1,7 +1,8 @@
-#--------------------------------------------------------------
-# Just run 'make menuconfig', configure stuff, then run 'make'.
-# You shouldn't need to mess with anything beyond this point...
-#--------------------------------------------------------------
+#
+# Default config file is in $(TOPDIR)/board/$(BOARD_NAME)/*_defconfig
+# First, run xxx_defconfig
+# Then, `make menuconfig' if needed
+#
 
 TOPDIR=$(shell pwd)
 
@@ -16,11 +17,9 @@ endif
 
 BINDIR:=$(TOPDIR)/binaries
 
-TOOLCHAIN_DIR=atmel-2009-08-rc2
-
 DATE:=$(shell date +%Y%m%d)
 
-VERSION:=2.13
+VERSION:=3.0
 
  
 noconfig_targets:= menuconfig defconfig $(CONFIG) oldconfig
@@ -88,6 +87,10 @@ defconfig: $(CONFIG)/conf
 else
 ##  Have DOT Config
 #
+
+ifeq ($(CROSS_COMPILE),)
+$(error Environment variable "CROSS_COMPILE" must be defined!)
+endif
 
 AS=$(CROSS_COMPILE)gcc
 CC=$(CROSS_COMPILE)gcc
@@ -264,14 +267,14 @@ PHONY:=all gen_bin
 all: PrintFlags gen_bin ChkFileSize
 
 PrintFlags:
-	@echo ASFLAGS
-	@echo =======
-	@echo $(ASFLAGS) && echo
-	@echo CPPFLAGS
+	@echo as FLAGS
 	@echo ========
+	@echo $(ASFLAGS) && echo
+	@echo gcc FLAGS
+	@echo =========
 	@echo $(CPPFLAGS) && echo
-	@echo LDFLAGS
-	@echo =======
+	@echo ld FLAGS
+	@echo ========
 	@echo $(LDFLAGS) && echo
 
 gen_bin: $(OBJS)
