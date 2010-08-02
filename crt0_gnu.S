@@ -237,7 +237,7 @@ flush_idcache:
 
 	.align
 _lp_data:
-        .word _etext
+        .word _edummy
         .word _sdata
         .word _edata
 

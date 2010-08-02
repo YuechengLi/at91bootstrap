@@ -149,6 +149,8 @@ MACH_TYPE:=$(strip $(subst ",,$(CONFIG_MACH_TYPE)))
 
 LINK_ADDR:=$(strip $(subst ",,$(CONFIG_LINK_ADDR)))
 
+DATA_SECTION_ADDR:=$(strip $(subst ",,$(CONFIG_DATA_SECTION_ADDR)))
+
 TOP_OF_MEMORY:=$(strip $(subst ",,$(CONFIG_TOP_OF_MEMORY)))
 
 # CRYSTAL is UNUSED
@@ -251,6 +253,10 @@ include		driver/driver_cpp.mk
 LDFLAGS+=-nostartfiles -Map=$(BINDIR)/$(BOOT_NAME).map --cref
 #LDFLAGS+=-lc -lgcc
 LDFLAGS+=-T elf32-littlearm.lds $(GC_SECTIONS) -Ttext $(LINK_ADDR)
+
+ifneq ($(DATA_SECTION_ADDR),)
+LDFLAGS+=-Tdata $(DATA_SECTION_ADDR)
+endif
 
 ifdef YYY   # For other utils
 ifeq ($(CC),gcc) 
