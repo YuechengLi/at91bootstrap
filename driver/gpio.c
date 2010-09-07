@@ -85,6 +85,7 @@ static int pio_set_A_periph(unsigned pin, int use_pullup)
 /* \fn    pio_set_B_periph							*/
 /* \brief mux the pin to the "B" internal peripheral role.			*/
 /*------------------------------------------------------------------------------*/
+#if !defined(at91sam9g10) || !defined (CONFIG_SDCARD)
 static int pio_set_B_periph(unsigned pin, int use_pullup)
 {
     unsigned pio = pin_to_controller(pin);
@@ -177,6 +178,7 @@ static int pio_set_multi_drive(unsigned pin, int is_on)
     write_pio((is_on ? PIO_MDER(pio) : PIO_MDDR(pio)), mask);
     return 0;
 }
+#endif
 
 #if !defined(at91sam9g10)
 /*------------------------------------------------------------------------------*/

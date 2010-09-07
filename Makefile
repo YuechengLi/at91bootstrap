@@ -417,7 +417,6 @@ distclean: clean config-clean
 
 mrproper: distclean
 	rm -fr $(BINDIR)
-	rm -fr log
 
 PHONY+=distrib config-clean clean distclean mrproper
 

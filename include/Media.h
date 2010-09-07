@@ -163,7 +163,7 @@ extern unsigned int numMedias;
 //! \return Operation result code
 //! \see    TransferCallback
 //------------------------------------------------------------------------------
-static unsigned char MED_Write(Media * media,
+static inline unsigned char MED_Write(Media * media,
                                unsigned int address,
                                void *data,
                                unsigned int length,
@@ -185,7 +185,7 @@ static unsigned char MED_Write(Media * media,
 //! \return Operation result code
 //! \see    TransferCallback
 //------------------------------------------------------------------------------
-static unsigned char MED_Read(Media * media,
+static inline unsigned char MED_Read(Media * media,
                               unsigned int address,
                               void *data,
                               unsigned int length,
@@ -203,7 +203,7 @@ static unsigned char MED_Read(Media * media,
 /// \param  pActualEnd  End address of the actual lock range (optional).
 /// \return 0 if successful; otherwise returns an error code.
 //------------------------------------------------------------------------------
-static unsigned char MED_Lock(Media * media,
+static inline unsigned char MED_Lock(Media * media,
                               unsigned int start,
                               unsigned int end,
                               unsigned int *pActualStart,
@@ -225,7 +225,7 @@ static unsigned char MED_Lock(Media * media,
 /// \param pActualEnd  End address of the actual unlock range (optional).
 /// \return 0 if successful; otherwise returns an error code.
 //------------------------------------------------------------------------------
-static unsigned char MED_Unlock(Media * media,
+static inline unsigned char MED_Unlock(Media * media,
                                 unsigned int start,
                                 unsigned int end,
                                 unsigned int *pActualStart,
@@ -242,7 +242,7 @@ static unsigned char MED_Unlock(Media * media,
 //! \brief  
 //! \param  media Pointer to the Media instance to use
 //------------------------------------------------------------------------------
-static unsigned char MED_Flush(Media * media)
+static inline unsigned char MED_Flush(Media * media)
 {
     if (media->flush) {
 
@@ -257,7 +257,7 @@ static unsigned char MED_Flush(Media * media)
 //! \brief  Invokes the interrupt handler of the specified media
 //! \param  media Pointer to the Media instance to use
 //------------------------------------------------------------------------------
-static void MED_Handler(Media * media)
+static inline void MED_Handler(Media * media)
 {
     if (media->handler) {
 

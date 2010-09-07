@@ -47,6 +47,7 @@
 /// \param enablePullUp  Indicates if the pin(s) internal pull-up shall be
 ///                      configured.
 //------------------------------------------------------------------------------
+#if !defined(at91sam9g10)
 static void PIO_SetPeripheralA(unsigned int pio,
                                unsigned int mask, unsigned char enablePullUp)
 {
@@ -77,6 +78,7 @@ static void PIO_SetPeripheralA(unsigned int pio,
     (*(volatile unsigned int *)(pio + PIO_PDR(0))) = mask;
 
 }
+#endif
 
 //------------------------------------------------------------------------------
 /// Configures one or more pin(s) of a PIO controller as being controlled by
@@ -145,6 +147,7 @@ static void PIO_SetFilter(AT91S_PIO * pio,
 /// \param enablePullUp  Indicates if the internal pull-up(s) must be enabled.
 /// \param enableFilter  Indicates if the glitch filter(s) must be enabled.
 //------------------------------------------------------------------------------
+#if !defined(at91sam9g10)
 static void PIO_SetInput(unsigned int pio,
                          unsigned int mask,
                          unsigned char enablePullUp, unsigned char enableFilter)
@@ -172,6 +175,7 @@ static void PIO_SetInput(unsigned int pio,
     (*(volatile unsigned int *)(pio + PIO_ODR(0))) = mask;
     (*(volatile unsigned int *)(pio + PIO_PER(0))) = mask;
 }
+#endif
 
 //------------------------------------------------------------------------------
 /// Configures one or more pin(s) of a PIO controller as outputs, with the

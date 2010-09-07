@@ -38,7 +38,7 @@
 #include "dbgu.h"
 #include "debug.h"
 
-#include "pio.h"
+//#include "pio.h"
 
 #include <string.h>
 
@@ -82,9 +82,12 @@ unsigned char gSdmmcAutoHsEnable = 0;
 // Delay between sending MMC commands
 #define MMC_DELAY     0x4FF
 
-//#define SD_ADDRESS(pSd, address) \
-//    ((((pSd)->cardType == CARD_SDHC) || ((pSd)->cardType == CARD_MMCHD)) ? \
-//        (address):((address) << SD_BLOCK_SIZE_BIT))
+/*
+#define SD_ADDRESS(pSd, address) \
+    ((((pSd)->cardType == CARD_SDHC) || ((pSd)->cardType == CARD_MMCHD)) ? \
+        (address):((address) << SD_BLOCK_SIZE_BIT))
+*/
+
 #define SD_ADDRESS(pSd, address) \
     ( ((pSd)->totalSize == 0xFFFFFFFF) ? \
                             (address):((address) << SD_BLOCK_SIZE_BIT) )
@@ -702,6 +705,7 @@ static unsigned char Pon(SdCard * pSd)
     return error;
 }
 
+#if 0
 #if defined(MCI2_INTERFACE)
 //------------------------------------------------------------------------------
 /// Initialization delay: The maximum of 1 msec, 74 clock cycles and supply ramp
@@ -726,6 +730,7 @@ static unsigned char PonBoot(SdCard * pSd)
     error = SendCommand(pSd);
     return error;
 }
+#endif
 #endif
 
 //------------------------------------------------------------------------------
@@ -762,6 +767,7 @@ static unsigned char Cmd0(SdCard * pSd, unsigned int arg)
 /// \param hdSupport  Indicate whether the host support high density MMC.
 /// \param pHdSupport  Indicate whether the card is a high density MMC.
 //------------------------------------------------------------------------------
+#if !(defined(CONFIG_AT91SAM9G10EK))
 static unsigned char Cmd1(SdCard * pSd,
                           unsigned char hdSupport, unsigned char *pHdSupport)
 {
@@ -798,6 +804,7 @@ static unsigned char Cmd1(SdCard * pSd,
         return SD_ERROR_DRIVER;
     }
 }
+#endif
 
 //------------------------------------------------------------------------------
 /// Asks any card to send the CID numbers
@@ -893,6 +900,7 @@ static unsigned char Cmd7(SdCard * pSd, unsigned int address)
 /// \param  pStatus     Pointer to where the 512bit status is returned.
 /// \param  pResp       Pointer to where the response is returned.
 //------------------------------------------------------------------------------
+#if !(defined(CONFIG_AT91SAM9G10EK))
 static unsigned char Cmd6(SdCard * pSd,
                           const void *pSwitchArg,
                           unsigned int *pStatus, unsigned int *pResp)
@@ -953,6 +961,7 @@ static unsigned char Cmd6(SdCard * pSd,
 
     return 0;
 }
+#endif
 
 //------------------------------------------------------------------------------
 /// SD:  Sends SD Memory Card interface condition, which includes host supply
@@ -1310,6 +1319,7 @@ static unsigned char Cmd59(SdCard *pSd, unsigned char option)
 /// \param busWidth  Bus width in bits.
 /// \return the command transfer result (see SendCommand).
 //------------------------------------------------------------------------------
+#if !(defined(CONFIG_AT91SAM9G10EK))
 static unsigned char Acmd6(SdCard * pSd, unsigned char busWidth)
 {
     SdCmd *pCommand = &(pSd->command);
@@ -1335,12 +1345,14 @@ static unsigned char Acmd6(SdCard * pSd, unsigned char busWidth)
     // Send command
     return SendCommand(pSd);
 }
+#endif
 
 //------------------------------------------------------------------------------
 /// The SD Status contains status bits that are related to the SD memory Card
 /// proprietary features and may be used for future application-specific usage.
 /// Can be sent to a card only in 'tran_state'.
 //------------------------------------------------------------------------------
+#if !(defined(CONFIG_AT91SAM9G10EK))
 static unsigned char Acmd13(SdCard * pSd, unsigned int *pSdSTAT)
 {
     SdCmd *pCommand = &(pSd->command);
@@ -1374,6 +1386,7 @@ static unsigned char Acmd13(SdCard * pSd, unsigned int *pSdSTAT)
 
     return error;
 }
+#endif
 
 //------------------------------------------------------------------------------
 /// Asks to all cards to send their operations conditions.
@@ -1426,6 +1439,7 @@ static unsigned char Acmd41(SdCard * pSd, unsigned char hcs,
 /// Card's special features that were configured into the given card. The size
 /// of SCR register is 64 bits.
 //------------------------------------------------------------------------------
+#if !(defined(CONFIG_AT91SAM9G10EK))
 static unsigned char Acmd51(SdCard * pSd, unsigned int *pSCR)
 {
     SdCmd *pCommand = &(pSd->command);
@@ -1461,6 +1475,7 @@ static unsigned char Acmd51(SdCard * pSd, unsigned int *pSCR)
 
     return error;
 }
+#endif
 
 #if defined(MCI2_INTERFACE) && defined(AT91C_MCI_SPCMD_BOOTREQ)
 //------------------------------------------------------------------------------
@@ -1523,6 +1538,7 @@ static unsigned char BootREQ(SdCard * pSd,
 /// \param pData  Pointer to the application buffer to be filled.
 /// \param address  SD card address.
 //------------------------------------------------------------------------------
+#if !(defined(CONFIG_AT91SAM9G10EK))
 static unsigned char ContinuousRead(SdCard * pSd,
                                     unsigned short nbBlock,
                                     unsigned char *pData,
@@ -1546,6 +1562,7 @@ static unsigned char ContinuousRead(SdCard * pSd,
     // Send command
     return SendCommand(pSd);
 }
+#endif
 
 //------------------------------------------------------------------------------
 /// Continue to transfer datablocks from host to card until interrupted by a
@@ -1554,6 +1571,7 @@ static unsigned char ContinuousRead(SdCard * pSd,
 /// \param blockSize  Block size (shall be set to 512 in case of high capacity).
 /// \param pData  Pointer to the application buffer to be filled.
 //------------------------------------------------------------------------------
+#if 0
 static unsigned char ContinuousWrite(SdCard * pSd,
                                      unsigned short nbBlock,
                                      const unsigned char *pData,
@@ -1576,6 +1594,7 @@ static unsigned char ContinuousWrite(SdCard * pSd,
     // Send command
     return SendCommand(pSd);
 }
+#endif
 
 //------------------------------------------------------------------------------
 /// Try SW Reset several times (CMD0 with ARG 0)
@@ -1637,6 +1656,7 @@ static unsigned char ReInit(SdCard *pSd)
 //------------------------------------------------------------------------------
 /// Move SD card to transfer state.
 //------------------------------------------------------------------------------
+#if 0
 static unsigned char MoveToTranState(SdCard * pSd)
 {
     unsigned char error;
@@ -1669,6 +1689,7 @@ static unsigned char MoveToTranState(SdCard * pSd)
 
     return 0;
 }
+#endif
 
 //------------------------------------------------------------------------------
 /// Move SD card to transfer state. The buffer size must be at
@@ -1781,6 +1802,7 @@ static unsigned char MoveToTransferState(SdCard * pSd,
 /// \param pSd      Pointer to SdCard instance.
 /// \param hsEnable 1 to enable, 0 to disable.
 //------------------------------------------------------------------------------
+#if 0
 static unsigned char SdMmcSwitchHsMode(SdCard * pSd, unsigned char hsEnable)
 {
     unsigned int status;
@@ -1856,6 +1878,7 @@ static unsigned char SdMmcSwitchHsMode(SdCard * pSd, unsigned char hsEnable)
 
     return error;
 }
+#endif
 
 //------------------------------------------------------------------------------
 /// Process a list of SWITCH command
@@ -1864,6 +1887,7 @@ static unsigned char SdMmcSwitchHsMode(SdCard * pSd, unsigned char hsEnable)
 /// \param  listSize Number of arguments listed.
 /// \return 0, or error code and argument index.
 //------------------------------------------------------------------------------
+#if 0
 static unsigned short MmcSwitchSettings(SdCard * pSd,
                                         const MmcCmd6Arg * pArgList,
                                         unsigned int listSize,
@@ -1888,6 +1912,7 @@ static unsigned short MmcSwitchSettings(SdCard * pSd,
     }
     return 0;
 }
+#endif
 
 //------------------------------------------------------------------------------
 /// Switch card state between STBY and TRAN
@@ -1940,6 +1965,7 @@ static unsigned char MmcSelectCard(SdCard * pSd, unsigned short address)
 /// Get EXT_CSD information
 /// \param pSd      Pointer to a SD card driver instance.
 //------------------------------------------------------------------------------
+#if !(defined(CONFIG_AT91SAM9G10EK))
 static unsigned char MmcGetExtInformation(SdCard * pSd)
 {
     unsigned char error;
@@ -1957,11 +1983,13 @@ static unsigned char MmcGetExtInformation(SdCard * pSd)
     }
     return 0;
 }
+#endif
 
 //------------------------------------------------------------------------------
 /// Get SCR and SD Status information
 /// \param pSd      Pointer to a SD card driver instance.
 //------------------------------------------------------------------------------
+#if !(defined(CONFIG_AT91SAM9G10EK))
 static unsigned char SdGetExtInformation(SdCard * pSd)
 {
     unsigned char error;
@@ -1985,6 +2013,7 @@ static unsigned char SdGetExtInformation(SdCard * pSd)
 
     return 0;
 }
+#endif
 
 //------------------------------------------------------------------------------
 /// Update SD/MMC information.
@@ -1993,6 +2022,7 @@ static unsigned char SdGetExtInformation(SdCard * pSd)
 /// \param pSd      Pointer to a SD card driver instance.
 /// \return error code when update CSD error.
 //------------------------------------------------------------------------------
+#if !(defined(CONFIG_AT91SAM9G10EK))
 static unsigned char SdMmcUpdateInformation(SdCard * pSd,
                                             unsigned char csd,
                                             unsigned char extData)
@@ -2018,6 +2048,7 @@ static unsigned char SdMmcUpdateInformation(SdCard * pSd,
 
     return 0;
 }
+#endif
 
 //------------------------------------------------------------------------------
 //         Global functions
@@ -2187,17 +2218,17 @@ static unsigned short SdMmcInit(SdCard * pSd, SdDriver * pSdDriver)
 
     unsigned short error;
 
-    unsigned int status = 0;
+    //unsigned int status = 0;
 
     unsigned char cmd8Retries = 1;
 
-    unsigned int cmd1Retries = 10000;   //120;
-
     unsigned char isHdSupport = 0;
 
+#if !(defined(CONFIG_AT91SAM9G10EK))
+    unsigned int cmd1Retries = 10000;   //120;
     unsigned char isHsSupport = 0;
-
     unsigned char updateInformation = 0;
+#endif
 
     // The command GO_IDLE_STATE (CMD0) is the software reset command and sets
     // card into Idle State regardless of the current card state.
