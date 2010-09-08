@@ -113,7 +113,9 @@ void hw_init(void)
      * Configure CP15 
      */
     cp15 = get_cp15();
-    //cp15 |= I_CACHE;
+#ifndef WINCE
+    cp15 |= I_CACHE;
+#endif
     set_cp15(cp15);
 
     /*
