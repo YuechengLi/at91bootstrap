@@ -208,5 +208,6 @@ SOURCES= \
     dmad.c \
     dma.c \
     pio.c \
+    Media.c \
     linux_loader.c \
     wince_loader.c \
