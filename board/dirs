@@ -9,3 +9,4 @@ DIRS=\
     at91sam9m10ek \
     at91sam9g45ekes \
     at91sam9m10ekes \
+    at91sam9m10ihd \

@@ -93,6 +93,7 @@ config CONFIG_OS_MEM_BANK
 	default "0x70000000" if CONFIG_AT91SAM9G45EKES
 	default "0x70000000" if CONFIG_AT91SAM9M10EK
 	default "0x70000000" if CONFIG_AT91SAM9M10EKES
+	default "0x70000000" if CONFIG_AT91SAM9M10IHD
 	
 config CONFIG_OS_MEM_SIZE
 	string "OS Memory Bank Size"
@@ -111,6 +112,7 @@ config CONFIG_LINUX_KERNEL_ARG_STRING
 	default "mem=128M console=ttyS0,115200 mtdparts=atmel_nand:4M(bootstrap),60M(rootfs),-(spare) root=/dev/mtdblock1 rw rootfstype=jffs2" if CONFIG_AT91SAM9G45EKES && !CONFIG_SDCARD
 	default "mem=64M console=ttyS0,115200 mtdparts=atmel_nand:4M(bootstrap),60M(rootfs),-(spare) root=/dev/mtdblock1 rw rootfstype=jffs2" if CONFIG_AT91SAM9M10EK && !CONFIG_SDCARD
 	default "mem=64M console=ttyS0,115200 mtdparts=atmel_nand:4M(bootstrap),60M(rootfs),-(spare) root=/dev/mtdblock1 rw rootfstype=jffs2" if CONFIG_AT91SAM9M10EKES && !CONFIG_SDCARD
+	default "mem=64M console=ttyS0,115200 mtdparts=atmel_nand:4M(bootstrap),60M(rootfs),-(spare) root=/dev/mtdblock1 rw rootfstype=jffs2" if CONFIG_AT91SAM9M10IHD && !CONFIG_SDCARD
 	default "mem=64M console=ttyS0,115200 root=/dev/mmcblk0p2 rootdelay=2" if CONFIG_AT91SAM9RLEK && CONFIG_SDCARD
 	default "mem=64M console=ttyS0,115200 root=/dev/mmcblk0p2 rootdelay=2" if CONFIG_AT91SAM9G10EK && CONFIG_SDCARD
 	default "mem=64M console=ttyS0,115200 root=/dev/mmcblk0p2 rootdelay=2" if CONFIG_AT91SAM9G20EK && CONFIG_SDCARD
@@ -119,6 +121,7 @@ config CONFIG_LINUX_KERNEL_ARG_STRING
 	default "mem=128M console=ttyS0,115200 root=/dev/mmcblk0p2 rootdelay=2" if CONFIG_AT91SAM9G45EKES && CONFIG_SDCARD
 	default "mem=64M console=ttyS0,115200 root=/dev/mmcblk0p2 rootdelay=2" if CONFIG_AT91SAM9M10EK && CONFIG_SDCARD
 	default "mem=64M console=ttyS0,115200 root=/dev/mmcblk0p2 rootdelay=2" if CONFIG_AT91SAM9M10EKES && CONFIG_SDCARD
+	default "mem=64M console=ttyS0,115200 root=/dev/mmcblk0p2 rootdelay=2" if CONFIG_AT91SAM9M10IHD && CONFIG_SDCARD
 
 config CONFIG_OS_IMAGE_NAME
 	depends on CONFIG_SDCARD && CONFIG_AT91SAM9G10EK
@@ -156,6 +159,7 @@ config CONFIG_OS_MEM_BANK
 	default "0x70000000" if CONFIG_AT91SAM9G45EKES
 	default "0x70000000" if CONFIG_AT91SAM9M10EK
 	default "0x70000000" if CONFIG_AT91SAM9M10EKES
+	default "0x70000000" if CONFIG_AT91SAM9M10IHD
 	
 config CONFIG_OS_MEM_SIZE
 	string "OS Memory Bank Size"
@@ -173,6 +177,7 @@ config CONFIG_CE_LOAD_ADDR
 	default "1879490560" if CONFIG_AT91SAM9G45EKES
 	default "1879490560" if CONFIG_AT91SAM9M10EK
 	default "1879490560" if CONFIG_AT91SAM9M10EKES
+	default "1879490560" if CONFIG_AT91SAM9M10IHD
 
 config CONFIG_OS_IMAGE_NAME
 	depends on CONFIG_SDCARD
@@ -246,6 +251,7 @@ config CONFIG_JUMP_ADDR
 	default "0x73F00000" if CONFIG_AT91SAM9G45EK
 	default "0x73F00000" if CONFIG_AT91SAM9M10EK
 	default "0x73F00000" if CONFIG_AT91SAM9M10EKES
+	default "0x73F00000" if CONFIG_AT91SAM9M10IHD
 	default "0x23F00000"
 	help
 	  The entry point to which the bootstrap will pass control.
@@ -259,6 +265,7 @@ config CONFIG_JUMP_ADDR
 	default "0x7006c000" if CONFIG_AT91SAM9G45EK
 	default "0x7006c000" if CONFIG_AT91SAM9M10EK
 	default "0x7006c000" if CONFIG_AT91SAM9M10EKES
+	default "0x7006c000" if CONFIG_AT91SAM9M10IHD
 	default "0x20067000" if CONFIG_AT91SAM9G20EK
 	default "0x2006c000" if CONFIG_AT91SAM9263EK
 	default "0x20059000" if CONFIG_AT91SAM9261EK
@@ -278,6 +285,7 @@ config CONFIG_JUMP_ADDR
 	default "0x72000000" if CONFIG_AT91SAM9G45EK
 	default "0x72000000" if CONFIG_AT91SAM9M10EK
 	default "0x72000000" if CONFIG_AT91SAM9M10EKES
+	default "0x72000000" if CONFIG_AT91SAM9M10IHD
 	default "0x22000000" if CONFIG_AT91SAM9G20EK
 	default "0x22000000" if CONFIG_AT91SAM9263EK
 	default "0x22000000" if CONFIG_AT91SAM9261EK
@@ -295,6 +303,7 @@ config CONFIG_JUMP_ADDR
 	default "0x70000000" if CONFIG_AT91SAM9G45EK
 	default "0x70000000" if CONFIG_AT91SAM9M10EK
 	default "0x70000000" if CONFIG_AT91SAM9M10EKES
+	default "0x70000000" if CONFIG_AT91SAM9M10IHD
 	default "0x70000000" if CONFIG_AT91SAM9G45EKES
 	default "0x20000000"
 	help
@@ -308,6 +317,7 @@ config CONFIG_GLBDRV_ADDR
 	default "0x7006b000" if CONFIG_AT91SAM9G45EK
 	default "0x7006b000" if CONFIG_AT91SAM9M10EK
 	default "0x7006b000" if CONFIG_AT91SAM9M10EKES
+	default "0x7006b000" if CONFIG_AT91SAM9M10IHD
 	default "0x20058000" if CONFIG_AT91SAM9G20EK
 	default "0x2006b000" if CONFIG_AT91SAM9263EK
 	default "0x20058000" if CONFIG_AT91SAM9261EK
@@ -355,7 +365,7 @@ config CONFIG_THUMB
 	  Build code in thumb mode
 
 config CONFIG_SCLK	  
-	depends on CONFIG_AT91SAM9RLEK || CONFIG_AT91SAM9G45EK || CONFIG_AT91SAM9G45EKES || CONFIG_AT91SAM9M10EK || CONFIG_AT91SAM9M10EKES
+	depends on CONFIG_AT91SAM9RLEK || CONFIG_AT91SAM9G45EK || CONFIG_AT91SAM9G45EKES || CONFIG_AT91SAM9M10EK || CONFIG_AT91SAM9M10EKES || CONFIG_AT91SAM9M10IHD
 	bool "Use external 32KHZ oscillator as source of slow clock"
 	help
 	  Use external 32KHZ oscillator as source of slow clock

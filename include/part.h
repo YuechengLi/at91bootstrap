@@ -81,6 +81,9 @@
 #ifdef CONFIG_AT91SAM9M10EKES
 #include "at91sam9m10ekes.h"
 #endif
+#ifdef CONFIG_AT91SAM9M10IHD
+#include "at91sam9m10ihd.h"
+#endif
 #endif
 
 #ifdef AT91SAM9261

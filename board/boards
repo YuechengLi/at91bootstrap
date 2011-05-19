@@ -32,6 +32,7 @@ at91sam9g45ekes/at91sam9g45nfes_defconfig
 at91sam9m10ek/at91sam9m10df_defconfig
 at91sam9m10ek/at91sam9m10ek_defconfig
 at91sam9m10ek/at91sam9m10nf_defconfig
+at91sam9m10ihd/at91sam9m10ihd_nf_defconfig
 at91sam9rlek/at91sam9rldf_defconfig
 at91sam9rlek/at91sam9rlek_defconfig
 at91sam9rlek/at91sam9rlnf_defconfig
