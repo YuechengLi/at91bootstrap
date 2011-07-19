@@ -130,6 +130,15 @@ void hw_init(void)
      */
     pio_setup(hw_pio);
 
+    /*
+     * Using to enable power down function
+     */
+    writel(1 | 1 << 18, 0xfffffD20);
+    while(readl(0xfffffD28)>0);
+    readl(0xfffffd2c);
+    writel((readl(0xfffffd28) + 4), 0xfffffD24);
+    while((readl(0xfffffd28) + 5) > readl(0xfffffD28));
+
 #ifdef CONFIG_DEBUG
     /*
      * Enable Debug messages on the DBGU 
