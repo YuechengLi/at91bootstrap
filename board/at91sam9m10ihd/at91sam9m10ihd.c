@@ -133,11 +133,11 @@ void hw_init(void)
     /*
      * Using to enable power down function
      */
-    writel(1 | 1 << 18, 0xfffffD20);
-    while(readl(0xfffffD28)>0);
-    readl(0xfffffd2c);
-    writel((readl(0xfffffd28) + 4), 0xfffffD24);
-    while((readl(0xfffffd28) + 5) > readl(0xfffffD28));
+    writel(AT91C_RTTC_ALMS | AT91C_RTTC_RTTRST, AT91C_RTTC_RTMR);
+    while(readl(AT91C_RTTC_RTVR) > 0);
+    readl(AT91C_RTTC_RTSR);
+    writel((readl(AT91C_RTTC_RTVR) + 4), AT91C_RTTC_RTAR);
+    while((readl(AT91C_RTTC_RTVR) + 5) > readl(AT91C_RTTC_RTVR));
 
 #ifdef CONFIG_DEBUG
     /*
