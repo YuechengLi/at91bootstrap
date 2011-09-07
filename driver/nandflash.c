@@ -118,6 +118,7 @@ static inline struct SNandInitInfo *AT91F_GetNandInitInfo(unsigned short chipID)
         break;
     case 0x2cda:
     case 0x2caa:
+    case 0x2cac:
     case 0xecda:
     case 0xecaa:
     case 0x20aa:
