@@ -57,6 +57,8 @@ int get_cpsr(void);
 
 void set_cpsr(unsigned int value);
 
+void sclk_enable(void);
+
 #ifdef CONFIG_HW_INIT
 /*----------------------------------------------------------------------------*/
 /* \fn    hw_init							      */
@@ -124,6 +126,13 @@ void hw_init(void)
     cp15 |= I_CACHE;
 #endif
     set_cp15(cp15);
+
+    /*
+     * Using external slow clock
+     */
+#ifdef CONFIG_SCLK
+        sclk_enable();
+#endif
 
     /*
      * Configure the PIO controller 
