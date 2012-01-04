@@ -48,7 +48,7 @@ static inline unsigned int read_pmc(unsigned int offset)
 
 void lowlevel_clock_init()
 {
-#if defined(CONFIG_AT91SAM9X5EK)
+#if defined(CONFIG_AT91SAM9X5EK) || defined(CONFIG_AT91SAMA5EK)
     unsigned long tmp;
 
     tmp = read_pmc(PMC_MCKR);
