@@ -132,9 +132,9 @@ void hw_init(void)
     /*
      * Configure CP15 
      */
-    cp15 = get_cp15();
-    cp15 |= I_CACHE;
-    set_cp15(cp15);
+    //cp15 = get_cp15();
+    //cp15 |= I_CACHE;
+    //set_cp15(cp15);
 
 #ifdef CONFIG_SCLK
     sclk_enable();
