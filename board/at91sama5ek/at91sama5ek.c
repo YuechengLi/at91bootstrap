@@ -142,7 +142,7 @@ void hw_init(void)
     /*
      * Configure the PIO controller 
      */
-    writel((1 << AT91C_ID_PIOA_B), (PMC_PCER + AT91C_BASE_PMC));
+    writel((1 << AT91C_ID_PIOB), (PMC_PCER + AT91C_BASE_PMC));
     pio_setup(hw_pio);
 
     /*
