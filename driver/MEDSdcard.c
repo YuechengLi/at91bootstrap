@@ -349,7 +349,6 @@ static unsigned char MEDSdcard_Write(Media * media,
 //------------------------------------------------------------------------------
 //! \brief Callback invoked when SD/MMC transfer done
 //------------------------------------------------------------------------------
-#if 0
 static void SdMmcCallback(unsigned char status, void *pCommand)
 {
     SdCmd *pCmd = (SdCmd *) pCommand;
@@ -371,7 +370,6 @@ static void SdMmcCallback(unsigned char status, void *pCommand)
                        status, pXfr->length * pMed->blockSize, 0);
     }
 }
-#endif
 
 //------------------------------------------------------------------------------
 //! \brief  Writes data on a SDRAM media

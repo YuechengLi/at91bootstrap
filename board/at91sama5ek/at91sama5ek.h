@@ -107,4 +107,6 @@
     {(0x0f << 1), AT91C_BASE_PIOD, AT91C_ID_PIOD, PIO_PERIPH_A, PIO_PULLUP}, \
     {(0x01 << 9), AT91C_BASE_PIOD, AT91C_ID_PIOD, PIO_PERIPH_A, PIO_DEFAULT},
 
+#define OP_BOOTSTRAP_MCI_on
+
 #endif                          /* _AT91SAM9X5EK_H */
