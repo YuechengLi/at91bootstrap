@@ -149,6 +149,7 @@ void hw_init(void)
      * Enable Debug messages on the DBGU 
      */
 #ifdef CONFIG_DEBUG
+    writel((1 << AT91C_ID_DBGU), (PMC_PCER + AT91C_BASE_PMC));
     dbgu_init(BAUDRATE(MASTER_CLOCK, 115200));
     dbgu_print("Start AT91Bootstrap...\n\r");
 #endif
