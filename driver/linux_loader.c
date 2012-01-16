@@ -372,6 +372,7 @@ void LoadLinux()
     load_SDCard((void *)JUMP_ADDR);
 #endif
 
+#if 0
     hdr = (image_header_t *) JUMP_ADDR;
     if (ntohl(hdr->ih_magic) != IMAGE_MAGIC) {
         dbg_log(1, "*** Bad Image Magic Number found! %d\n\r",
@@ -411,6 +412,7 @@ void LoadLinux()
      * never reach here 
      */
     //return;
+#endif
 }
 
 #endif
