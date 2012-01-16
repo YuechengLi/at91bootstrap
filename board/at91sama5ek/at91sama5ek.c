@@ -91,8 +91,8 @@ void hw_init(void)
      */
     const struct pio_desc hw_pio[] = {
 #ifdef CONFIG_DEBUG
-        {"RXD", AT91C_PIN_PA(9), 0, PIO_DEFAULT, PIO_PERIPH_A},
-        {"TXD", AT91C_PIN_PA(10), 0, PIO_DEFAULT, PIO_PERIPH_A},
+        {"RXD", AT91C_PIN_PB(30), 0, PIO_DEFAULT, PIO_PERIPH_A},
+	{"TXD", AT91C_PIN_PB(31), 0, PIO_DEFAULT, PIO_PERIPH_A},
 #endif
         {(char *)0, 0, 0, PIO_DEFAULT, PIO_PERIPH_A},
     };
