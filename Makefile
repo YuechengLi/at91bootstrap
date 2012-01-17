@@ -229,16 +229,16 @@ INCL=board/$(BOARD)
 AT91_CUSTOM_FLAGS:=-mcpu=cortex-a5
 GC_SECTIONS=--gc-sections
 
-CPPFLAGS=-ffunction-sections -g -Os -Wall 	-I$(INCL) -Iinclude	\
+CPPFLAGS=-ffunction-sections -g -O0 -Wall 	-I$(INCL) -Iinclude	\
 	-DAT91BOOTSTRAP_VERSION=\"$(VERSION)\"	\
 	$(NO_DWARF_CFI_ASM) \
 	$(AT91_CUSTOM_FLAGS) 
 
-CPPFLAGS_UTIL=-g -Os -Wall 	-I$(INCL) -Iinclude	\
+CPPFLAGS_UTIL=-g -O0 -Wall 	-I$(INCL) -Iinclude	\
 	-DAT91BOOTSTRAP_VERSION=\"$(VERSION)\" 
 
 
-ASFLAGS=-g -Os -Wall -I$(INCL) -Iinclude  		\
+ASFLAGS=-g -O0 -Wall -I$(INCL) -Iinclude  		\
 	$(AT91_CUSTOM_FLAGS)
 
 include		toplevel_cpp.mk
