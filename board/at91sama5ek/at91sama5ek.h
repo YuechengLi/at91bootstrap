@@ -25,13 +25,13 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ----------------------------------------------------------------------------
- * File Name           : at91sam9x5ek.h
+ * File Name           : at91sama5ek.h
  * Object              :
- * Creation            : HXu Aug. 2010
+ * Creation            : LDe Jan. 2012
  *-----------------------------------------------------------------------------
  */
-#ifndef _AT91SAM9X5EK_H
-#define _AT91SAM9X5EK_H
+#ifndef _AT91SAMA5EK_H
+#define _AT91SAMA5EK_H
 
 /* ***************************************************************************** */
 /* PMC Settings                                                                  */
@@ -48,8 +48,8 @@
 #define BOARD_OSCOUNT               (AT91C_CKGR_OSCOUNT & (64 << 8))
 #define BOARD_CKGR_PLLA             (AT91C_CKGR_SRCA | AT91C_CKGR_OUTA_0)
 #define BOARD_PLLACOUNT             (0x3F << 8)
-#define BOARD_MULA                  (AT91C_CKGR_MULA & (199 << 18))
-#define BOARD_DIVA                  (AT91C_CKGR_DIVA & 3)
+#define BOARD_MULA                  (AT91C_CKGR_MULA & (66 << 18))
+#define BOARD_DIVA                  (AT91C_CKGR_DIVA & 1)
 
 #define BOARD_PRESCALER_MAIN_CLOCK  (AT91C_PMC_PLLADIV2_2 | AT91C_PMC_MDIV_3 | AT91C_PMC_CSS_MAIN_CLK)
 #define BOARD_PRESCALER_PLLA        (AT91C_PMC_PLLADIV2_2 | AT91C_PMC_MDIV_3 | AT91C_PMC_CSS_PLLA_CLK)
@@ -109,4 +109,4 @@
 
 #define OP_BOOTSTRAP_MCI_on
 
-#endif                          /* _AT91SAM9X5EK_H */
+#endif                          /* _AT91SAMA5EK_H */
