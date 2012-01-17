@@ -57,6 +57,8 @@ int get_cpsr(void);
 
 void set_cpsr(unsigned int value);
 
+void WM9711L_enble(void);
+
 #ifdef CONFIG_SCLK
 void sclk_enable(void)
 {
@@ -163,6 +165,12 @@ void hw_init(void)
      */
     ddramc_hw_init();
 #endif                          /* CONFIG_DDR2 */
+#ifdef CONFIG_WM9711L
+	/*
+	* Rest the audio chip
+	*/
+	WM9711L_enble();
+#endif
 }
 #endif                          /* CONFIG_HW_INIT */
 
@@ -351,5 +359,68 @@ void nandflash_cfg_8bits_dbw_init(void)
 }
 
 #endif                          /* #ifdef CONFIG_NANDFLASH */
+
+#ifdef CONFIG_WM9711L
+/* Convert Pin Number into PIO controller index */
+static unsigned pin_to_controller(unsigned pin)
+{
+    return (pin) / PIO_NB_IO;
+}
+
+/* Convert Pin Number into I/O line index */
+static unsigned pin_to_mask(unsigned pin)
+{
+    return 1 << ((pin) % PIO_NB_IO);
+}
+
+static unsigned int at91_sys_read(unsigned int reg_offset)
+{
+	void *addr = (void *)reg_offset;
+
+	return readl(addr);
+}
+
+static void at91_sys_write(unsigned int reg_offset, unsigned long value)
+{
+	void *addr = (void *)reg_offset;
+
+	writel(value, addr);
+}
+
+void WM9711L_enble(void)
+{
+	unsigned long rstc;
+	unsigned long rst_key = (0xA5 << 24);
+
+	/* Enable clock */
+	at91_sys_write(AT91C_PMC_PCER, 1 << 25);
+
+	writel(pin_to_mask(AT91C_PIN_PD(7)) | pin_to_mask(AT91C_PIN_PD(8)),
+		PIO_PER(pin_to_controller(AT91C_PIN_PD(0))) + AT91C_BASE_PIOA);
+
+	writel(pin_to_mask(AT91C_PIN_PD(7)) | pin_to_mask(AT91C_PIN_PD(8)),
+		PIO_OER(pin_to_controller(AT91C_PIN_PD(0))) + AT91C_BASE_PIOA);
+
+	writel(pin_to_mask(AT91C_PIN_PD(7)) | pin_to_mask(AT91C_PIN_PD(8)),
+		PIO_CODR(pin_to_controller(AT91C_PIN_PD(0))) + AT91C_BASE_PIOA);
+
+	rstc = at91_sys_read(AT91C_RSTC_RMR);
+
+	/* Need to reset PHY -> 500ms reset */
+	at91_sys_write(AT91C_RSTC_RMR, rst_key |
+				(AT91C_RSTC_ERSTL & (0x0D << 8)) |
+				AT91C_RSTC_URSTEN);
+
+	at91_sys_write(AT91C_RSTC_RCR, rst_key | AT91C_RSTC_EXTRST);
+
+	/* Wait for end hardware reset */
+	while (!(at91_sys_read(AT91C_RSTC_RSR) & AT91C_RSTC_NRSTL));
+
+	/* Restore NRST value */
+	at91_sys_write(AT91C_RSTC_RMR, rst_key |
+				(rstc) |
+				AT91C_RSTC_URSTEN);
+}
+#endif
 
 #endif                          /* CONFIG_AT91SAM9M10EK */
