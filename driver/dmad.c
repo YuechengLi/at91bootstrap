@@ -150,7 +150,8 @@ void DMAD_Initialize(unsigned char channel, unsigned char defaultHandler)
     DMA_Enable();
     if (defaultHandler) {
 //        IRQ_ConfigureIT(AT91C_ID_HDMA, 0, DMAD_Handler);
-        (*(unsigned int *)(AT91C_BASE_AIC + AIC_IDCR)) = 1 << AT91C_ID_HDMA;
+	(*(unsigned int *)(AT91C_BASE_AIC + AIC_SSR)) = AT91C_ID_HDMA;
+        (*(unsigned int *)(AT91C_BASE_AIC + AIC_IDCR)) = 0x1;
 //        IRQ_EnableIT(AT91C_ID_HDMA);
     }
     // Initialize transfer instance.

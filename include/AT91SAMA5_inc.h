@@ -290,24 +290,33 @@
 //              SOFTWARE API DEFINITION  FOR Advanced Interrupt Controller
 // *****************************************************************************
 // *** Register offset in AT91S_AIC structure ***
-#define AIC_SMR         ( 0)    // Source Mode Register
-#define AIC_SVR         (128)   // Source Vector Register
-#define AIC_IVR         (256)   // IRQ Vector Register
-#define AIC_FVR         (260)   // FIQ Vector Register
-#define AIC_ISR         (264)   // Interrupt Status Register
-#define AIC_IPR         (268)   // Interrupt Pending Register
-#define AIC_IMR         (272)   // Interrupt Mask Register
-#define AIC_CISR        (276)   // Core Interrupt Status Register
-#define AIC_IECR        (288)   // Interrupt Enable Command Register
-#define AIC_IDCR        (292)   // Interrupt Disable Command Register
-#define AIC_ICCR        (296)   // Interrupt Clear Command Register
-#define AIC_ISCR        (300)   // Interrupt Set Command Register
-#define AIC_EOICR       (304)   // End of Interrupt Command Register
-#define AIC_SPU         (308)   // Spurious Vector Register
-#define AIC_DCR         (312)   // Debug Control Register (Protect)
-#define AIC_FFER        (320)   // Fast Forcing Enable Register
-#define AIC_FFDR        (324)   // Fast Forcing Disable Register
-#define AIC_FFSR        (328)   // Fast Forcing Status Register
+#define AIC_SSR		(0x00)	// Source Select Register
+#define AIC_SMR		(0x04)	// Source Mode Register
+#define AIC_SVR		(0x08)	// Source Vector Register
+#define AIC_IVR		(0x10)	// IRQ Vector Register
+#define AIC_FVR		(0x14)	// FIQ Vector Register
+#define AIC_ISR		(0x18)	// Interrupt Status Register
+#define AIC_IPR0	(0x20)	// Interrupt Pending Register 0
+#define AIC_IPR1	(0x24)	// Interrupt Pending Register 1
+#define AIC_IPR2	(0x28)	// Interrupt Pending Register 2
+#define AIC_IPR3	(0x2C)	// Interrupt Pending Register 3
+#define AIC_IMR		(0x30)	// Interrupt Mask Register
+#define AIC_CISR	(0x34)	// Core Interrupt Status Register
+#define AIC_EOICR	(0x38)	// End of Interrupt Command Register
+#define AIC_SPU		(0x3C)	// Spurious Vector Register
+#define AIC_IECR	(0x40)	// Interrupt Enable Command Register
+#define AIC_IDCR	(0x44)	// Interrupt Disable Command Register
+#define AIC_ICCR	(0x48)	// Interrupt Clear Command Register
+#define AIC_ISCR	(0x4C)	// Interrupt Set Command Register
+#define AIC_FFER	(0x50)	// Fast Forcing Enable Register
+#define AIC_FFDR	(0x54)	// Fast Forcing Disable Register
+#define AIC_FFSR	(0x58)	// Fast Forcing Status Register
+#define AIC_SVRRER	(0x60)	// SVR Return Enable Register
+#define AIC_SVRRDR	(0x64)	// SVR Return Disable Register
+#define AIC_SVRRSR	(0x68)	// SVR Return Status Register
+#define AIC_DCR		(0x6C)	// Debug Control Register
+#define AIC_WPMR	(0xE4)	// Write Protect Mode Register
+#define AIC_WPSR	(0xE8)	// Write Protect Status Register
 // -------- AIC_SMR : (AIC Offset: 0x0) Control Register -------- 
 #define AT91C_AIC_PRIOR           (0x7UL <<  0) // (AIC) Priority Level
 #define 	AT91C_AIC_PRIOR_LOWEST               (0x0UL)    // (AIC) Lowest priority level
@@ -320,7 +329,7 @@
 // -------- AIC_CISR : (AIC Offset: 0x114) AIC Core Interrupt Status Register -------- 
 #define AT91C_AIC_NFIQ            (0x1UL <<  0) // (AIC) NFIQ Status
 #define AT91C_AIC_NIRQ            (0x1UL <<  1) // (AIC) NIRQ Status
-// -------- AIC_DCR : (AIC Offset: 0x138) AIC Debug Control Register (Protect) -------- 
+// -------- AIC_DCR : (AIC Offset: 0x138) AIC Debug Control Register -------- 
 #define AT91C_AIC_DCR_PROT        (0x1UL <<  0) // (AIC) Protection Mode
 #define AT91C_AIC_DCR_GMSK        (0x1UL <<  1) // (AIC) General Mask
 
@@ -1819,5 +1828,6 @@
 #define BOARD_SD_MCI_ID		AT91C_ID_MCI0
 #define BOARD_SD_SLOT		MCI_SD_SLOTA
 #define BOARD_SD_MCI_ID_USE	0
+#define MCI2_INTERFACE
 
 #endif /* __AT91SAMA5_INC_H__ */

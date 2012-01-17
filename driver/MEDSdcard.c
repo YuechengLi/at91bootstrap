@@ -458,7 +458,8 @@ unsigned char MEDSdcard_Initialize(Media * media, unsigned char mciID)
     // Initialize the MCI driver
     if (mciID == 0) {
         //IRQ_ConfigureIT(BOARD_SD_MCI_ID,  1, MCI0_IrqHandler);
-        (*(unsigned int *)(AT91C_BASE_AIC + AIC_IDCR)) = 1 << BOARD_SD_MCI_ID;
+	(*(unsigned int *)(AT91C_BASE_AIC + AIC_SSR)) = BOARD_SD_MCI_ID;
+        (*(unsigned int *)(AT91C_BASE_AIC + AIC_IDCR)) = 0x1;
         MCI_Init(mciDrv, BOARD_SD_MCI_BASE, BOARD_SD_MCI_ID, BOARD_SD_SLOT,
                  MCI_POLLING_MODE);
         //IRQ_EnableIT(BOARD_SD_MCI_ID);
