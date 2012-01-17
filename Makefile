@@ -226,6 +226,7 @@ INCL=board/$(BOARD)
 
 #AT91_CUSTOM_FLAGS:=-mcpu=arm9
 #AT91_CUSTOM_FLAGS:=-mcpu=arm926ej-s
+AT91_CUSTOM_FLAGS:=-mcpu=cortex-a5
 GC_SECTIONS=--gc-sections
 
 CPPFLAGS=-ffunction-sections -g -Os -Wall 	-I$(INCL) -Iinclude	\
