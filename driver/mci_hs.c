@@ -254,6 +254,7 @@ static unsigned int DMACH_MCI_P2M(unsigned int channel_index,
                                              | AT91C_HDMA_DST_ADDRESS_MODE_INCR
                                              | AT91C_HDMA_SRC_DSCR_FETCH_DISABLE
                                              | srcAddressMode
+					     | 0x2 /* Select proper AHB masters */
                                              | AT91C_HDMA_FC_PER2MEM));
         } else {
             AT91F_Prepare_Multiple_Transfer(channel_index, LLI_rownumber, 0,
@@ -266,8 +267,9 @@ static unsigned int DMACH_MCI_P2M(unsigned int channel_index,
                                             (AT91C_HDMA_DST_DSCR_FETCH_FROM_MEM
                                              | AT91C_HDMA_DST_ADDRESS_MODE_INCR
                                              | AT91C_HDMA_SRC_DSCR_FETCH_DISABLE
-                                             | srcAddressMode |
-                                             AT91C_HDMA_FC_PER2MEM));
+                                             | srcAddressMode 
+					     | 0x2 /* Select proper AHB masters */
+                                             | AT91C_HDMA_FC_PER2MEM));
 
         }
 

@@ -269,6 +269,9 @@ void DMA_SetSourceBufferMode(unsigned char channel,
            || (transferMode == DMA_TRANSFER_CONTIGUOUS)) {
         value |= AT91C_SRC_DSCR | addressingType << 24 | 1 << 31;
     }
+
+    value |= 0x2; /* Select proper AHB masters */
+
     (*(volatile unsigned int *)
      (AT91C_BASE_HDMA_CH_0 + channel * 40 + HDMA_CTRLB)) = value;
 
