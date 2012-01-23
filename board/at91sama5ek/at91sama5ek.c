@@ -85,6 +85,7 @@ void sclk_enable(void)
 void hw_init(void)
 {
     unsigned int cp15;
+    int i;
 
     /*
      * Configure PIOs 
@@ -159,7 +160,67 @@ void hw_init(void)
      * Configure DDRAM Controller 
      */
     dbg_log(1, "Init DDR... ");
-    ddramc_hw_init();
+    //ddramc_hw_init();
+    writel(0x00008000,0xFFFFFE44);   // Disable Watchdog
+    writel(0x00020000,0xFFFFFD00);   // Enable MPDDR controller clock
+    writel(0x00000004,0xFFFFFC00);   // System Clock Enable Register : Enable DDR clock
+    writel(0x01010001,0xFFFFEA78);   // MPDDRC DLL Slave Offset Register : set DLL Slave x Delay Line Offset
+    writel(0xC5011f07,0xFFFFEA74);   // MPDDRC DLL Master Offset Register : DLL Master Delay Line Offset + DLL CLK90 Delay Line Offset + DLL Offset Selection
+    writel(0x00850404,0xFFFFEA34);   // MPDDRC I/O Calibration Register : set Resistor Divider + IO Calibration (delay between an IO Calibration Command and any Valid commands) 
+    writel(0x00000006,0xFFFFEA20);   // Memory Device Register  :  32bit mode - DDR2 mode
+    writel(0x22228226,0xFFFFEA0C);   // Timing 0 Register : tras  | trcd  | twr   | trc  | trp | trrd | twtr | tmrd
+    writel(0x02C81311,0xFFFFEA10);   // Timing 1 Register : trfc  | txsnr | txsrd | txp
+    writel(0x00072372,0xFFFFEA14);   // Timing 2 Register : txard | tards | trpa  | trtp | tfaw
+    writel(0x00900039,0xFFFFEA08);   // Configuration Register  :  row = 13, column(DDR) = 10, CAS 3, DLL reset disable, phase error correction is enabled / normal driver strength
+    writel(0x00000001,0xFFFFEA00);   // Mode register : command  NOP --> ENABLE CLOCK output
+    writel(0x00000000,0x20000000);   // DDR2 memory : access memory to validate preeceeding command
+    for (i = 0 ; i < 500000 ; i++);
+    writel(0x00000001,0xFFFFEA00);   // Mode register : command  NOP --> ENABLE CLOCK output
+    writel(0x00000000,0x20000000);   // DDR2 memory : access memory to validate preeceeding command
+    for (i = 0 ; i < 500000 ; i++);
+    writel(0x00000002,0xFFFFEA00);   // Mode register : command  All Banks Precharge
+    writel(0x00000000,0x20000000);   // DDR2 memory : access memory to validate preeceeding command
+    for (i = 0 ; i < 500000 ; i++);
+    writel(0x00000005,0xFFFFEA00);   // Mode register : command  Extended Load Mode Register : Set EMR Ext Mode Reg EMSR2 BA0=0 BA1=1
+    writel(0x00000000,0x24000000);   // DDR2 memory : access memory to validate preeceeding command
+    for (i = 0 ; i < 500000 ; i++);
+    writel(0x00000005,0xFFFFEA00);   // Mode register : command  Extended Load Mode Register : Set EMR Ext Mode Reg EMSR3 BA0=1 BA1=1
+    writel(0x00000000,0x26000000);   // DDR2 memory : access memory to validate preeceeding command
+    for (i = 0 ; i < 500000 ; i++);
+    writel(0x00000005,0xFFFFEA00);   // Mode register : command  Extended Load Mode Register : Set EMR Ext Mode Reg EMSR1 BA0=1 BA1=0 ENABLE DLL
+    writel(0x00000000,0x22000000);   // DDR2 memory : access memory to validate preeceeding command
+    for (i = 0 ; i < 500000 ; i++);
+    writel(0x009000B9,0xFFFFEA08);   // Configuration Register : Enable DLL reset
+    writel(0x00000003,0xFFFFEA00);   // Mode register : command  RESET DLL
+    writel(0x00000000,0x20000000);   // DDR2 memory : access memory to validate preeceeding command
+    for (i = 0 ; i < 500000 ; i++);
+    writel(0x00000002,0xFFFFEA00);   // Mode register : command  All Banks Precharge
+    writel(0x00000000,0x20000000);   // DDR2 memory : access memory to validate preeceeding command
+    for (i = 0 ; i < 500000 ; i++);
+    writel(0x00000004,0xFFFFEA00);   // Mode register : 2 * command  Auto-Refresh
+    writel(0x00000000,0x20000000);   // DDR2 memory : access memory to validate preeceeding command
+    for (i = 0 ; i < 500000 ; i++);
+    writel(0x00000004,0xFFFFEA00);   // Mode register :
+    writel(0x00000000,0x20000000);   // DDR2 memory : access memory to validate preeceeding command
+    for (i = 0 ; i < 500000 ; i++);
+    writel(0x00900039,0xFFFFEA08);   // Configuration Register : disable DLL reset
+    writel(0x00000003,0xFFFFEA00);   // Mode register :  MRS  initialize device operation (CAS latency, burst length and disable DLL reset)
+    writel(0x00000000,0x20000000);   // DDR2 memory : access memory to validate preeceeding command
+    for (i = 0 ; i < 500000 ; i++);
+    writel(0x00907039,0xFFFFEA08);   // Configuration Register : OCD default value
+    writel(0x00000005,0xFFFFEA00);   // Mode register : EMRS1   OCD Default values
+    writel(0x00000000,0x22000000);   // DDR2 memory : access memory to validate preeceeding command
+    for (i = 0 ; i < 500000 ; i++);
+    writel(0x00900039,0xFFFFEA08);   // Configuration Register : OCD exit
+    writel(0x00000005,0xFFFFEA00);   // Mode register : EMRS1   OCD exit
+    writel(0x00000000,0x22000000);   // DDR2 memory : access memory to validate preeceeding command
+    for (i = 0 ; i < 500000 ; i++);
+    writel(0x00000000,0xFFFFEA00);   // Mode register : command  Normal mode
+    writel(0x00000000,0x20000000);   // DDR2 memory : access memory to validate preeceeding command
+    for (i = 0 ; i < 500000 ; i++);
+    writel(0x00000000,0x20000000);   // DDR2 memory : access memory to validate preeceeding command
+    for (i = 0 ; i < 500000 ; i++);
+    writel(0x00300208,0xFFFFEA04);   // Refresh Timer register : 520 for 133 MHz
     dbg_log(1, "Done!\n\r");
 #endif                          /* CONFIG_DDR2 */
 }
