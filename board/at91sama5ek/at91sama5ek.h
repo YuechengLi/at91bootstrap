@@ -48,7 +48,7 @@
 #define BOARD_OSCOUNT               (AT91C_CKGR_OSCOUNT & (64 << 8))
 #define BOARD_CKGR_PLLA             (AT91C_CKGR_SRCA | AT91C_CKGR_OUTA_0)
 #define BOARD_PLLACOUNT             (0x3F << 8)
-#define BOARD_MULA                  (AT91C_CKGR_MULA & (66 << 18))
+#define BOARD_MULA                  (AT91C_CKGR_MULA & (65 << 18))
 #define BOARD_DIVA                  (AT91C_CKGR_DIVA & 1)
 
 #define BOARD_PRESCALER_MAIN_CLOCK  (AT91C_PMC_PLLADIV2_2 | AT91C_PMC_MDIV_3 | AT91C_PMC_CSS_MAIN_CLK)
