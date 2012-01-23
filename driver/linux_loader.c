@@ -372,6 +372,9 @@ void LoadLinux()
     load_SDCard((void *)JUMP_ADDR);
 #endif
 
+/* enable USB clocks */
+(*(volatile unsigned int *)(0xfffffd00)) = (0x3);
+
 #if 0
     hdr = (image_header_t *) JUMP_ADDR;
     if (ntohl(hdr->ih_magic) != IMAGE_MAGIC) {
