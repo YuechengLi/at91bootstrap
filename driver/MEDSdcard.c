@@ -678,6 +678,10 @@ unsigned int load_SDCard(void *dst)
 
     unsigned char ret;
 
+    /* temp: for some boards mci is not powered on by default */
+    (*(volatile unsigned int *)(0xfffff400)) = (0x400);
+    (*(volatile unsigned int *)(0xfffff410)) = (0x400);
+
     ret = MEDSdcard_Initialize(&medias[0], BOARD_SD_MCI_ID_USE);
 
     memset(&fs, 0, sizeof (FATFS));     // Clear file system object    
