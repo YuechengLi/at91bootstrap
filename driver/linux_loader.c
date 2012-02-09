@@ -361,6 +361,8 @@ void LoadLinux()
 
     image_header_t *hdr;
 
+    unsigned int reg;
+
 #ifdef CONFIG_DATAFLASH
     load_df(AT91C_SPI_PCS_DATAFLASH, IMG_ADDRESS, IMG_SIZE, JUMP_ADDR);
 #endif
@@ -372,8 +374,18 @@ void LoadLinux()
     load_SDCard((void *)JUMP_ADDR);
 #endif
 
-/* enable USB clocks */
-(*(volatile unsigned int *)(0xfffffd00)) = (0x3);
+/* enable all clocks unmanaged by Linux */
+(*(volatile unsigned int *)(0xfffffd00)) = (0xffffffff);
+/* special configuration for usb certification */
+reg = (*(volatile unsigned int *)(0xF0038034));
+reg &= 0xfff999ff;
+reg |= 0x00011107;
+(*(volatile unsigned int *)(0xF0038034)) = reg;
+reg = (*(volatile unsigned int *)(0xF0038038));
+reg &= 0xffffffcc;
+reg |= 0x00000344;
+(*(volatile unsigned int *)(0xF0038038)) = reg;
+
 
 #if 0
     hdr = (image_header_t *) JUMP_ADDR;
