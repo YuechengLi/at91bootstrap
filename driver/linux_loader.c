@@ -376,6 +376,8 @@ void LoadLinux()
 
 /* enable all clocks unmanaged by Linux */
 (*(volatile unsigned int *)(0xfffffd00)) = (0xffffffff);
+/* enable lcd clock */
+(*(volatile unsigned int *)(0xfffffc00)) = (0x8);
 /* special configuration for usb certification */
 reg = (*(volatile unsigned int *)(0xF0038034));
 reg &= 0xfff999ff;
