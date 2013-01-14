@@ -89,7 +89,7 @@ CONFIG_LOAD_LINUX=y
 # Linux Image Storage Setup
 #
 CONFIG_OS_MEM_BANK="0x70000000"
-CONFIG_OS_MEM_SIZE="0x4000000"
+CONFIG_OS_MEM_SIZE="0x8000000"
 CONFIG_LINUX_KERNEL_ARG_STRING="console=ttyS0,115200 mtdparts=atmel_nand:5M(Bootstrap),95M(system),92M(userdata),-(storage) ubi.mtd=1 ubi.mtd=2 rw root=ubi0:system rootfstype=ubifs init=/init androidboot.console=ttyS0"
 CONFIG_OS_IMG_SIZE="0x300000"
 CONFIG_LINUX_IMG_NAND_OFFSET="0x200000"
