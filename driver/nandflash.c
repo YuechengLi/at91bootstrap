@@ -36,10 +36,25 @@
 
 #include "nand.h"
 #include "hamming.h"
-#include "nand_ids.h"
 #include "timer.h"
 
 #define ECC_CORRECT_ERROR  0xfe
+
+static struct nand_chip nand_ids[] = {
+	/* Samsung K9F2G08U0M 256MB */
+	{0xecda, 0x800, 0x20000, 0x800, 0x40, 0x0},
+	/* Samsung K9F2G08U0A 256MB */
+	{0xecaa, 0x800, 0x20000, 0x800, 0x40, 0x0},
+	/* Micron MT29F2G16AAB 256MB */
+	{0x2cca, 0x800, 0x20000, 0x800, 0x40, 0x1},
+	/* Micron MT29F2G08AAC 256MB  */
+	{0x2cda, 0x800, 0x20000, 0x800, 0x40, 0x0},
+	/* Micron MT29F2G08ABD 256MB */
+	{0x2caa, 0x800, 0x20000, 0x800, 0x40, 0x0},
+	/* Mircon MT29H8G08ACAH1 1GB */
+	{0x2c38, 0x800, 0x80000, 0x1000, 0xe0, 0x0},
+	{0,}
+};
 
 #undef CONFIG_USE_PMECC
 #if defined(CPU_HAS_PMECC) && !defined(CONFIG_ENABLE_SW_ECC)
@@ -173,8 +188,6 @@ static int get_pmecc_bytes()
 static struct nand_ooblayout nand_oob_layout;
 
 static struct nand_chip nand_chip_default;
-
-static struct nand_onfi_params onfi_params;
 
 /*
  * NAND Commands
@@ -347,13 +360,29 @@ static unsigned short onfi_crc16(unsigned short crc,
 	return crc;
 }
 
+#define ONFI_PARAMS_SIZE		256
+
+#define PARAMS_OFFSET_BUSWIDTH		6
+#define PARAMS_OFFSET_MODEL		49
+#define PARAMS_OFFSET_JEDEC_ID		64
+#define PARAMS_OFFSET_PAGESIZE		80
+#define PARAMS_OFFSET_OOBSIZE		84
+#define PARAMS_OFFSET_BLOCKSIZE		92
+#define PARAMS_OFFSET_NBBLOCKS		96
+#define PARAMS_OFFSET_ECC_BITS		112
+#define PARAMS_OFFSET_CRC		254
+
+#define ONFI_CRC_BASE			0x4F4E
+
 static int nandflash_detect_onfi(struct nand_chip *chip)
 {
-	struct nand_onfi_params *p = &onfi_params;
 	unsigned char onfi_ind[4];
-	int i, j;
-	unsigned int onfi_version;
+	unsigned char onfi_params[ONFI_PARAMS_SIZE];
+	unsigned char *p = onfi_params;
 	unsigned char *param;
+	int i, j;
+	unsigned short crc;
+	unsigned char jedec_id, model, ecc_bits;
 
 	nand_cs_enable();
 	nand_command(CMD_READID);
@@ -384,13 +413,13 @@ static int nandflash_detect_onfi(struct nand_chip *chip)
 	nand_command(CMD_READ_1);
 	
 	for (i = 0; i < 3; i++) {
-		param = (unsigned char *)p;
+		param = onfi_params;
 		/* Read the onfi parameter table */
-		for (j = 0; j < sizeof(onfi_params); j++)
+		for (j = 0; j < ONFI_PARAMS_SIZE; j++)
 			*param++ = read_byte();
 
-		if (onfi_crc16(ONFI_CRC_BASE, (unsigned char *)p, 254)
-						== p->crc)
+		crc = *(unsigned short *)(p + PARAMS_OFFSET_CRC);
+		if (onfi_crc16(ONFI_CRC_BASE, (unsigned char *)p, 254) == crc)
 			break;
 	}
 
@@ -401,40 +430,28 @@ static int nandflash_detect_onfi(struct nand_chip *chip)
 		return -1;
 	}
 
-	/* check version */
-	if (p->revision & (1 << 5))
-		onfi_version = 23;
-	else if (p->revision & (1 << 4))
-		onfi_version = 22;
-	else if (p->revision & (1 << 3))
-		onfi_version = 21;
-	else if (p->revision & (1 << 2))
-		onfi_version = 20;
-	else if (p->revision & (1 << 1))
-		onfi_version = 10;
-	else
-		onfi_version = 0;
+	chip->numblocks = *(unsigned short *)(p + PARAMS_OFFSET_NBBLOCKS);
+	chip->pagesize	= *(unsigned short *)(p + PARAMS_OFFSET_PAGESIZE);
+	chip->blocksize = *(unsigned int  *)(p + PARAMS_OFFSET_BLOCKSIZE)
+							* chip->pagesize;
+	chip->oobsize	= *(unsigned char *)(p + PARAMS_OFFSET_OOBSIZE);
+	chip->buswidth	= (*(unsigned char *)(p + PARAMS_OFFSET_BUSWIDTH))
+								& 0x01;
 
-	if (!onfi_version) {
-		dbg_log(1, "NAND: unsupported ONFI version: %d\n\r",
-						p->revision);
-		return -1;
-	}
+	jedec_id = *(unsigned char *)(p + PARAMS_OFFSET_JEDEC_ID);
+	model	 = *(unsigned char *)(p + PARAMS_OFFSET_MODEL);
+	ecc_bits = *(unsigned char *)(p + PARAMS_OFFSET_ECC_BITS);
 
-	chip->numblocks = p->blocks_per_lun;
-	chip->pagesize 	= p->byte_per_page;
-	chip->blocksize = p->pages_per_block * chip->pagesize;
-	chip->oobsize 	= p->spare_bytes_per_page;
-	chip->buswidth	= p->features & 0x01;
+	nand_disable_internal_ecc(jedec_id, model, ecc_bits);
 
-	nand_disable_internal_ecc(p->jedec_id, p->model[5], p->ecc_bits);
 	return 0;
 }
 
 static int nandflash_detect_non_onfi(struct nand_chip *chip)
 {
-	int manf_id, dev_id, cellinfo, extid, tmp_manf, tmp_dev;
-	struct nandflash_dev *type;
+	int manf_id, dev_id;
+	unsigned int chipid;
+	unsigned int i;
 
 	nand_cs_enable();
 
@@ -444,64 +461,29 @@ static int nandflash_detect_non_onfi(struct nand_chip *chip)
 
 	manf_id  = read_byte();
 	dev_id   = read_byte();
-	cellinfo = read_byte();
-	extid    = read_byte();
 
-	/* Read twice */
-	nand_command(CMD_READID);
-	nand_address(0x00);
+	chipid = (manf_id << 8) | dev_id;
 
-	/* Read manufacturer and device IDs */
-	tmp_manf = read_byte();
-	tmp_dev  = read_byte();
-
-	nand_cs_disable();
-
-	if (tmp_manf != manf_id || tmp_dev != dev_id) {
-		dbg_log(1, "NAND: Twice reading device ID did not match\n\r");
-		return -1;
-	}
-
-	cellinfo = cellinfo;
-
-	type = (struct nandflash_dev *)&nandflash_ids[0];
-	
-	for (; type->name != NULL; type++)
-		if (dev_id == type->id)
+	for (i = 0; i < ARRAY_SIZE(nand_ids); i++) {
+		if (chipid == nand_ids[i].chip_id)
 			break;
-	
-	if (type->name == NULL){
-		if (manf_id != 0x00 && manf_id != 0xff 
-			&& dev_id != 0x00 && dev_id != 0xff)
-			dbg_log(1, "NAND: Not found Manufacturer ID: %d," \
-				"Chip ID: 0x%d\n\r", manf_id, dev_id);
+	}
+
+	if (i == ARRAY_SIZE(nand_ids)) {
+		dbg_log(1, "NAND: Not found Manufacturer ID: %d," \
+			"Chip ID: 0x%d\n\r", manf_id, dev_id);
+
 		return -1;
 	}
-	
-	dbg_log(1, "NAND: %s Manufacturer ID: %d Chip ID: %d\n\r",
-				type->name, manf_id, dev_id);
 
-	if (type->pagesize == 0){
-		/* pagesize */
-		chip->pagesize = 1024 << (extid & 0x3);
-		extid >>= 2;
-		/* oobsize */
-		chip->oobsize = (8 << (extid & 0x01)) * (chip->pagesize >> 9);
-		extid >>= 2;
-		/* Blocksize is multiples of 64KiB */
-		chip->blocksize = (64 * 1024) << (extid & 0x03);
-		extid >>= 2;
-		/* Get buswidth information */
-		chip->buswidth = (extid & 0x01) ? 1 : 0;
-	} else {
-		chip->pagesize 	= type->pagesize;
-		chip->blocksize = type->erasesize;
-		chip->oobsize 	= chip->pagesize / 32;
-		chip->buswidth 	= (((type->options & NAND_BUSWIDTH_16) 
-						== NAND_BUSWIDTH_16) ? 1: 0); 
-	}
+	dbg_log(1, "NAND: Manufacturer ID: %d Chip ID: %d\n\r",
+						manf_id, dev_id);
 
-	chip->numblocks = (type->chipsize << 20) / chip->blocksize;
+	chip->pagesize	= nand_ids[i].pagesize;
+	chip->blocksize = nand_ids[i].blocksize;
+	chip->oobsize	= nand_ids[i].oobsize;
+	chip->buswidth	= nand_ids[i].buswidth;
+	chip->numblocks = nand_ids[i].numblocks;
 
 	return 0;
 }

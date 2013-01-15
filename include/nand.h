@@ -62,78 +62,6 @@ struct nand_info {
 	struct nand_ooblayout	*ecclayout;
 };
 
-
-struct nand_onfi_params {
-	/* rev info and features block */
-	/* 'O' 'N' 'F' 'I'  */
-	unsigned char sig[4];
-	unsigned short revision;
-	unsigned short features;
-	unsigned short opt_cmd;
-	unsigned char reserved[22];
-
-	/* manufacturer information block */
-	char manufacturer[12];
-	char model[20];
-	unsigned char jedec_id;
-	unsigned short date_code;
-	unsigned char reserved2[13];
-
-	/* memory organization block */
-	unsigned int byte_per_page;
-	unsigned short spare_bytes_per_page;
-	unsigned int data_bytes_per_ppage;
-	unsigned short spare_bytes_per_ppage;
-	unsigned int pages_per_block;
-	unsigned int blocks_per_lun;
-	unsigned char lun_count;
-	unsigned char addr_cycles;
-	unsigned char bits_per_cell;
-	unsigned short bb_per_lun;
-	unsigned short block_endurance;
-	unsigned char guaranteed_good_blocks;
-	unsigned short guaranteed_block_endurance;
-	unsigned char programs_per_page;
-	unsigned char ppage_attr;
-	unsigned char ecc_bits;
-	unsigned char interleaved_bits;
-	unsigned char interleaved_ops;
-	unsigned char reserved3[13];
-
-	/* electrical parameter block */
-	unsigned char io_pin_capacitance_max;
-	unsigned short async_timing_mode;
-	unsigned short program_cache_timing_mode;
-	unsigned short t_prog;
-	unsigned short t_bers;
-	unsigned short t_r;
-	unsigned short t_ccs;
-	unsigned short src_sync_timing_mode;
-	unsigned short src_ssync_features;
-	unsigned short clk_pin_capacitance_typ;
-	unsigned short io_pin_capacitance_typ;
-	unsigned short input_pin_capacitance_typ;
-	unsigned char input_pin_capacitance_max;
-	unsigned char driver_strenght_support;
-	unsigned short t_int_r;
-	unsigned short t_ald;
-	unsigned char reserved4[7];
-
-	/* vendor */
-	unsigned char reserved5[90];
-
-	unsigned short crc;
-} __attribute__((packed));
-
-struct nandflash_dev {
-	char *name;
-	int id;
-	unsigned long pagesize;
-	unsigned long chipsize;
-	unsigned long erasesize;
-	unsigned long options;
-};
-
 #define ZONE_DATA			0x01    /* Sector data zone */
 #define ZONE_INFO			0x02    /* Sector info zone */
 
@@ -170,9 +98,5 @@ struct nandflash_dev {
 /* Feature Operations */
 #define CMD_SET_FEATURE			0xEF
 #define CMD_GET_FEATURE			0xEE
-
-#define ONFI_CRC_BASE			0x4F4E
-
-#define NAND_BUSWIDTH_16		0x02
 
 #endif /* #ifndef __NAND_H__ */
