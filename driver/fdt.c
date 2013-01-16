@@ -37,9 +37,6 @@
 #define OF_DT_TOKEN_NOP		0x4
 #define OF_DT_END		0x9
 
-#define ALIGN(x, a)		(((x) + (a) - 1) & ~((a) - 1))
-#define OF_ALIGN(x)		ALIGN(x, 4)
-
 struct of_dt_header {
 	unsigned int	magic;
 	unsigned int	totalsize;
@@ -59,39 +56,45 @@ struct of_dt_header {
 	unsigned int	size_dt_struct;
 };
 
+static unsigned int swap_uint32(unsigned int data)
+{
+	return ((data & 0x000000ff) << 24) | ((data & 0x0000ff00) << 8)
+		| ((data & 0xff000000) >> 24) | ((data & 0x00ff0000) >> 8);
+}
+
 static inline unsigned int of_get_magic(void *blob)
 {
 	struct of_dt_header *header = (struct of_dt_header *)blob;
 
-	return be32_to_cpu(header->magic);
+	return swap_uint32(header->magic);
 }
 
 static inline unsigned int of_get_version(void *blob)
 {
 	struct of_dt_header *header = (struct of_dt_header *)blob;
 
-	return be32_to_cpu(header->version);
+	return swap_uint32(header->version);
 }
 
 static inline unsigned int of_get_last_compversion(void *blob)
 {
 	struct of_dt_header *header = (struct of_dt_header *)blob;
 
-	return be32_to_cpu(header->last_comp_version);
+	return swap_uint32(header->last_comp_version);
 }
 
 static inline unsigned int of_get_off_dt_strings(void *blob)
 {
 	struct of_dt_header *header = (struct of_dt_header *)blob;
 
-	return be32_to_cpu(header->off_dt_strings);
+	return swap_uint32(header->off_dt_strings);
 }
 
 static inline void of_set_off_dt_strings(void *blob, unsigned int offset)
 {
 	struct of_dt_header *header = (struct of_dt_header *)blob;
 
-	header->off_dt_strings = cpu_to_be32(offset);
+	header->off_dt_strings = swap_uint32(offset);
 }
 
 static inline char *of_dt_strings_offset(void *blob, unsigned int offset)
@@ -104,7 +107,7 @@ static inline unsigned int of_get_off_dt_struct(void *blob)
 {
 	struct of_dt_header *header = (struct of_dt_header *)blob;
 
-	return be32_to_cpu(header->off_dt_struct);
+	return swap_uint32(header->off_dt_struct);
 }
 
 static inline unsigned int of_dt_struct_offset(void *blob, unsigned int offset)
@@ -116,42 +119,42 @@ static inline unsigned int of_get_totalsize(void *blob)
 {
 	struct of_dt_header *header = (struct of_dt_header *)blob;
 
-	return be32_to_cpu(header->totalsize);
+	return swap_uint32(header->totalsize);
 }
 
 static inline void of_set_totalsize(void *blob, unsigned int size)
 {
 	struct of_dt_header *header = (struct of_dt_header *)blob;
 
-	header->totalsize = cpu_to_be32(size);
+	header->totalsize = swap_uint32(size);
 }
 
 static inline unsigned int of_get_size_dt_strings(void *blob)
 {
 	struct of_dt_header *header = (struct of_dt_header *)blob;
 
-	return be32_to_cpu(header->size_dt_strings);
+	return swap_uint32(header->size_dt_strings);
 }
 
 static inline void of_set_size_dt_strings(void *blob, unsigned int size)
 {
 	struct of_dt_header *header = (struct of_dt_header *)blob;
 
-	header->size_dt_strings = cpu_to_be32(size);
+	header->size_dt_strings = swap_uint32(size);
 }
 
 static inline unsigned int of_get_size_dt_struct(void *blob)
 {
 	struct of_dt_header *header = (struct of_dt_header *)blob;
 
-	return be32_to_cpu(header->size_dt_struct);
+	return swap_uint32(header->size_dt_struct);
 }
 
 static inline void of_set_size_dt_struct(void *blob, unsigned int size)
 {
 	struct of_dt_header *header = (struct of_dt_header *)blob;
 
-	header->size_dt_struct = cpu_to_be32(size);
+	header->size_dt_struct = swap_uint32(size);
 }
 
 static inline int of_blob_data_size(void *blob)
@@ -167,8 +170,6 @@ static int of_nodename_is_equal(void *blob,
 				int namelen)
 {
 	const char *p = (char *)of_dt_struct_offset(blob, (offset + 4));
-
-
 
 	if (memcmp(p, name, namelen) != 0)
 		return 0;
@@ -200,7 +201,7 @@ static int of_find_nextoffset_token(void *blob,
 {
 	const unsigned int *p, *lenp;
 	unsigned int tag;
-	const char *tmp;
+	const char *cell;
 	unsigned int offset = startoffset;
 
 	*nextoffset = -1;
@@ -212,22 +213,22 @@ static int of_find_nextoffset_token(void *blob,
 
 	/* Get the token */
 	p = (unsigned int *)of_dt_struct_offset(blob, offset);
-	tag = be32_to_cpu(*p);
+	tag = swap_uint32(*p);
 
 	/* Prepare offset for the next token */
 	offset += 4;
 	if (tag  == OF_DT_TOKEN_NODE_BEGIN) {
 		/* node name */
-		tmp = (char *)of_dt_struct_offset(blob, offset);
+		cell = (char *)of_dt_struct_offset(blob, offset);
 		do {
-			tmp++;
+			cell++;
 			offset++;
-		} while (*tmp != '\0');
+		} while (*cell != '\0');
 	} else if (tag == OF_DT_TOKEN_PROP) {
 		/* the property value size */
 		lenp = (unsigned int *)of_dt_struct_offset(blob, offset);
 		/* name offset + value size + value */
-		offset += be32_to_cpu(*lenp) + 8;
+		offset += swap_uint32(*lenp) + 8;
 	} else if ((tag != OF_DT_TOKEN_NODE_END)
 			&& (tag != OF_DT_TOKEN_NOP)
 			&& (tag != OF_DT_END))
@@ -463,7 +464,7 @@ static int of_get_property_offset_by_name(void *blob,
 			return ret;
 
 		p = (unsigned int *)of_dt_struct_offset(blob, propoffset + 8);
-		nameoffset = be32_to_cpu(*p);
+		nameoffset = swap_uint32(*p);
 
 		if (of_propertyname_is_equal(blob, nameoffset, name, namelen)) {
 			*offset = propoffset;
@@ -531,14 +532,14 @@ static int of_update_property(void *blob,
 	void *point = (void *)valuep;
 	int ret;
 
-	oldlen = be32_to_cpu(*lenp);
+	oldlen = swap_uint32(*lenp);
 
 	ret = of_blob_splice_dt_struct(blob, point,
 			OF_ALIGN(oldlen), OF_ALIGN(newlen));
 	if (ret)
 		return ret;
 
-	*lenp = cpu_to_be32(newlen);
+	*lenp = swap_uint32(newlen);
 
 	memcpy(valuep, value, newlen);
 
@@ -571,9 +572,9 @@ static int of_add_property(void *blob,
 		return ret;
 
 	p = (unsigned int *)addr;
-	*p++ = cpu_to_be32(OF_DT_TOKEN_PROP);
-	*p++ = cpu_to_be32(valuelen);
-	*p++ = cpu_to_be32(string_offset);
+	*p++ = swap_uint32(OF_DT_TOKEN_PROP);
+	*p++ = swap_uint32(valuelen);
+	*p++ = swap_uint32(string_offset);
 	memcpy((unsigned char *)p, value, valuelen);
 
 	return 0;
@@ -608,7 +609,9 @@ static int of_set_property(void *blob,
 	return 0;
 }
 
-static int of_get_cells_len(void *blob, int *addrcells_len, int *sizecells_len)
+static int of_get_cells_len(void *blob,
+				unsigned int *addrcells_len,
+				unsigned int *sizecells_len)
 {
 	int offset;
 	int nextoffset;
@@ -631,7 +634,7 @@ static int of_get_cells_len(void *blob, int *addrcells_len, int *sizecells_len)
 		return ret;
 
 	cellp = (unsigned int *)of_dt_struct_offset(blob, offset);
-	if (be32_to_cpu(*cellp) == 2)
+	if (swap_uint32(*cellp) == 2)
 		*addrcells_len = 8;
 	else
 		*addrcells_len = 4;
@@ -643,7 +646,7 @@ static int of_get_cells_len(void *blob, int *addrcells_len, int *sizecells_len)
 		return ret;
 
 	cellp = (unsigned int *)of_dt_struct_offset(blob, offset);
-	if (be32_to_cpu(*cellp) == 2)
+	if (swap_uint32(*cellp) == 2)
 		*sizecells_len = 8;
 	else
 		*sizecells_len = 4;
@@ -655,6 +658,7 @@ static int of_get_cells_len(void *blob, int *addrcells_len, int *sizecells_len)
 static void write_cell(unsigned char *addr, unsigned long value, int size)
 {
 	int shift = (size - 1) * 8;
+
 	while (size-- > 0) {
 		*addr++ = (value >> shift) & 0xff;
 		shift -= 8;
@@ -718,9 +722,9 @@ int of_fixup_memory_node(void *blob,
 				int banks)
 {
 	int nodeoffset;
-	int addr_cells_len, size_cells_len;
+	unsigned int addr_cells_len, size_cells_len;
 	int len;
-	unsigned char tmp[banks * 16]; /* Up to 64-bit address + 64-bit size */
+	unsigned char cells[banks * 16];
 	int bank;
 	int ret;
 
@@ -747,14 +751,14 @@ int of_fixup_memory_node(void *blob,
 		return ret;
 
 	for (bank = 0, len = 0; bank < banks; bank++) {
-		write_cell(tmp + len, start[bank], addr_cells_len);
+		write_cell(cells + len, start[bank], addr_cells_len);
 		len += addr_cells_len;
 
-		write_cell(tmp + len, size[bank], size_cells_len);
+		write_cell(cells + len, size[bank], size_cells_len);
 		len += size_cells_len;
 	}
 
-	ret = of_set_property(blob, nodeoffset, "reg", tmp, len);
+	ret = of_set_property(blob, nodeoffset, "reg", cells, len);
 	if (ret) {
 		dbg_log(1, "DT: could not set reg property\n\r");
 		return ret;

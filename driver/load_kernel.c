@@ -292,7 +292,7 @@ int load_kernel(struct image_info *image)
 #endif
 
 	image_header = (struct kernel_image_header *)jump_addr;
-	magic_number = ntohl(image_header->magic);
+	magic_number = swap_uint32(image_header->magic);
 	dbg_log(1, "\n\rImage magic: %d is found.\n\r", magic_number);
 	if (magic_number != KERNEL_IMAGE_MAGIC) {
 		dbg_log(1, "** Bad image magic number found: %d\n\r",
@@ -300,8 +300,8 @@ int load_kernel(struct image_info *image)
 		return -1;
 	}
 
-	image_size = ntohl(image_header->size);
-	load_addr = ntohl(image_header->load);
+	image_size = swap_uint32(image_header->size);
+	load_addr = swap_uint32(image_header->load);
 
 	dbg_log(1, "Image size: %d, load address: %d\n\r",
 				image_size, load_addr);
@@ -310,8 +310,9 @@ int load_kernel(struct image_info *image)
 		dbg_log(1, "The comp type has not been supported\n\r");
 		return -1;
 	}
+
 	kernel_entry = (void (*)(int, int, unsigned int))
-					ntohl(image_header->entry_point);
+					swap_uint32(image_header->entry_point);
 
 	dbg_log(1, "Relocating kernel image, dest: %d, src: %d\n\r",
 		load_addr, jump_addr + sizeof(struct kernel_image_header));

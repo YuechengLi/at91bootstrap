@@ -616,8 +616,8 @@ static int sd_read_card_configuration(struct sd_card *sdcard)
 	if (ret)
 		return ret;
 
-	sdcard->reg->scr[0] = be32_to_cpu(scr[0]);
-	sdcard->reg->scr[1] = be32_to_cpu(scr[1]);
+	sdcard->reg->scr[0] = swap_uint32(scr[0]);
+	sdcard->reg->scr[1] = swap_uint32(scr[1]);
 
 	return 0;
 }
@@ -717,12 +717,12 @@ static int switch_check_hs_busy_status_supported(struct sd_card *sdcard,
 		 * 0x00 - bits 511:376 are defined
 		 * 0x01 - bits 511:272 are defined
 		 */
-		version = be32_to_cpu(switch_func_status[4]);
+		version = swap_uint32(switch_func_status[4]);
 		if (((version >> 16) & 0xff) == 0x00)
 			break;
 
 		/* Check Busy Status of function */
-		status = be32_to_cpu(switch_func_status[7]);
+		status = swap_uint32(switch_func_status[7]);
 		if (!((status >> 17) & 0x01))
 			break;
 	} while (--timeout);
@@ -731,7 +731,7 @@ static int switch_check_hs_busy_status_supported(struct sd_card *sdcard,
 		return -1;
 
 	/* Check function supported */
-	status = be32_to_cpu(switch_func_status[3]);
+	status = swap_uint32(switch_func_status[3]);
 	*support = ((status >> 17) & 0x01) ? 1 : 0;
 
 	return 0;
@@ -763,7 +763,7 @@ static int sd_switch_func_high_speed(struct sd_card *sdcard)
 		return ret;
 
 	/* Check Switched function */
-	status = be32_to_cpu(switch_func_status[4]);
+	status = swap_uint32(switch_func_status[4]);
 	if ((status >> 24) & 0x01) {
 		sdcard->highspeed_card = 1;
 		return 0;
