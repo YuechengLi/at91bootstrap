@@ -31,7 +31,7 @@
 #include "arch/at91_pit.h"
 #include "arch/at91_pmc.h"
 
-#define TIMER_LOAD_VAL  0xfffff
+#define MAX_PIV		0xfffff
 
 static inline int pit_readl(unsigned int reg)
 {
@@ -44,13 +44,12 @@ static inline void pit_writel(unsigned int value, unsigned reg)
 }
 
 /*
- * Use the PITC in full 32 bit incrementing mode
  * If MASTER_CLOCK = 132M, the maximum delay is about 520.6 second(8.6767 min).
- * it is long enough for our use.
+ * it is long enough for using in bootstrap.
  */
 int timer_init(void)
 {
-	pit_writel((TIMER_LOAD_VAL | AT91C_PIT_PITEN), PIT_MR);
+	pit_writel((MAX_PIV | AT91C_PIT_PITEN), PIT_MR);
 
 	/* Enable PITC Clock */
 #ifdef AT91C_ID_PIT
@@ -61,37 +60,22 @@ int timer_init(void)
 	return 0;
 }
 
-/* If MASTER_CLOCK = 132M, usec <= 21537 us (0xffffffff / 132000) */
-static unsigned int usec_to_tick(unsigned int usec)
-{
-	unsigned int tick;
-
-	tick = ((MASTER_CLOCK / 1000) * usec) / (16 * 1000);
-
-	return tick;
-}
-
-static unsigned int msec_to_tick(unsigned int msec)
-{
-	unsigned int tick;
-
-	tick = ((MASTER_CLOCK / 1000) * msec) / 16;
-
-	return tick;
-}
-
-static unsigned int get_ticks(void)
+static unsigned int at91_get_pit_value(void)
 {
 	return(pit_readl(PIT_PIIR));
 }
 
-
+/* If MASTER_CLOCK = 132M, require usec <= 21537 us (0xffffffff / 132000) */
 void udelay(unsigned int usec)
 {
-	unsigned int start = get_ticks();
-	unsigned int tmo = usec_to_tick(usec);
+	unsigned int base = at91_get_pit_value();
+	unsigned int delay = ((MASTER_CLOCK / 1000) * usec) / (16 * 1000);
+	unsigned int current;
 
-	while ((get_ticks() - start) < tmo);
+	do {
+		current = at91_get_pit_value();
+		current -= base;
+	} while (current < delay);
 }
 
 /* Init a special timer for slow clock switch function */
@@ -99,16 +83,20 @@ static int timer1_base;
 
 int start_interval_timer(void)
 {
-	timer1_base = get_ticks();
+	timer1_base = at91_get_pit_value();
 
 	return 0;
 }
 
 int wait_interval_timer(unsigned int msec)
 {
-	unsigned int tmo = msec_to_tick(msec);
+	unsigned int delay = ((MASTER_CLOCK / 1000) * msec) / 16;
+	unsigned int current;
 
-	while ((get_ticks() - timer1_base) < tmo);
+	do {
+		current = at91_get_pit_value();
+		current -= timer1_base;
+	} while (current < delay);
 
 	return 0;
 }
