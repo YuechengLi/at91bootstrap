@@ -40,72 +40,39 @@
 
 #ifdef CONFIG_OF_LIBFDT
 
-static int fixup_chosen_node(void *blob, char *bootargs)
-{
-	char *p;
-	int  ret;
-
-	if (!bootargs)
-		return -1;
-
-	/* eat leading white space */
-	for (p = bootargs; *p == ' '; p++)
-		;
-
-	/* skip non-existent command lines so the kernel will still
-	 * use its default command line.
-	 */
-	if (*p == '\0')
-		return -1;
-
-	ret = of_fixup_chosen_node(blob, p);
-	if (ret)
-		return ret;
-
-	return 0;
-}
-
-#define CONFIG_NR_DRAM_BANKS	1
-static int fixup_memory_node(void *blob)
-{
-	int bank;
-	unsigned int start[CONFIG_NR_DRAM_BANKS];
-	unsigned int size[CONFIG_NR_DRAM_BANKS];
-	int ret;
-
-	for (bank = 0; bank < CONFIG_NR_DRAM_BANKS; bank++) {
-		start[bank] = OS_MEM_BANK;
-		size[bank] = OS_MEM_SIZE;
-	}
-
-	ret = of_fixup_memory_node(blob, start, size, CONFIG_NR_DRAM_BANKS);
-
-	return ret;
-}
-
 static int setup_dt_blob(void *blob)
 {
-	unsigned int of_size;
 	char *bootargs = LINUX_KERNEL_ARG_STRING;
+	char *p;
+	unsigned int mem_bank = OS_MEM_BANK;
+	unsigned int mem_size = OS_MEM_SIZE;
+	unsigned int size;
 	int ret;
 
-	if (of_check_dt_header(blob)) {
+	if (check_dt_blob_valid(blob)) {
 		dbg_log(1, "DT: the blob is not a valid fdt\n\r");
 		return -1;
 	}
 
-	ret = of_expand_blob(blob, &of_size);
+	ret = resize_dt_blob_totalsize(blob, &size);
 	if (ret)
 		return ret;
 
 	dbg_log(1, "\n\rDT: Using Device Tree in place at %d, end %d\n\r",
-			(unsigned int)blob, (unsigned int)blob + of_size - 1);
+			(unsigned int)blob, (unsigned int)blob + size - 1);
 
-	ret = fixup_chosen_node(blob, bootargs);
+	/* set "/chosen" node */
+	for (p = bootargs; *p == ' '; p++)
+		;
+
+	if (*p == '\0')
+		return -1;
+
+	ret = fixup_chosen_node(blob, p);
 	if (ret)
 		return ret;
 
-	ret = fixup_memory_node(blob);
+	ret = fixup_memory_node(blob, &mem_bank, &mem_size);
 	if (ret)
 		return ret;
 

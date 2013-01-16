@@ -9,3 +9,4 @@ COBJS-y		+= $(LIBC)eabi_utils.o
 SOBJS-y		+= $(LIBC)_udivsi3.o
 SOBJS-y		+= $(LIBC)_umodsi3.o
 
+COBJS-$(CONFIG_OF_LIBFDT) += $(LIBC)/fdt.o
