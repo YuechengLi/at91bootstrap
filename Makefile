@@ -19,7 +19,7 @@ BINDIR:=$(TOPDIR)/binaries
 
 DATE := $(shell date)
 VERSION := 3.5
-REVISION := 0
+REVISION := 1
 
 noconfig_targets:= menuconfig defconfig $(CONFIG) oldconfig
 
