@@ -49,7 +49,7 @@ void *memset(void *dst, int val, int cnt)
 	return d;
 }
 
-int memcmp(const void *dst, const void *src, size_t cnt)
+int memcmp(const void *dst, const void *src, unsigned int cnt)
 {
 	const char *d = (const char *)dst;
 	const char *s = (const char *)src;
@@ -60,7 +60,7 @@ int memcmp(const void *dst, const void *src, size_t cnt)
 	return r;
 }
 
-size_t strlen(const char *str)
+unsigned int strlen(const char *str)
 {
 	int i = 0;
 
@@ -94,7 +94,7 @@ int strcmp(const char *p1, const char *p2)
 	return 0;
 }
 
-int strncmp(const char *p1, const char *p2, size_t cnt)
+int strncmp(const char *p1, const char *p2, unsigned int cnt)
 {
 	unsigned char c1, c2;
 
@@ -112,7 +112,7 @@ int strncmp(const char *p1, const char *p2, size_t cnt)
 	return 0;
 }
 
-char *strchr(const char * s, int c)
+char *strchr(const char *s, int c)
 {
 	for (; *s != (char) c; ++s)
 		if (*s == '\0')
@@ -121,7 +121,7 @@ char *strchr(const char * s, int c)
 	return (char *)s;
 }
 
-void *memchr(void *ptr, int value, size_t num)
+void *memchr(void *ptr, int value, unsigned int num)
 {
 	char *pret = NULL;
 	char *ptmp = (char *)ptr;
@@ -138,7 +138,7 @@ void *memchr(void *ptr, int value, size_t num)
 	return pret;
 }
 
-void *memmove(void * dest, const void *src, size_t count)
+void *memmove(void *dest, const void *src, unsigned int count)
 {
 	char *tmp, *s;
 
