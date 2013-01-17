@@ -619,7 +619,10 @@ void load_1wire_info()
 	unsigned int	cnt;
 	unsigned int	size = LEN_ONE_WIRE_INFO;
 	struct board_info	board_info;
-	struct board_info	*bd_info = &board_info;
+	struct board_info	*bd_info;
+
+	memset(&board_info, 0, sizeof(board_info));
+	bd_info= &board_info;
 
 	dbg_log(1, "1-Wire: Loading 1-Wire information ...\n\r");
 
