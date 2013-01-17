@@ -4,9 +4,7 @@
 LIBC:=$(TOPDIR)/lib/
 
 COBJS-y		+= $(LIBC)string.o
-COBJS-y		+= $(LIBC)div00.o
 COBJS-y		+= $(LIBC)eabi_utils.o
-SOBJS-y		+= $(LIBC)_udivsi3.o
-SOBJS-y		+= $(LIBC)_umodsi3.o
+COBJS-y		+= $(LIBC)raise.o
 
 COBJS-$(CONFIG_OF_LIBFDT) += $(LIBC)/fdt.o

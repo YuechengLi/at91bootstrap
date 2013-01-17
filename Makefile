@@ -191,12 +191,15 @@ include	driver/driver_cpp.mk
 #    --cref:    add cross reference to map file
 #  -lc 	   : 	tells the linker to tie in newlib
 #  -lgcc   : 	tells the linker to tie in newlib
-LDFLAGS+=-nostartfiles -Map=$(BINDIR)/$(BOOT_NAME).map --cref
+LDFLAGS+=-nostartfiles -Map=$(BINDIR)/$(BOOT_NAME).map --cref -static
 LDFLAGS+=-T elf32-littlearm.lds $(GC_SECTIONS) -Ttext $(LINK_ADDR)
 
 ifneq ($(DATA_SECTION_ADDR),)
 LDFLAGS+=-Tdata $(DATA_SECTION_ADDR)
 endif
+
+gcclibdir := $(shell dirname `$(CC) -print-libgcc-file-name`)
+LIBPATH := -lgcc -L$(gcclibdir)
 
 ifdef YYY   # For other utils
 ifeq ($(CC),gcc) 
@@ -222,6 +225,9 @@ PrintFlags:
 	@echo gcc FLAGS
 	@echo =========
 	@echo $(CPPFLAGS) && echo
+	@echo lib Path
+	@echo ========
+	@echo $(LIBPATH) && echo
 	@echo ld FLAGS
 	@echo ========
 	@echo $(LDFLAGS) && echo
@@ -229,7 +235,7 @@ PrintFlags:
 $(AT91BOOTSTRAP): $(OBJS)
 	$(if $(wildcard $(BINDIR)),,mkdir -p $(BINDIR))
 	@echo "  LD        "$(BOOT_NAME).elf
-	@$(LD) $(LDFLAGS) -n -o $(BINDIR)/$(BOOT_NAME).elf $(OBJS)
+	@$(LD) $(LDFLAGS) -n -o $(BINDIR)/$(BOOT_NAME).elf $(OBJS) ${LIBPATH}
 #	@$(OBJCOPY) --strip-debug --strip-unneeded $(BINDIR)/$(BOOT_NAME).elf -O binary $(BINDIR)/$(BOOT_NAME).bin
 	@$(OBJCOPY) --strip-all $(BINDIR)/$(BOOT_NAME).elf -O binary $@
 
