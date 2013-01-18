@@ -199,8 +199,8 @@ int at91_mci_read_block_data(unsigned int *data,
 			unsigned int block_len)
 {
 	unsigned int count;
-	unsigned int words_to_read = bytes_to_read / 4;
-	unsigned int words_of_block = block_len / 4;
+	unsigned int words_to_read = bytes_to_read >> 2;
+	unsigned int words_of_block = block_len >> 2;
 	unsigned int tmp;
 	int timeout = 10000;
 	int ret;
