@@ -1172,14 +1172,12 @@ static int sdcard_identification(struct sd_card *sdcard)
 
 	sdcard->highcapacity_card = (sdcard->reg->ocr & OCR_HCR_CCS) ? 1 : 0;
 
-	if (sdcard->highcapacity_card) {
-		if (sdcard->card_type == CARD_TYPE_SD)
-			dbg_log(1, "SD: High or Extended " \
-					"Capacity SD Card\n\r");
-	} else {
-		if (sdcard->card_type == CARD_TYPE_SD)
-			dbg_log(1, "SD: Standard Capacity "
-					"SD Card\n\r");
+	if (sdcard->card_type == CARD_TYPE_SD) {
+		dbg_log(1, "SD: Card Capacity: ");
+		if (sdcard->highcapacity_card)
+			dbg_log(1, "High or Extended\n\r");
+		else
+			dbg_log(1, "Standard\n\r");
 	}
 
 	/*
@@ -1237,25 +1235,24 @@ static int sd_initialization(struct sd_card *sdcard)
 #ifdef CONFIG_SDCARD_HS
 	unsigned int version;
 	version = (sdcard->reg->scr[0] >> 24) & 0x0f;
+	dbg_log(1, "SD: Specification Version ");
 	if (version == 0) {
 		sdcard->sd_spec_version = SD_VERSION_1_0;
-		dbg_log(1, "SD: Specification Version 1.0 " \
-						"and Version 1.01\n\r");
+		dbg_log(1, "1.0 and 1.01\n\r");
 	} else if (version == 1) {
 		sdcard->sd_spec_version = SD_VERSION_1_10;
-		dbg_log(1, "SD: Specification Version 1.10\n\r");
+		dbg_log(1, "1.10\n\r");
 	} else if (version == 2) {
 		if ((sdcard->reg->scr[0] >> 15) & 0x01) {
 			sdcard->sd_spec_version = SD_VERSION_3;
-			dbg_log(1, "SD: Specification Version 3.0X\n\r");
+			dbg_log(1, "3.0X\n\r");
 		} else {
 			sdcard->sd_spec_version = SD_VERSION_2;
-			dbg_log(1, "SD: Specification Version 2.00\n\r");
+			dbg_log(1, "2.00\n\r");
 		}
 	} else {
 		sdcard->sd_spec_version = SD_VERSION_1_0;
-		dbg_log(1, "SD: Specification Version 1.0" \
-						"and Version 1.01\n\r");
+		dbg_log(1, "1.0 and 1.01\n\r");
 	}
 
 	/*
@@ -1293,24 +1290,25 @@ static int mmc_initialization(struct sd_card *sdcard)
 	int ret;
 
 	version = (sdcard->reg->csd[0] >> 26) & 0xf;
+	dbg_log(1, "MMC: Specification Version ");
 	if (version == 0) {
 		sdcard->sd_spec_version = MMC_VERSION_1_2;
-		dbg_log(1, "MMC: Specification Version 1.2\n\r");
+		dbg_log(1, "1.2\n\r");
 	} else if (version == 1) {
 		sdcard->sd_spec_version = MMC_VERSION_1_4;
-		dbg_log(1, "MM: Specification Version 1.4\n\r");
+		dbg_log(1, "1.4\n\r");
 	} else if (version == 2) {
 		sdcard->sd_spec_version = MMC_VERSION_2_2;
-		dbg_log(1, "MMC: Specification Version 2.2\n\r");
+		dbg_log(1, "2.2\n\r");
 	} else if (version == 3) {
 		sdcard->sd_spec_version = MMC_VERSION_3;
-		dbg_log(1, "MMC: Specification Version 3.0\n\r");
+		dbg_log(1, "3.0\n\r");
 	} else if (version == 4) {
 		sdcard->sd_spec_version = MMC_VERSION_4;
-		dbg_log(1, "MMC: Specification Version 4.1 - 4.2\n\r");
+		dbg_log(1, "4.1 - 4.2\n\r");
 	} else {
 		sdcard->sd_spec_version = MMC_VERSION_1_2;
-		dbg_log(1, "MMC: Specification Version 1.2\n\r");
+		dbg_log(1, "1.2\n\r");
 	}
 
 	/*
