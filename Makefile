@@ -18,8 +18,8 @@ endif
 BINDIR:=$(TOPDIR)/binaries
 
 DATE := $(shell date)
-VERSION := 3.5
-REVISION := 1
+VERSION := 3.5.1
+REVISION :=
 
 noconfig_targets:= menuconfig defconfig $(CONFIG) oldconfig
 
@@ -96,9 +96,6 @@ SIZE=$(CROSS_COMPILE)size
 OBJCOPY=$(CROSS_COMPILE)objcopy
 OBJDUMP=$(CROSS_COMPILE)objdump
 
-CCVERSION := $(strip $(subst .,, $(shell expr `$(CC) -dumpversion`)))
-CCVERSIONGE441 := $(shell test $(CCVERSION) -ge 441 && echo 1 || echo 0)
-
 PROJECT := $(strip $(subst ",,$(CONFIG_PROJECT)))
 IMG_ADDRESS := $(strip $(subst ",,$(CONFIG_IMG_ADDRESS)))
 IMG_SIZE := $(strip $(subst ",,$(CONFIG_IMG_SIZE)))
@@ -137,7 +134,7 @@ SPI_BOOT:=$(strip $(subst ",,$(CONFIG_SPI_BOOT)))
 ifeq ($(REVISION),)
 REV:=
 else
-REV:=.$(strip $(subst ",,$(REVISION)))
+REV:=-$(strip $(subst ",,$(REVISION)))
 endif
 
 ifeq ($(CONFIG_OF_LIBFDT), y)
@@ -177,7 +174,7 @@ GC_SECTIONS=--gc-sections
 CPPFLAGS=-ffunction-sections -g -Os -Wall \
 	-fno-stack-protector \
 	-I$(INCL) -Iinclude -Ifs/include \
-	-DAT91BOOTSTRAP_VERSION=\"$(VERSION)$(REV)\"  -DCOMPILE_TIME="\"$(DATE)\""
+	-DAT91BOOTSTRAP_VERSION=\"$(VERSION)$(REV)\" -DCOMPILE_TIME="\"$(DATE)\""
 
 ASFLAGS=-g -Os -Wall -I$(INCL) -Iinclude
 
@@ -197,6 +194,8 @@ LDFLAGS+=-T elf32-littlearm.lds $(GC_SECTIONS) -Ttext $(LINK_ADDR)
 ifneq ($(DATA_SECTION_ADDR),)
 LDFLAGS+=-Tdata $(DATA_SECTION_ADDR)
 endif
+
+gccversion := $(shell expr `$(CC) -dumpversion`)
 
 gcclibdir := $(shell dirname `$(CC) -print-libgcc-file-name`)
 LIBPATH := -lgcc -L$(gcclibdir)
@@ -218,7 +217,7 @@ all: PrintFlags $(AT91BOOTSTRAP) ChkFileSize
 PrintFlags:
 	@echo CC
 	@echo ========
-	@echo $(CC) && echo
+	@echo $(CC) $(gccversion)&& echo
 	@echo as FLAGS
 	@echo ========
 	@echo $(ASFLAGS) && echo
