@@ -128,7 +128,7 @@
 
 struct sd_command {
 	unsigned int	cmd;
-	unsigned int	flag;
+	unsigned int	cmdreg;
 	unsigned int	argu;
 	unsigned int	error_check;
 	unsigned int	*resp;

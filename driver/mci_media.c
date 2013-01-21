@@ -48,278 +48,153 @@ static const struct sd_command	sd_command_table[] =  {
 	/* CMD17 */
 	{
 		.cmd		= SD_CMD_READ_SINGLE_BLOCK,
-		.flag		= (AT91C_MCI_RSPTYP_48
+		.cmdreg		= (17 | AT91C_MCI_RSPTYP_48
 					| AT91C_MCI_MAXLAT_64
 					| AT91C_MCI_TRCMD_START
 					| AT91C_MCI_TRDIR_READ
 					| AT91C_MCI_TRTYP_SINGLE),
-		.error_check	= (AT91C_MCI_RINDE
-					| AT91C_MCI_RDIRE
-					| AT91C_MCI_RCRCE
-					| AT91C_MCI_RENDE
-					| AT91C_MCI_RTOE),
-		.resp		= response,
 	},
 	/* CMD18 */
 	{
 		.cmd		= SD_CMD_READ_MULTIPLE_BLOCK,
-		.flag		= (AT91C_MCI_RSPTYP_48
+		.cmdreg		= (18 | AT91C_MCI_RSPTYP_48
 					| AT91C_MCI_MAXLAT_64
 					| AT91C_MCI_TRCMD_START
 					| AT91C_MCI_TRDIR_READ
 					| AT91C_MCI_TRTYP_MULTIPLE),
-		.error_check	= (AT91C_MCI_RINDE
-					| AT91C_MCI_RDIRE
-					| AT91C_MCI_RCRCE
-					| AT91C_MCI_RENDE
-					| AT91C_MCI_RTOE),
-		.resp		= response,
 	},
 	/* CMD55 */
 	{
 		.cmd		= SD_CMD_APP_CMD,
-		.flag		= (AT91C_MCI_RSPTYP_48
+		.cmdreg		= (55 | AT91C_MCI_RSPTYP_48
 					| AT91C_MCI_MAXLAT_64),
-		.error_check	= (AT91C_MCI_RINDE
-					| AT91C_MCI_RDIRE
-					| AT91C_MCI_RCRCE
-					| AT91C_MCI_RENDE
-					| AT91C_MCI_RTOE),
-		.resp		= response,
 	},
 	/* ACMD6 */
 	{
 		.cmd		= SD_CMD_APP_SET_BUS_WIDTH,
-		.flag		= (AT91C_MCI_RSPTYP_48
+		.cmdreg		= (6 | AT91C_MCI_RSPTYP_48
 					| AT91C_MCI_MAXLAT_64),
-		.error_check	= (AT91C_MCI_RINDE
-					| AT91C_MCI_RDIRE
-					| AT91C_MCI_RCRCE
-					| AT91C_MCI_RENDE
-					| AT91C_MCI_RTOE),
-		.resp		= response,
 	},
 	/* CMD16 */
 	{
 		.cmd		= SD_CMD_SET_BLOCKLEN,
-		.flag		= (AT91C_MCI_RSPTYP_48
+		.cmdreg		= (16 | AT91C_MCI_RSPTYP_48
 					| AT91C_MCI_MAXLAT_64),
-		.error_check	= (AT91C_MCI_RINDE
-					| AT91C_MCI_RDIRE
-					| AT91C_MCI_RCRCE
-					| AT91C_MCI_RENDE
-					| AT91C_MCI_RTOE),
-		.resp		= response,
 	},
 	/* CMD12 */
 	{
 		.cmd		= SD_CMD_STOP_TRANSMISSION,
-		.flag		= (AT91C_MCI_RSPTYP_R1B
+		.cmdreg		= (12 | AT91C_MCI_RSPTYP_R1B
 					| AT91C_MCI_MAXLAT_64),
-		.error_check	= (AT91C_MCI_RINDE
-					| AT91C_MCI_RDIRE
-					| AT91C_MCI_RCRCE
-					| AT91C_MCI_RENDE
-					| AT91C_MCI_RTOE),
-		.resp		= response,
 	},
 	/* CMD13 */
 	{
 		.cmd		= SD_CMD_SEND_STATUS,
-		.flag		= (AT91C_MCI_RSPTYP_48
+		.cmdreg		= (13 | AT91C_MCI_RSPTYP_48
 					| AT91C_MCI_MAXLAT_64),
-		.error_check	= (AT91C_MCI_RINDE
-					| AT91C_MCI_RDIRE
-					| AT91C_MCI_RCRCE
-					| AT91C_MCI_RENDE
-					| AT91C_MCI_RTOE),
-		.resp		= response,
 	},
 	/* CMD0 */
 	{
 		.cmd		= SD_CMD_GO_IDLE_STATE,
-		.flag		= 0,
+		.cmdreg		= 0,
 		.error_check	= 0,
-		.resp		= response,
 	},
 	/* CMD2 */
 	{
 		.cmd		= SD_CMD_ALL_SEND_CID,
-		.flag		= (AT91C_MCI_RSPTYP_136
+		.cmdreg		= (2 | AT91C_MCI_RSPTYP_136
 					| AT91C_MCI_MAXLAT_64),
-		.error_check	= (AT91C_MCI_RINDE
-					| AT91C_MCI_RDIRE
-					| AT91C_MCI_RCRCE
-					| AT91C_MCI_RENDE
-					| AT91C_MCI_RTOE),
-		.resp		= response,
 	},
 	/* CMD3 */
 	{
 		.cmd		= SD_CMD_SEND_RELATIVE_ADDR,
-		.flag		= (AT91C_MCI_RSPTYP_48
+		.cmdreg		= (3 | AT91C_MCI_RSPTYP_48
 					| AT91C_MCI_MAXLAT_64),
-		.error_check	= (AT91C_MCI_RINDE
-					| AT91C_MCI_RDIRE
-					| AT91C_MCI_RCRCE
-					| AT91C_MCI_RENDE
-					| AT91C_MCI_RTOE),
-		.resp		= response,
 	},
 #ifdef CONFIG_SDCARD_HS
 	/* CMD6 */
 	{
 		.cmd		= SD_CMD_SWITCH_FUN,
-		.flag		= (AT91C_MCI_RSPTYP_48
+		.cmdreg		= (6 | AT91C_MCI_RSPTYP_48
 					| AT91C_MCI_MAXLAT_64
 					| AT91C_MCI_TRCMD_START
 					| AT91C_MCI_TRDIR_READ),
-		.error_check	= (AT91C_MCI_RINDE
-					| AT91C_MCI_RDIRE
-					| AT91C_MCI_RCRCE
-					| AT91C_MCI_RENDE
-					| AT91C_MCI_RTOE),
-		.resp		= response,
 	},
 #endif
 	/* CMD7 */
 	{
 		.cmd		= SD_CMD_SELECT_CARD,
-		.flag		= (AT91C_MCI_RSPTYP_R1B
+		.cmdreg		= (7 | AT91C_MCI_RSPTYP_R1B
 					| AT91C_MCI_MAXLAT_64),
-		.error_check	= (AT91C_MCI_RINDE
-					| AT91C_MCI_RDIRE
-					| AT91C_MCI_RCRCE
-					| AT91C_MCI_RENDE
-					| AT91C_MCI_RTOE),
-		.resp		= response,
 	},
 	/* CMD8 */
 	{
 		.cmd		= SD_CMD_SEND_IF_COND,
-		.flag		= (AT91C_MCI_RSPTYP_48
+		.cmdreg		= (8 | AT91C_MCI_RSPTYP_48
 					| AT91C_MCI_MAXLAT_64),
-		.error_check	= (AT91C_MCI_RINDE
-					| AT91C_MCI_RDIRE
-					| AT91C_MCI_RCRCE
-					| AT91C_MCI_RENDE
-					| AT91C_MCI_RTOE),
-		.resp		= response,
 	},
 	/* CMD9 */
 	{
 		.cmd		= SD_CMD_SEND_CSD,
-		.flag		= (AT91C_MCI_RSPTYP_136
+		.cmdreg		= (9 | AT91C_MCI_RSPTYP_136
 					| AT91C_MCI_MAXLAT_64),
-		.error_check	= (AT91C_MCI_RINDE
-					| AT91C_MCI_RDIRE
-					| AT91C_MCI_RCRCE
-					| AT91C_MCI_RENDE
-					| AT91C_MCI_RTOE),
-		.resp		= response,
 	},
 	/* CMD10 */
 	{
 		.cmd		= SD_CMD_SEND_CID,
-		.flag		= (AT91C_MCI_RSPTYP_136
+		.cmdreg		= (10 | AT91C_MCI_RSPTYP_136
 					| AT91C_MCI_MAXLAT_64),
-		.error_check	= (AT91C_MCI_RINDE
-					| AT91C_MCI_RDIRE
-					| AT91C_MCI_RCRCE
-					| AT91C_MCI_RENDE
-					| AT91C_MCI_RTOE),
-		.resp		= response,
 	},
 	/* ACMD41 */
 	{
 		.cmd		= SD_CMD_APP_SD_SEND_OP_COND,
-		.flag		= (AT91C_MCI_RSPTYP_48
+		.cmdreg		= (41 | AT91C_MCI_RSPTYP_48
 					| AT91C_MCI_MAXLAT_64),
-		.error_check	= (AT91C_MCI_RINDE
-					| AT91C_MCI_RDIRE
-					| AT91C_MCI_RENDE
-					| AT91C_MCI_RTOE),
-		.resp		= response,
 	},
 	/* ACMD51 */
 	{
 		.cmd		= SD_CMD_APP_SEND_SCR,
-		.flag		= (AT91C_MCI_RSPTYP_48
+		.cmdreg		= (51 | AT91C_MCI_RSPTYP_48
 					| AT91C_MCI_MAXLAT_64
 					| AT91C_MCI_TRCMD_START
 					| AT91C_MCI_TRDIR_READ),
-		.error_check	= (AT91C_MCI_RINDE
-					| AT91C_MCI_RDIRE
-					| AT91C_MCI_RCRCE
-					| AT91C_MCI_RENDE
-					| AT91C_MCI_RTOE),
-		.resp		= response,
 	},
 #ifdef CONFIG_MMC_SUPPORT
 	/* MMC CMD1 */
 	{
 		.cmd		= MMC_CMD_SEND_OP_COND,
-		.flag		= (AT91C_MCI_RSPTYP_48
+		.cmdreg		= (1 | AT91C_MCI_RSPTYP_48
 					| AT91C_MCI_MAXLAT_64),
-		.error_check	= (AT91C_MCI_RINDE
-					| AT91C_MCI_RDIRE
-					| AT91C_MCI_RENDE
-					| AT91C_MCI_RTOE),
-		.resp		= response,
 	},
 	/* MMC CMD6 */
 	{
 		.cmd		= MMC_CMD_SWITCH_FUN,
-		.flag		= (AT91C_MCI_RSPTYP_R1B
+		.cmdreg		= (6 | AT91C_MCI_RSPTYP_R1B
 					| AT91C_MCI_MAXLAT_64),
-		.error_check	= (AT91C_MCI_RINDE
-					| AT91C_MCI_RDIRE
-					| AT91C_MCI_RCRCE
-					| AT91C_MCI_RENDE
-					| AT91C_MCI_RTOE),
-		.resp		= response,
 	},
 	/* MMC CMD8 */
 	{
 		.cmd		= MMC_CMD_SEND_EXT_CSD,
-		.flag		= (AT91C_MCI_RSPTYP_48
+		.cmdreg		= (8 | AT91C_MCI_RSPTYP_48
 					| AT91C_MCI_MAXLAT_64
 					| AT91C_MCI_TRCMD_START
 					| AT91C_MCI_TRDIR_READ),
-		.error_check	= (AT91C_MCI_RINDE
-					| AT91C_MCI_RDIRE
-					| AT91C_MCI_RCRCE
-					| AT91C_MCI_RENDE
-					| AT91C_MCI_RTOE),
-		.resp		= response,
 	},
 	/* MMC CMD14 */
 	{
 		.cmd		= MMC_CMD_BUSTEST_R,
-		.flag		= (AT91C_MCI_RSPTYP_48
+		.cmdreg		= (14 | AT91C_MCI_RSPTYP_48
 					| AT91C_MCI_MAXLAT_64
 					| AT91C_MCI_TRCMD_START
 					| AT91C_MCI_TRDIR_READ),
-		.error_check	= (AT91C_MCI_RINDE
-					| AT91C_MCI_RDIRE
-					| AT91C_MCI_RCRCE
-					| AT91C_MCI_RENDE
-					| AT91C_MCI_RTOE),
-		.resp		= response,
 	},
 	/* MMC CMD19 */
 	{
 		.cmd		= MMC_CMD_BUSTEST_W,
-		.flag		= (AT91C_MCI_RSPTYP_48
+		.cmdreg		= (19 | AT91C_MCI_RSPTYP_48
 					| AT91C_MCI_MAXLAT_64
 					| AT91C_MCI_TRCMD_START
 					| AT91C_MCI_TRDIR_WRITE),
-		.error_check	= (AT91C_MCI_RINDE
-					| AT91C_MCI_RDIRE
-					| AT91C_MCI_RCRCE
-					| AT91C_MCI_RENDE
-					| AT91C_MCI_RTOE),
-		.resp		= response,
 	},
 #endif /* #ifdef CONFIG_MMC_SUPPORT */
 };
@@ -336,10 +211,21 @@ static int init_sd_command(struct sd_command *command)
 	if (i == ARRAY_SIZE(sd_command_table))
 		return -1;
 
-	command->cmd = sd_command_table[i].cmd;
-	command->flag = sd_command_table[i].flag;
-	command->error_check = sd_command_table[i].error_check;
-	command->resp = sd_command_table[i].resp;
+	command->cmdreg = sd_command_table[i].cmdreg;
+
+	if (command->cmd == 0)
+		command->error_check = 0;
+	else {
+		command->error_check = (AT91C_MCI_RINDE
+					| AT91C_MCI_RDIRE
+					| AT91C_MCI_RENDE);
+
+		if ((command->cmd != SD_CMD_APP_SD_SEND_OP_COND)
+			&& (command->cmd != MMC_CMD_SEND_OP_COND))
+			command->error_check |= AT91C_MCI_RCRCE;
+	}
+
+	command->resp = response;
 
 	return 0;
 }
@@ -350,59 +236,42 @@ static int init_sd_command(struct sd_command *command)
  */
 static int sd_send_command(struct sd_command *command)
 {
-	unsigned int cmdr;
-	unsigned int cmdarg;
 	unsigned int status;
-	unsigned int error_status;
-	unsigned int *response;
+	unsigned int *response = command->resp;
 	int ret;
 
 	ret = init_sd_command(command);
 	if (ret)
 		return ret;
 
-	error_status = command->error_check;
-	response = command->resp;
-
-	command->cmd &= (~(SD_APP_CMD | MMC_CMD));
-
-	cmdr = command->cmd;
-	cmdr |= command->flag;
-
-	cmdarg = command->argu;
-
 	/* Set the Command Argument Register */
-	mci_writel(MCI_ARGR, cmdarg);
+	mci_writel(MCI_ARGR, command->argu);
 	/* Set the Command Register */
-	mci_writel(MCI_CMDR, cmdr);
+	mci_writel(MCI_CMDR, command->cmdreg);
 
-	/* Wait for the command ready status flag */
-	while (!((status = mci_readl(MCI_SR)) & AT91C_MCI_CMDRDY))
-		;
+	/* Wait for the command ready status flag*/
+	do {
+		status = mci_readl(MCI_SR);
+	} while (!(status & AT91C_MCI_CMDRDY));
 
 	/* Check error bits in the status register */
 	if (status & AT91C_MCI_RTOE) {
-		dbg_log(1, "Cmd: %d Response Time-out\n\r", command->cmd);
+		dbg_log(1, "Cmd: %d Response Time-out\n\r",
+				command->cmd & (~(SD_APP_CMD | MMC_CMD)));
 		return ERROR_TIMEOUT;
 	}
 
-	if (status & error_status) {
+	if (status & command->error_check) {
 		dbg_log(1, "Error command, cmd: %d, status: %d\n\r", \
-				command->cmd, status);
+			command->cmd & (~(SD_APP_CMD | MMC_CMD)), status);
 		return ERROR_COMM;
 	}
 
-	if (!command->flag)
-		return 0;
-
 	/*  Read response */
-	if ((command->flag & AT91C_MCI_RSPTYP_136) == AT91C_MCI_RSPTYP_136) {
-		*response++ = mci_readl(MCI_RSPR);
-		*response++ = mci_readl(MCI_RSPR1);
-		*response++ = mci_readl(MCI_RSPR2);
-		*response++ = mci_readl(MCI_RSPR3);
-	} else
-		*response = mci_readl(MCI_RSPR);
+	*response++ = mci_readl(MCI_RSPR);
+	*response++ = mci_readl(MCI_RSPR1);
+	*response++ = mci_readl(MCI_RSPR2);
+	*response++ = mci_readl(MCI_RSPR3);
 
 	return 0;
 }
@@ -443,14 +312,50 @@ static int sd_verify_operating_condition(struct sd_card *sdcard)
 		return 0;
 }
 
+static int sd_send_app_cmd(struct sd_card *sdcard)
+{
+	struct sd_command *command = sdcard->command;
+	int ret;
+
+	command->cmd = SD_CMD_APP_CMD;
+	command->argu = sdcard->reg->rca << 16;
+
+	ret = sd_send_command(command);
+	if (ret)
+		return ret;
+
+	return 0;
+}
+
 /* Host Capacity Support / Card Capacity Status */
 #define OCR_HCR_CCS		(0x01 << 30)
 #define OCR_BUSY_STATUS		(0x01 << 31)
-
-static int sd_check_operational_condition(struct sd_card *sdcard,
-			unsigned int host_capacity_support)
+static int sd_send_sd_send_op_cond(struct sd_card *sdcard,
+				unsigned int capacity_support,
+				unsigned int *reponse)
 {
 	struct sd_command *command = sdcard->command;
+	int ret;
+
+	command->cmd = SD_CMD_APP_SD_SEND_OP_COND;
+	command->argu = sdcard->votage_host_support
+				& OCR_VOLTAGE_27_36_MASK;
+	if (capacity_support)
+		command->argu |= OCR_HCR_CCS;
+
+	ret = sd_send_command(command);
+	if (ret)
+		return ret;
+
+	*reponse = command->resp[0];
+
+	return 0;
+}
+
+static int sd_check_operational_condition(struct sd_card *sdcard,
+			unsigned int capacity_support)
+{
+	unsigned int response = 0;
 	unsigned int timeout = 1000;
 	int ret;
 
@@ -459,30 +364,25 @@ static int sd_check_operational_condition(struct sd_card *sdcard,
 	 * or until the busy bit are set to 1.
 	 */
 	do {
-		command->cmd = SD_CMD_APP_CMD;
-		command->argu = sdcard->reg->rca << 16;
-
-		ret = sd_send_command(command);
+		ret = sd_send_app_cmd(sdcard);
 		if (ret)
 			return ret;
 
-		command->cmd = SD_CMD_APP_SD_SEND_OP_COND;
-		command->argu = sdcard->votage_host_support
-					& OCR_VOLTAGE_27_36_MASK;
-		if (host_capacity_support)
-			command->argu |= OCR_HCR_CCS;
-
-		ret = sd_send_command(command);
+		ret = sd_send_sd_send_op_cond(sdcard,
+				capacity_support, &response);
 		if (ret)
 			return ret;
+
+		if (response & OCR_BUSY_STATUS)
+			break;
 
 		udelay(1000);
-	} while ((!(command->resp[0] & OCR_BUSY_STATUS)) && --timeout);
+	} while (--timeout);
 
 	if (!timeout)
 		return ERROR_UNUSABLE_CARD;
 
-	sdcard->reg->ocr = command->resp[0];
+	sdcard->reg->ocr = response;
 
 	return 0;
 }
@@ -490,6 +390,7 @@ static int sd_check_operational_condition(struct sd_card *sdcard,
 static int sd_card_id_number(struct sd_card *sdcard)
 {
 	struct sd_command *command = sdcard->command;
+	unsigned int i;
 	int ret;
 
 	command->cmd = SD_CMD_ALL_SEND_CID;
@@ -499,10 +400,8 @@ static int sd_card_id_number(struct sd_card *sdcard)
 	if (ret)
 		return ret;
 
-	sdcard->reg->cid[0] = command->resp[0];
-	sdcard->reg->cid[1] = command->resp[1];
-	sdcard->reg->cid[2] = command->resp[2];
-	sdcard->reg->cid[3] = command->resp[3];
+	for (i = 0; i < 4; i++)
+		sdcard->reg->cid[i] = command->resp[i];
 
 	return 0;
 }
@@ -573,6 +472,7 @@ static int sd_enter_transfer_state(struct sd_card *sdcard)
 static int sd_read_card_specific_data(struct sd_card *sdcard)
 {
 	struct sd_command *command = sdcard->command;
+	unsigned int i;
 	int ret;
 
 	command->cmd = SD_CMD_SEND_CSD;
@@ -582,10 +482,8 @@ static int sd_read_card_specific_data(struct sd_card *sdcard)
 	if (ret)
 		return ret;
 
-	sdcard->reg->csd[0] = command->resp[0];
-	sdcard->reg->csd[1] = command->resp[1];
-	sdcard->reg->csd[2] = command->resp[2];
-	sdcard->reg->csd[3] = command->resp[3];
+	for (i = 0; i < 4; i++)
+		sdcard->reg->csd[i] = *command->resp++;
 
 	return 0;
 }
@@ -593,15 +491,13 @@ static int sd_read_card_specific_data(struct sd_card *sdcard)
 static int sd_read_card_configuration(struct sd_card *sdcard)
 {
 	struct sd_command *command = sdcard->command;
-	unsigned int scr[2];
+	unsigned int data[2];
 	unsigned int bytes_to_read = 8;
 	unsigned int block_len = DEFAULT_SD_BLOCK_LEN;
+	unsigned int i;
 	int ret;
 
-	command->cmd = SD_CMD_APP_CMD;
-	command->argu = sdcard->reg->rca << 16;
-
-	ret = sd_send_command(command);
+	ret = sd_send_app_cmd(sdcard);
 	if (ret)
 		return ret;
 
@@ -612,12 +508,28 @@ static int sd_read_card_configuration(struct sd_card *sdcard)
 	if (ret)
 		return ret;
 
-	ret = at91_mci_read_block_data(scr, bytes_to_read, block_len);
+	ret = at91_mci_read_block_data(data, bytes_to_read, block_len);
 	if (ret)
 		return ret;
 
-	sdcard->reg->scr[0] = swap_uint32(scr[0]);
-	sdcard->reg->scr[1] = swap_uint32(scr[1]);
+	for (i = 0; i < 2; i++)
+		sdcard->reg->scr[i] = swap_uint32(data[i]);
+
+	return 0;
+}
+
+static int sd_cmd_app_set_bus_width(struct sd_card *sdcard,
+				unsigned int bus_width)
+{
+	struct sd_command *command = sdcard->command;
+	int ret;
+
+	command->cmd = SD_CMD_APP_SET_BUS_WIDTH;
+	command->argu = (bus_width == 4) ? 0x02 : 0;
+
+	ret = sd_send_command(command);
+	if (ret)
+		return ret;
 
 	return 0;
 }
@@ -625,20 +537,13 @@ static int sd_read_card_configuration(struct sd_card *sdcard)
 static int sd_set_card_bus_width(struct sd_card *sdcard,
 				unsigned int bus_width)
 {
-	struct sd_command *command = sdcard->command;
 	int ret;
 
-	command->cmd = SD_CMD_APP_CMD;
-	command->argu = sdcard->reg->rca << 16;
-
-	ret = sd_send_command(command);
+	ret = sd_send_app_cmd(sdcard);
 	if (ret)
 		return ret;
 
-	command->cmd = SD_CMD_APP_SET_BUS_WIDTH;
-	command->argu = (bus_width == 4) ? 0x02 : 0;
-
-	ret = sd_send_command(command);
+	ret = sd_cmd_app_set_bus_width(sdcard, bus_width);
 	if (ret)
 		return ret;
 
@@ -815,7 +720,7 @@ static int mmc_verify_operating_condition(struct sd_card *sdcard)
 {
 	struct sd_command *command = sdcard->command;
 	unsigned int ocr;
-	unsigned int timeout = 2000;
+	unsigned int timeout = 1000;
 	int ret;
 
 	/* Query the card and determine the voltage type of the card */
@@ -889,7 +794,7 @@ static int mmc_send_ext_csd(struct sd_card *sdcard, char *ext_csd)
 {
 	struct sd_command *command = sdcard->command;
 	unsigned int *data = (unsigned int *)ext_csd;
-	unsigned int block_len = 512;
+	unsigned int block_len = DEFAULT_SD_BLOCK_LEN;
 	int ret;
 
 	command->cmd = MMC_CMD_SEND_EXT_CSD;
@@ -924,7 +829,7 @@ static int mmc_send_ext_csd(struct sd_card *sdcard, char *ext_csd)
 
 static int mmc_switch_high_speed(struct sd_card *sdcard)
 {
-	char ext_csd[512];
+	char ext_csd[DEFAULT_SD_BLOCK_LEN];
 	char cardtype;
 	int ret;
 
@@ -949,32 +854,6 @@ static int mmc_switch_high_speed(struct sd_card *sdcard)
 		return -1;
 
 	sdcard->highspeed_card = (cardtype & 0x02) ? 1 : 0;
-	return 0;
-}
-
-static int mmc_send_bus_test_r(struct sd_card *sdcard,
-				unsigned int buswidth,
-				unsigned char *data)
-{
-	struct sd_command *command = sdcard->command;
-	unsigned int bytes_to_read;
-	unsigned int block_len = 512;
-	int ret;
-
-	bytes_to_read = (buswidth == 8) ? 8 : 4;
-
-	command->cmd = MMC_CMD_BUSTEST_R;
-	command->argu = 0;
-
-	ret = sd_send_command(command);
-	if (ret)
-		return ret;
-
-	ret = at91_mci_read_block_data((unsigned int *)data,
-						bytes_to_read,
-						block_len);
-	if (ret)
-		return ret;
 
 	return 0;
 }
@@ -985,7 +864,7 @@ static int mmc_send_bus_test_w(struct sd_card *sdcard,
 {
 	struct sd_command *command = sdcard->command;
 	unsigned int bytes_to_write;
-	unsigned int block_len = 512;
+	unsigned int block_len = DEFAULT_SD_BLOCK_LEN;
 	int ret;
 
 	bytes_to_write = (buswidth == 8) ? 8 : 4;
@@ -999,6 +878,33 @@ static int mmc_send_bus_test_w(struct sd_card *sdcard,
 
 	ret = at91_mci_write_block_data((unsigned int *)data,
 						bytes_to_write,
+						block_len);
+	if (ret)
+		return ret;
+
+	return 0;
+}
+
+static int mmc_send_bus_test_r(struct sd_card *sdcard,
+				unsigned int buswidth,
+				unsigned char *data)
+{
+	struct sd_command *command = sdcard->command;
+	unsigned int bytes_to_read;
+	unsigned int block_len = DEFAULT_SD_BLOCK_LEN;
+	int ret;
+
+	bytes_to_read = (buswidth == 8) ? 8 : 4;
+
+	command->cmd = MMC_CMD_BUSTEST_R;
+	command->argu = 0;
+
+	ret = sd_send_command(command);
+	if (ret)
+		return ret;
+
+	ret = at91_mci_read_block_data((unsigned int *)data,
+						bytes_to_read,
 						block_len);
 	if (ret)
 		return ret;
@@ -1038,29 +944,18 @@ static int mmc_bus_width_select(struct sd_card *sdcard, unsigned int buswidth)
 
 static int mmc_detect_buswidth(struct sd_card *sdcard)
 {
-	unsigned char testdata_8bit[8] = { 0x55, 0xaa, 0, 0, 0, 0, 0, 0 };
-	unsigned char testdata_4bit[4] = { 0x5a, 0, 0, 0 };
-	unsigned char data_r[8];
+	unsigned char data_8bits[8] = {0x55, 0xaa, 0, 0, 0, 0, 0, 0};
+	unsigned char data_4bits[4] = {0x5a, 0, 0, 0};
+	unsigned char read_data[8];
 	unsigned char *pdata_w;
 
-	unsigned char buswidths[] = {8, 4};
 	unsigned int busw;
 	unsigned int len;
-	unsigned int i, j;
-	int result;
+	unsigned int i;
 	int ret;
 
-	for (i = 0; i < ARRAY_SIZE(buswidths); i++) {
-		result = 0;
-
-		busw = buswidths[i];
-		if (busw == 8) {
-			pdata_w = testdata_8bit;
-			len = 2;
-		} else {
-			pdata_w = testdata_4bit;
-			len = 1;
-		}
+	for (busw = 8, len = 2; busw != 0; busw -= 4, len--) {
+		pdata_w = (busw == 8) ? data_8bits : data_4bits;
 
 		ret = mmc_bus_width_select(sdcard, busw);
 		if (ret)
@@ -1070,21 +965,20 @@ static int mmc_detect_buswidth(struct sd_card *sdcard)
 		if (ret)
 			return ret;
 
-		ret = mmc_send_bus_test_r(sdcard, busw, data_r);
+		ret = mmc_send_bus_test_r(sdcard, busw, read_data);
 		if (ret)
 			return ret;
 
-		for (j = 0; j < len; j++) {
-			if ((pdata_w[j] ^ data_r[j]) != 0xff) {
-				result = 1;
+		for (i = 0; i < len; i++) {
+			if ((pdata_w[i] ^ read_data[i]) != 0xff)
 				break;
-			}
 		}
 
-		if (!result) {
+		if (i == len) {
 			dbg_log(1, "MMC: %d-bit bus width detected\n\r", busw);
 			break;
 		}
+
 	}
 
 	return 0;
@@ -1340,7 +1234,7 @@ static int mmc_initialization(struct sd_card *sdcard)
 		}
 	}
 
-	if (sdcard->highspeed_card == 1)
+	if (sdcard->highspeed_card)
 		at91_mci_set_clock(52000000);
 	else
 		at91_mci_set_clock(26000000);
