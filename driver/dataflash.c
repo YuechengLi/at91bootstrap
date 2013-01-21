@@ -410,6 +410,9 @@ static int df_at45_desc_init(struct dataflash_descriptor *df_desc)
 	int ret;
 
 	ret = df_read_status_at45(&status);
+	if (ret)
+		return ret;
+
 	if (status & STATUS_PAGE_SIZE_AT45)
 		df_desc->is_power_2 = 1;
 	else
