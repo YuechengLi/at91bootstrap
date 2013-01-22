@@ -79,9 +79,10 @@ int load_sdcard(struct image_info *image)
 
 	at91_mci0_hw_init();
 
+	/* mount fs */
 	fret = f_mount(0, &fs);
 	if (fret != FR_OK) {
-		dbg_log(1, "*** FATFS: f_mount error **\n\r");
+		dbg_log(1, "*** FATFS: f_mount mount error **\n\r");
 		return -1;
 	}
 
@@ -92,13 +93,34 @@ int load_sdcard(struct image_info *image)
 	if (ret)
 		return ret;
 
+	/* umount fs */
+	fret = f_mount(0, NULL);
+	if (fret != FR_OK) {
+		dbg_log(1, "*** FATFS: f_mount umount error **\n\r");
+		return -1;
+	}
+
 	if (image->of) {
+		/* mount fs */
+		fret = f_mount(0, &fs);
+		if (fret != FR_OK) {
+			dbg_log(1, "*** FATFS: f_mount error **\n\r");
+			return -1;
+		}
+
 		dbg_log(1, "SD/MMC: dt blob: Read file %s to %d\n\r",
 				image->of_filename, image->of_dest);
 
 		ret = sdcard_loadimage(image->of_filename, image->of_dest);
 		if (ret)
 			return ret;
+
+		/* umount fs */
+		fret = f_mount(0, NULL);
+		if (fret != FR_OK) {
+			dbg_log(1, "*** FATFS: f_mount umount error **\n\r");
+			return -1;
+		}
 	}
 
 	return 0;
