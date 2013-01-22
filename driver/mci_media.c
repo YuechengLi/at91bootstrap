@@ -646,7 +646,7 @@ static int sd_switch_func_high_speed(struct sd_card *sdcard)
 {
 	unsigned int switch_func_status[16];
 	unsigned int status;
-	unsigned char support;
+	unsigned char support = 0;
 	int ret;
 
 	ret = switch_check_hs_busy_status_supported(sdcard, &support);

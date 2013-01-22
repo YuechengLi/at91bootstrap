@@ -376,7 +376,7 @@ static int of_get_property_offset_by_name(void *blob,
 	unsigned int *p;
 	unsigned int namelen = strlen(name);
 	int startoffset = nodeoffset;
-	int property_offset;
+	int property_offset = 0;
 	int nextoffset = 0;
 	char *string;
 	int ret;
