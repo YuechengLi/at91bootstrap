@@ -1163,7 +1163,8 @@ static int sd_initialization(struct sd_card *sdcard)
 		}
 	}
 	if (sdcard->highspeed_card)
-		at91_mci_set_clock(50000000);
+		/* for SAM9G25-CM by COGENT, it cann't support 50M */
+		at91_mci_set_clock(40000000);
 	else
 #endif /* #ifdef CONFIG_SDCARD_HS */
 
