@@ -219,7 +219,7 @@ int at91_mci_read_block_data(unsigned int *data,
 			return ret;
 	}
 
-	while ((mci_readl(MCI_SR) & AT91C_MCI_DTIP) && (timeout--))
+	while ((mci_readl(MCI_SR) & AT91C_MCI_DTIP) && (--timeout))
 		;
 
 	if (!timeout) {
@@ -248,7 +248,7 @@ int at91_mci_read_blocks(unsigned int *data,
 		}
 	}
 
-	while ((mci_readl(MCI_SR) & AT91C_MCI_DTIP) && (timeout--))
+	while ((mci_readl(MCI_SR) & AT91C_MCI_DTIP) && (--timeout))
 		;
 
 	if (!timeout) {
@@ -301,7 +301,7 @@ int at91_mci_write_block_data(unsigned int *data,
 			return ret;
 	}
 
-	while ((mci_readl(MCI_SR) & AT91C_MCI_DTIP) && (timeout--))
+	while ((mci_readl(MCI_SR) & AT91C_MCI_DTIP) && (--timeout))
 		;
 
 	if (!timeout) {

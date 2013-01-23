@@ -118,10 +118,6 @@
 #define OCR_VOLTAGE_27_36_MASK		0xff8000
 #define CHECK_PATTERN			0xaa
 
-/* Card Status */
-#define CARD_STATUS_READY_FOR_DATA	(0x01 << 8)
-#define CARD_STATUS_MASK		(~0x0206BF7F)
-
 #define	ERROR_TIMEOUT		-10
 #define ERROR_COMM		-11
 #define ERROR_UNUSABLE_CARD	-12

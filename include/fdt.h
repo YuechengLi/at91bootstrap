@@ -29,7 +29,6 @@
 #define __FDT_H__
 
 extern int check_dt_blob_valid(void *blob);
-extern unsigned int resize_dt_blob_totalsize(void *blob, unsigned int *of_size);
 extern int fixup_chosen_node(void *blob, char *bootargs);
 extern int fixup_memory_node(void *blob,
 				unsigned int *mem_bank,

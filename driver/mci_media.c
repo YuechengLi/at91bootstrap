@@ -262,7 +262,7 @@ static int sd_send_command(struct sd_command *command)
 	}
 
 	if (status & command->error_check) {
-		dbg_log(1, "Error command, cmd: %d, status: %d\n\r", \
+		dbg_log(1, "Cmd: %d, error check, status: %d\n\r", \
 			command->cmd & (~(SD_APP_CMD | MMC_CMD)), status);
 		return ERROR_COMM;
 	}
@@ -276,7 +276,7 @@ static int sd_send_command(struct sd_command *command)
 	return 0;
 }
 
-static int sd_card_reset(struct sd_card *sdcard)
+static int sd_cmd_go_idle_state(struct sd_card *sdcard)
 {
 	struct sd_command *command = sdcard->command;
 	int ret;
@@ -291,7 +291,7 @@ static int sd_card_reset(struct sd_card *sdcard)
 	return 0;
 }
 
-static int sd_verify_operating_condition(struct sd_card *sdcard)
+static int sd_cmd_send_if_cond(struct sd_card *sdcard)
 {
 	struct sd_command *command = sdcard->command;
 	int ret;
@@ -312,7 +312,7 @@ static int sd_verify_operating_condition(struct sd_card *sdcard)
 		return 0;
 }
 
-static int sd_send_app_cmd(struct sd_card *sdcard)
+static int sd_cmd_send_app_cmd(struct sd_card *sdcard)
 {
 	struct sd_command *command = sdcard->command;
 	int ret;
@@ -330,7 +330,7 @@ static int sd_send_app_cmd(struct sd_card *sdcard)
 /* Host Capacity Support / Card Capacity Status */
 #define OCR_HCR_CCS		(0x01 << 30)
 #define OCR_BUSY_STATUS		(0x01 << 31)
-static int sd_send_sd_send_op_cond(struct sd_card *sdcard,
+static int sd_cmd_app_sd_send_op_cmd(struct sd_card *sdcard,
 				unsigned int capacity_support,
 				unsigned int *reponse)
 {
@@ -356,19 +356,20 @@ static int sd_check_operational_condition(struct sd_card *sdcard,
 			unsigned int capacity_support)
 {
 	unsigned int response = 0;
-	unsigned int timeout = 1000;
+	unsigned int retries = 1000;
+	unsigned int i;
 	int ret;
 
 	/*
 	 * The host repeatedly issues ACMD41 for at least 1 second
 	 * or until the busy bit are set to 1.
 	 */
-	do {
-		ret = sd_send_app_cmd(sdcard);
+	for (i = 0; i < retries; i++) {
+		ret = sd_cmd_send_app_cmd(sdcard);
 		if (ret)
 			return ret;
 
-		ret = sd_send_sd_send_op_cond(sdcard,
+		ret = sd_cmd_app_sd_send_op_cmd(sdcard,
 				capacity_support, &response);
 		if (ret)
 			return ret;
@@ -377,9 +378,9 @@ static int sd_check_operational_condition(struct sd_card *sdcard,
 			break;
 
 		udelay(1000);
-	} while (--timeout);
+	};
 
-	if (!timeout)
+	if (i == retries)
 		return ERROR_UNUSABLE_CARD;
 
 	sdcard->reg->ocr = response;
@@ -387,7 +388,7 @@ static int sd_check_operational_condition(struct sd_card *sdcard,
 	return 0;
 }
 
-static int sd_card_id_number(struct sd_card *sdcard)
+static int sd_cmd_all_send_cid(struct sd_card *sdcard)
 {
 	struct sd_command *command = sdcard->command;
 	unsigned int i;
@@ -406,7 +407,7 @@ static int sd_card_id_number(struct sd_card *sdcard)
 	return 0;
 }
 
-static int sd_relative_card_address(struct sd_card *sdcard)
+static int sd_cmd_send_relative_addr(struct sd_card *sdcard)
 {
 	struct sd_command *command = sdcard->command;
 	int ret;
@@ -424,15 +425,16 @@ static int sd_relative_card_address(struct sd_card *sdcard)
 	return 0;
 }
 
-static int sd_send_status(struct sd_card *sdcard, unsigned int timeout)
+static int sd_cmd_send_status(struct sd_card *sdcard, unsigned int retries)
 {
 	struct sd_command *command = sdcard->command;
+	unsigned int i;
 	int ret;
 
 	command->cmd = SD_CMD_SEND_STATUS;
 	command->argu = sdcard->reg->rca << 16;
 
-	do {
+	for (i = 0; i < retries; i++) {
 		ret = sd_send_command(command);
 		if (ret)
 			return ret;
@@ -440,13 +442,10 @@ static int sd_send_status(struct sd_card *sdcard, unsigned int timeout)
 		if ((command->resp[0] >> 8) & 0x01)
 			break;
 
-		if (command->resp[0] & CARD_STATUS_MASK)
-			return -1;
-
 		udelay(1000);
-	} while (--timeout);
+	};
 
-	if (!timeout) {
+	if (i == retries) {
 		dbg_log(1, "Timeout, wait for card ready\n\r");
 		return ERROR_TIMEOUT;
 	}
@@ -454,7 +453,7 @@ static int sd_send_status(struct sd_card *sdcard, unsigned int timeout)
 	return 0;
 }
 
-static int sd_enter_transfer_state(struct sd_card *sdcard)
+static int sd_cmd_select_card(struct sd_card *sdcard)
 {
 	struct sd_command *command = sdcard->command;
 	int ret;
@@ -469,7 +468,7 @@ static int sd_enter_transfer_state(struct sd_card *sdcard)
 	return 0;
 }
 
-static int sd_read_card_specific_data(struct sd_card *sdcard)
+static int sd_cmd_send_csd(struct sd_card *sdcard)
 {
 	struct sd_command *command = sdcard->command;
 	unsigned int i;
@@ -488,7 +487,7 @@ static int sd_read_card_specific_data(struct sd_card *sdcard)
 	return 0;
 }
 
-static int sd_read_card_configuration(struct sd_card *sdcard)
+static int sd_cmd_app_send_scr(struct sd_card *sdcard)
 {
 	struct sd_command *command = sdcard->command;
 	unsigned int data[2];
@@ -497,7 +496,7 @@ static int sd_read_card_configuration(struct sd_card *sdcard)
 	unsigned int i;
 	int ret;
 
-	ret = sd_send_app_cmd(sdcard);
+	ret = sd_cmd_send_app_cmd(sdcard);
 	if (ret)
 		return ret;
 
@@ -534,12 +533,12 @@ static int sd_cmd_app_set_bus_width(struct sd_card *sdcard,
 	return 0;
 }
 
-static int sd_set_card_bus_width(struct sd_card *sdcard,
+static int sd_set_bus_width(struct sd_card *sdcard,
 				unsigned int bus_width)
 {
 	int ret;
 
-	ret = sd_send_app_cmd(sdcard);
+	ret = sd_cmd_send_app_cmd(sdcard);
 	if (ret)
 		return ret;
 
@@ -567,7 +566,7 @@ static int sd_set_card_bus_width(struct sd_card *sdcard,
 #define SD_SWITCH_FUNC_SDR104		0x03
 #define SD_SWITCH_FUNC_DDR50		0x04
 
-static int sd_switch_function(struct sd_card *sdcard,
+static int sd_cmd_switch_fun(struct sd_card *sdcard,
 				unsigned int mode,
 				unsigned int group,
 				unsigned int func,
@@ -605,12 +604,13 @@ static int switch_check_hs_busy_status_supported(struct sd_card *sdcard,
 	unsigned int switch_func_status[16];
 	unsigned int status;
 	unsigned int version;
-	unsigned int timeout = 6;
+	unsigned int retries = 6;
+	unsigned int i;
 	int ret;
 
-	do {
+	for (i = 0; i < retries; i++) {
 		/* Mode 0 operation: check function */
-		ret = sd_switch_function(sdcard,
+		ret = sd_cmd_switch_fun(sdcard,
 					SD_SWITCH_MODE_CHECK,
 					SD_SWITCH_GRP_ACCESS_MODE,
 					SD_SWITCH_FUNC_HS_SDR25,
@@ -630,9 +630,9 @@ static int switch_check_hs_busy_status_supported(struct sd_card *sdcard,
 		status = swap_uint32(switch_func_status[7]);
 		if (!((status >> 17) & 0x01))
 			break;
-	} while (--timeout);
+	};
 
-	if (!timeout)
+	if (i == retries)
 		return -1;
 
 	/* Check function supported */
@@ -654,12 +654,12 @@ static int sd_switch_func_high_speed(struct sd_card *sdcard)
 		return ret;
 
 	if (!support) {
-		dbg_log(1, "SD: Not support HS function Switch\n\r");
+		dbg_log(1, "SD: Not support hs function switch\n\r");
 		return 0;
 	}
 
 	/* Mode 1 operation: set functioin */
-	ret = sd_switch_function(sdcard,
+	ret = sd_cmd_switch_fun(sdcard,
 				SD_SWITCH_MODE_SET,
 				SD_SWITCH_GRP_ACCESS_MODE,
 				SD_SWITCH_FUNC_HS_SDR25,
@@ -684,7 +684,7 @@ static int sd_card_set_bus_width(struct sd_card *sdcard)
 
 	bus_width = (sdcard->bus_width_support & 0x04) ? 4 : 1;
 
-	ret = sd_set_card_bus_width(sdcard, bus_width);
+	ret = sd_set_bus_width(sdcard, bus_width);
 	if (ret)
 		return ret;
 
@@ -720,7 +720,8 @@ static int mmc_verify_operating_condition(struct sd_card *sdcard)
 {
 	struct sd_command *command = sdcard->command;
 	unsigned int ocr;
-	unsigned int timeout = 1000;
+	unsigned int retries = 1000;
+	unsigned int i;
 	int ret;
 
 	/* Query the card and determine the voltage type of the card */
@@ -728,21 +729,9 @@ static int mmc_verify_operating_condition(struct sd_card *sdcard)
 	if (ret)
 		return ret;
 
-	/*
-	 * The SEND_OP_COND (CMD1) command is designed to provide
-	 * MultiMediaCard hosts withe mechanism to identify and
-	 * reject cards which do not match the Vdd range desire
-	 * by the host
-	 * The busy bit int the CMD1 response can be used
-	 * by a card to tell the host that it is still working
-	 * on its power-up/reset procedure and is not ready yet
-	 * for communication.
-	 * In this case the host must repeat CMD1
-	 * until the busy bit is cleared.
-	 */
 	ocr = command->resp[0];
 
-	do {
+	for (i = 0; i < retries; i++) {
 		ret = mmc_cmd_send_op_cond(sdcard, ocr);
 		if (ret)
 			return ret;
@@ -751,9 +740,9 @@ static int mmc_verify_operating_condition(struct sd_card *sdcard)
 			break;
 
 		udelay(1000);
-	} while (--timeout);
+	};
 
-	if (!timeout)
+	if (i == retries)
 		return ERROR_UNUSABLE_CARD;
 
 	sdcard->reg->ocr = command->resp[0];
@@ -761,13 +750,13 @@ static int mmc_verify_operating_condition(struct sd_card *sdcard)
 	return 0;
 }
 
-static int mmc_switch(struct sd_card *sdcard,
+static int mmc_cmd_switch_fun(struct sd_card *sdcard,
 				unsigned char access_mode,
 				unsigned char index,
 				unsigned char value)
 {
 	struct sd_command *command = sdcard->command;
-	unsigned int timeout = 1000;
+	unsigned int retries = 1000;
 	int ret;
 
 	command->cmd = MMC_CMD_SWITCH_FUN;
@@ -777,20 +766,14 @@ static int mmc_switch(struct sd_card *sdcard,
 
 	ret = sd_send_command(command);
 
-	/*
-	 * The SWITCH command response is of type R1b,
-	 * therefore, the host should read the card status,
-	 * using SEND_STATUS command, after the busy is de-asserted,
-	 * to check the result of the SWITCH operation.
-	 */
-	sd_send_status(sdcard, timeout);
+	sd_cmd_send_status(sdcard, retries);
 	if (ret)
 		return ret;
 
 	return 0;
 }
 
-static int mmc_send_ext_csd(struct sd_card *sdcard, char *ext_csd)
+static int mmc_cmd_send_ext_csd(struct sd_card *sdcard, char *ext_csd)
 {
 	struct sd_command *command = sdcard->command;
 	unsigned int *data = (unsigned int *)ext_csd;
@@ -817,7 +800,6 @@ static int mmc_send_ext_csd(struct sd_card *sdcard, char *ext_csd)
 #define MMC_EXT_CSD_ACCESS_CLEAR_BITS	0x02
 #define MMC_EXT_CSD_ACCESS_WRITE_BYTE	0x03
 
-/*  */
 #define EXT_CSD_BYTE_BUS_WIDTH		183
 #define EXT_CSD_BYTE_HS_TIMING		185
 #define EXT_CSD_BYTE_POWER_CLASS	187
@@ -833,20 +815,20 @@ static int mmc_switch_high_speed(struct sd_card *sdcard)
 	char cardtype;
 	int ret;
 
-	ret = mmc_send_ext_csd(sdcard, ext_csd);
+	ret = mmc_cmd_send_ext_csd(sdcard, ext_csd);
 	if (ret)
 		return ret;
 
 	cardtype = ext_csd[EXT_CSD_BYTE_CARD_TYPE] & 0x03;
 
-	ret = mmc_switch(sdcard,
+	ret = mmc_cmd_switch_fun(sdcard,
 			MMC_EXT_CSD_ACCESS_WRITE_BYTE,
 			EXT_CSD_BYTE_HS_TIMING,
 			1);
 	if (ret)
 		return ret;
 
-	ret = mmc_send_ext_csd(sdcard, ext_csd);
+	ret = mmc_cmd_send_ext_csd(sdcard, ext_csd);
 	if (ret)
 		return ret;
 
@@ -858,7 +840,7 @@ static int mmc_switch_high_speed(struct sd_card *sdcard)
 	return 0;
 }
 
-static int mmc_send_bus_test_w(struct sd_card *sdcard,
+static int mmc_cmd_bustest_w(struct sd_card *sdcard,
 				unsigned int buswidth,
 				unsigned char *data)
 {
@@ -885,7 +867,7 @@ static int mmc_send_bus_test_w(struct sd_card *sdcard,
 	return 0;
 }
 
-static int mmc_send_bus_test_r(struct sd_card *sdcard,
+static int mmc_cmd_bustest_r(struct sd_card *sdcard,
 				unsigned int buswidth,
 				unsigned char *data)
 {
@@ -921,14 +903,9 @@ static int mmc_bus_width_select(struct sd_card *sdcard, unsigned int buswidth)
 	unsigned char busw;
 	int ret;
 
-	if (buswidth == 8)
-		busw = MMC_BUS_WIDTH_8;
-	else if (buswidth == 4)
-		busw = MMC_BUS_WIDTH_4;
-	else
-		busw = MMC_BUS_WIDTH_1;
+	busw = (buswidth == 8) ? MMC_BUS_WIDTH_8 : MMC_BUS_WIDTH_4;
 
-	ret = mmc_switch(sdcard,
+	ret = mmc_cmd_switch_fun(sdcard,
 			MMC_EXT_CSD_ACCESS_WRITE_BYTE,
 			EXT_CSD_BYTE_BUS_WIDTH,
 			busw);
@@ -961,11 +938,11 @@ static int mmc_detect_buswidth(struct sd_card *sdcard)
 		if (ret)
 			return ret;
 
-		ret = mmc_send_bus_test_w(sdcard, busw, pdata_w);
+		ret = mmc_cmd_bustest_w(sdcard, busw, pdata_w);
 		if (ret)
 			return ret;
 
-		ret = mmc_send_bus_test_r(sdcard, busw, read_data);
+		ret = mmc_cmd_bustest_r(sdcard, busw, read_data);
 		if (ret)
 			return ret;
 
@@ -995,12 +972,11 @@ static int mmc_detect_buswidth(struct sd_card *sdcard)
  */
 static int sdcard_identification(struct sd_card *sdcard)
 {
-	unsigned int bl_len_shift;
 	int ret;
 
 	udelay(3000);
 
-	ret = sd_card_reset(sdcard);
+	ret = sd_cmd_go_idle_state(sdcard);
 	if (ret)
 		return ret;
 
@@ -1013,19 +989,7 @@ static int sdcard_identification(struct sd_card *sdcard)
 
 	} else if (ret == ERROR_TIMEOUT) {
 #endif
-		/*
-		 * SEND_IF_COND (CMD8) is used to verify SD Memory Card
-		 * interface operating condition.
-		 * The card checks the validity of operating condition
-		 * by analyzing the argument of CMD8 and
-		 * the host checks the validity by analyzing the response
-		 * of CMD8.
-		 * CMD8 is defined in the Physical Layer Specification
-		 * Version2.00.
-		 * It is mandatory to issue CMD8 prior to first ACMD41
-		 * to initialize SDHC or SDXC Card.
-		 */
-		ret = sd_verify_operating_condition(sdcard);
+		ret = sd_cmd_send_if_cond(sdcard);
 		if (ret == 0) {
 			/* Ver 2.00 or later SD Memory Card */
 			ret = sd_check_operational_condition(sdcard, 1);
@@ -1035,13 +999,6 @@ static int sdcard_identification(struct sd_card *sdcard)
 			} else if (ret)
 				return ret;
 		} else if (ret == ERROR_TIMEOUT) {
-			/*
-			 * No response
-			 * V2.00 or later SD Memory (voltage mismatch)
-			 * or Ver1.x SD Memory Card
-			 * not SD Memory Card
-			 */
-			/* AACMD41 with HCS = 0 */
 			ret = sd_check_operational_condition(sdcard, 0);
 			if (ret == ERROR_UNUSABLE_CARD) {
 				dbg_log(1, "Unusable Card\n\r");
@@ -1078,28 +1035,24 @@ static int sdcard_identification(struct sd_card *sdcard)
 	 * Card that is unidentified (which is in Ready State)
 	 * sends its CID number
 	 */
-	ret = sd_card_id_number(sdcard);
+	ret = sd_cmd_all_send_cid(sdcard);
 	if (ret)
 		return ret;
 
 	/* Asks the card to pubish a new relative card address (RCA) */
-	ret = sd_relative_card_address(sdcard);
+	ret = sd_cmd_send_relative_addr(sdcard);
 	if (ret)
 		return ret;
 
 	/*
 	 * The host issues SEND_CSD(CMD9) to obtain
 	 * the Card Specific Data (CSD Register),
-	 * e.g. block length, card storage capacity, etc
 	 */
-	ret = sd_read_card_specific_data(sdcard);
+	ret = sd_cmd_send_csd(sdcard);
 	if (ret)
 		return ret;
 
-	bl_len_shift = (sdcard->reg->csd[1] >> 16) & 0x0f;
-	sdcard->read_bl_len = 1 << bl_len_shift;
-	if (sdcard->read_bl_len > DEFAULT_SD_BLOCK_LEN)
-		sdcard->read_bl_len = DEFAULT_SD_BLOCK_LEN;
+	sdcard->read_bl_len = DEFAULT_SD_BLOCK_LEN;
 
 	return 0;
 }
@@ -1112,7 +1065,7 @@ static int sd_initialization(struct sd_card *sdcard)
 	 * CMD7 is used to select one card and put it into
 	 * the Transfer State
 	 */
-	ret = sd_enter_transfer_state(sdcard);
+	ret = sd_cmd_select_card(sdcard);
 	if (ret)
 		return ret;
 
@@ -1120,7 +1073,7 @@ static int sd_initialization(struct sd_card *sdcard)
 	 * In Transfer State, send SEND_SCR(ACMD51)
 	 * to read the SD Configuration Register (SCR)
 	 */
-	ret = sd_read_card_configuration(sdcard);
+	ret = sd_cmd_app_send_scr(sdcard);
 	if (ret)
 		return ret;
 
@@ -1149,12 +1102,6 @@ static int sd_initialization(struct sd_card *sdcard)
 		dbg_log(1, "1.0 and 1.01\n\r");
 	}
 
-	/*
-	 * Try to swich to high speed function of Access Mode
-	 * CMD6 is valid under the "Transfer Statr"
-	 * It is mandatory for an SD memory card of Version 1.10 and higher
-	 * to support Switch Function
-	 */
 	if (sdcard->highspeed_host) {
 		if (sdcard->sd_spec_version != SD_VERSION_1_0) {
 			ret = sd_switch_func_high_speed(sdcard);
@@ -1210,7 +1157,7 @@ static int mmc_initialization(struct sd_card *sdcard)
 	 * CMD7 is used to select one card and put it into
 	 * the Transfer State
 	 */
-	ret = sd_enter_transfer_state(sdcard);
+	ret = sd_cmd_select_card(sdcard);
 	if (ret)
 		return ret;
 
@@ -1220,13 +1167,6 @@ static int mmc_initialization(struct sd_card *sdcard)
 			return ret;
 	}
 
-	/*
-	 * After the host verifies that the card complies with
-	 * version 4.0, or higher, of this standard, it has to
-	 * enable the high speed mode timing in the card,
-	 * before changing the clock frequency to a frequency
-	 * higher than 20MHz
-	 */
 	if (sdcard->highspeed_host) {
 		if (sdcard->sd_spec_version >= MMC_VERSION_4) {
 			ret = mmc_switch_high_speed(sdcard);
@@ -1292,7 +1232,7 @@ int sdcard_initialize(void)
 
 /*------------------------------------------------------------------- */
 
-static int sdcard_set_block_len(struct sd_card *sdcard,
+static int sd_cmd_set_blocklen(struct sd_card *sdcard,
 					unsigned int block_len)
 {
 	struct sd_command *command = sdcard->command;
@@ -1308,10 +1248,10 @@ static int sdcard_set_block_len(struct sd_card *sdcard,
 	return 0;
 }
 
-static int sdcard_stop_transmission(struct sd_card *sdcard)
+static int sd_cmd_stop_transmission(struct sd_card *sdcard)
 {
 	struct sd_command *command = sdcard->command;
-	unsigned int timeout = 1000;
+	unsigned int retries = 1000;
 	int ret;
 
 	command->cmd = SD_CMD_STOP_TRANSMISSION;
@@ -1321,12 +1261,12 @@ static int sdcard_stop_transmission(struct sd_card *sdcard)
 	if (ret)
 		return ret;
 
-	sd_send_status(sdcard, timeout);
+	sd_cmd_send_status(sdcard, retries);
 
 	return 0;
 }
 
-static int sdcard_read_multi_blocks(struct sd_card *sdcard,
+static int sd_cmd_read_multiple_block(struct sd_card *sdcard,
 				void *buf,
 				unsigned int start,
 				unsigned int block_count)
@@ -1349,7 +1289,7 @@ static int sdcard_read_multi_blocks(struct sd_card *sdcard,
 	return block_count;
 }
 
-static int sdcard_read_single_block(struct sd_card *sdcard,
+static int sd_cmd_read_single_block(struct sd_card *sdcard,
 				void *buf,
 				unsigned int start)
 {
@@ -1389,7 +1329,7 @@ unsigned int sdcard_block_read(unsigned int start,
 	*/
 
 	/* Send SET_BLOCKLEN command */
-	ret = sdcard_set_block_len(sdcard, block_len);
+	ret = sd_cmd_set_blocklen(sdcard, block_len);
 	if (ret)
 		return 0;
 
@@ -1404,27 +1344,14 @@ unsigned int sdcard_block_read(unsigned int start,
 		at91_mci_set_blkr(block_count, block_len);
 
 		if (blocks > 1) {
-			/*
-			 * CMD18 (READ_MULTIPLE_BLOCK) starts
-			 * a transfer of several consecutive blocks.
-			 * Blocks will be continuously transferred
-			 * until a STOP_TRANSMISSION command (CMD12) is issued
-			 * The data transfer will terminate and
-			 * the card will return to the Transfer state
-			 */
-			blocks_read = sdcard_read_multi_blocks(sdcard,
+			blocks_read = sd_cmd_read_multiple_block(sdcard,
 							buf, start, blocks);
 
-			ret = sdcard_stop_transmission(sdcard);
+			ret = sd_cmd_stop_transmission(sdcard);
 			if (ret)
 				return ret;
 		} else {
-			/*
-			 * CMD17 (READ_SINGLE_BLOCK) initiates a block read
-			 * and after completing the transfer,
-			 * the card returns to the Transfer State.
-			 */
-			blocks_read = sdcard_read_single_block(sdcard,
+			blocks_read = sd_cmd_read_single_block(sdcard,
 							buf, start);
 		}
 

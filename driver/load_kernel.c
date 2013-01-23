@@ -46,7 +46,6 @@ static int setup_dt_blob(void *blob)
 	char *p;
 	unsigned int mem_bank = OS_MEM_BANK;
 	unsigned int mem_size = OS_MEM_SIZE;
-	unsigned int size;
 	int ret;
 
 	if (check_dt_blob_valid(blob)) {
@@ -54,12 +53,8 @@ static int setup_dt_blob(void *blob)
 		return -1;
 	}
 
-	ret = resize_dt_blob_totalsize(blob, &size);
-	if (ret)
-		return ret;
-
-	dbg_log(1, "\n\rDT: Using Device Tree in place at %d, end %d\n\r",
-			(unsigned int)blob, (unsigned int)blob + size - 1);
+	dbg_log(1, "\n\rUsing device tree in place at %d\n\r",
+						(unsigned int)blob);
 
 	/* set "/chosen" node */
 	for (p = bootargs; *p == ' '; p++)
@@ -260,23 +255,20 @@ int load_kernel(struct image_info *image)
 
 	image_header = (struct kernel_image_header *)jump_addr;
 	magic_number = swap_uint32(image_header->magic);
-	dbg_log(1, "\n\rImage magic: %d is found.\n\r", magic_number);
+	dbg_log(1, "\n\rImage magic: %d is found\n\r", magic_number);
 	if (magic_number != KERNEL_IMAGE_MAGIC) {
 		dbg_log(1, "** Bad image magic number found: %d\n\r",
 						magic_number);
 		return -1;
 	}
 
-	image_size = swap_uint32(image_header->size);
-	load_addr = swap_uint32(image_header->load);
-
-	dbg_log(1, "Image size: %d, load address: %d\n\r",
-				image_size, load_addr);
-
 	if (image_header->comp_type != 0) {
 		dbg_log(1, "The comp type has not been supported\n\r");
 		return -1;
 	}
+
+	image_size = swap_uint32(image_header->size);
+	load_addr = swap_uint32(image_header->load);
 
 	kernel_entry = (void (*)(int, int, unsigned int))
 					swap_uint32(image_header->entry_point);
@@ -287,7 +279,7 @@ int load_kernel(struct image_info *image)
 	memcpy((void *)load_addr, (void *)(jump_addr
 			+ sizeof(struct kernel_image_header)), image_size);
 
-	dbg_log(1, "... %d bytes data transferred\n\r", image_size);
+	dbg_log(1, " ...... %d bytes data transferred\n\r", image_size);
 
 	if (image->of) {
 		ret = setup_dt_blob((char *)image->of_dest);

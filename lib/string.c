@@ -121,39 +121,39 @@ char *strchr(const char *s, int c)
 	return (char *)s;
 }
 
-void *memchr(void *ptr, int value, unsigned int num)
+void *memchr(void *src, int val, unsigned int cnt)
 {
-	char *pret = NULL;
-	char *ptmp = (char *)ptr;
+	char *p = NULL;
+	char *s = (char *)src;
 
-	while (num) {
-		if (*ptmp == value) {
-			pret = ptmp;
+	while (cnt) {
+		if (*s == val) {
+			p = s;
 			break;
 		}
-		ptmp++;
-		num--;
+		s++;
+		cnt--;
 	}
 
-	return pret;
+	return p;
 }
 
-void *memmove(void *dest, const void *src, unsigned int count)
+void *memmove(void *dst, const void *src, unsigned int cnt)
 {
-	char *tmp, *s;
+	char *p, *s;
 
-	if (dest <= src) {
-		tmp = (char *) dest;
-		s = (char *) src;
-		while (count--)
-			*tmp++ = *s++;
+	if (dst <= src) {
+		p = (char *)dst;
+		s = (char *)src;
+		while (cnt--)
+			*p++ = *s++;
 		}
 	else {
-		tmp = (char *) dest + count;
-		s = (char *) src + count;
-		while (count--)
-			*--tmp = *--s;
+		p = (char *)dst + cnt;
+		s = (char *)src + cnt;
+		while (cnt--)
+			*--p = *--s;
 		}
 
-	return dest;
+	return dst;
 }
