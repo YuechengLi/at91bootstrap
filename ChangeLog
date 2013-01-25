@@ -1,7 +1,40 @@
 AT91Bootstrap ChangeLog 
-	
-Version 3.4.5
 
+Version 3.5.1
+
+	Jan 25 10:45:00 2013 Yang <wenyou.yang@atmel.com>
+
+	* For sama5d3ek nandflash, change pmecc-error-correction-bits from 2-bit to 4-bit.
+
+	Jan 24 13:38:25 2013 Josh Wu <josh.wu@atmel.com>
+
+	* nand, for PMECC, add the lookup table offset for 1024 sector size
+
+	Jan 17 16:27:19 2013 Wenyou Yang <wenyou.yang@atmel.com>
+
+	* Since introduce the libgcc, the size of the sam9260ek nandflash
+	  booting binary is greater than 4K, so remove the recovery function.
+
+	Jan 17 16:23:27 2013 Wenyou Yang <wenyou.yang@atmel.com>
+
+	* Makefile, since introduce the libgcc, the size of binary increased,
+	  change the gcc optimized option from "-O2" to "-Os"
+
+	Jan 17 14:49:26 2013 Wenyou Yang <wenyou.yang@atmel.com>
+
+	* Since the GPL conflict, remove .s files of division.
+	  using the libgcc comes from toolchains as a substitution.
+
+	Jan 16 16:56:01 2013 Wenyou Yang <wenyou.yang@atmel.com>
+
+	* Since the GPL conflicts, remove the macro definition in common.h
+
+	Jan 15 17:10:18 2013 Wenyou Yang <wenyou.yang@atmel.com>
+
+	* Since the GPL conflicts, remove the nand_ids table
+	  and nand_onfi_params struct for nandflash.
+
+Version 3.5.0
 
 	Jan 11 09:43:39 2013 Wenyou Yang <wenyou.yang@atmel.com>
 
