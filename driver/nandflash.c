@@ -65,9 +65,6 @@ static struct nand_chip nand_ids[] = {
 
 #define TT_MAX			25
 
-#define	PMECC_ERROR_CORR_BITS	2
-#define	PMECC_SECTOR_SIZE	512
-
 /* The PMECC descripter structure */
 struct _PMECC_paramDesc_struct {
 	unsigned int pageSize;
