@@ -132,13 +132,13 @@
 #define AT91C_CKGR_MULB		(0x7FFUL << 16)
 
 /* -------- PMC_MCKR : (PMC Offset: 0x30) Master Clock Register --------*/ 
-#define AT91C_PMC_CSS		(0x7UL <<  0)
+#define AT91C_PMC_CSS		(0x3UL <<  0)
 #define 	AT91C_PMC_CSS_SLOW_CLK		(0x0UL)
 #define 	AT91C_PMC_CSS_MAIN_CLK		(0x1UL)
 #define 	AT91C_PMC_CSS_PLLA_CLK		(0x2UL)
 #define 	AT91C_PMC_CSS_UPLL_CLK		(0x3UL)
 #define 	AT91C_PMC_CSS_SYS_CLK		(0x4UL)
-#define AT91C_PMC_PRES		(0xFUL <<  4)
+#define AT91C_PMC_PRES		(0x7UL <<  4)
 #define 	AT91C_PMC_PRES_CLK		(0x0UL <<  4)
 #define 	AT91C_PMC_PRES_CLK_2		(0x1UL <<  4)
 #define 	AT91C_PMC_PRES_CLK_4		(0x2UL <<  4)
@@ -156,6 +156,9 @@
 #define AT91C_PMC_PLLADIV2	(0x1UL << 12)
 #define 	AT91C_PMC_PLLADIV2_1		(0x0UL << 12)
 #define 	AT91C_PMC_PLLADIV2_2		(0x1UL << 12)
+#define AT91C_PMC_H32MXDIV	(0x1UL << 24)
+#define		AT91C_PMC_H32MXDIV_H32MXDIV1	(0x00UL << 24)
+#define		AT91C_PMC_H32MXDIV_H32MXDIV2	(0x01UL << 24)
 
 /* -------- PMC_USB : (PMC Offset: 0x38) USB Clock Register --------*/ 
 #define AT91C_PMC_USBS		(0x1UL <<  0)

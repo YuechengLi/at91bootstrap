@@ -48,7 +48,8 @@ static unsigned int read_ddramc(unsigned int address, unsigned int offset)
 
 static int ddramc_decodtype_is_seq(unsigned int ddramc_cr)
 {
-#if defined(AT91SAM9X5) || defined(AT91SAM9N12) || defined(SAMA5D3X)
+#if defined(AT91SAM9X5) || defined(AT91SAM9N12) || defined(SAMA5D3X) \
+	|| defined(SAMA5D4X)
 	if (ddramc_cr & AT91C_DDRC2_DECOD_INTERLEAVED)
 		return 0;
 #endif
@@ -279,3 +280,55 @@ int ddram_initialize(unsigned int base_address,
 
 	return 0;
 }
+
+#if 0
+#define BANK_LENGTH	0x10000
+#define CHECK_PATTERN	0x1122a55a
+
+static int ddr_bank_testing(unsigned int base_addr)
+{
+	unsigned int i;
+	unsigned int length = BANK_LENGTH / 4;
+	unsigned int *ptr = (unsigned int *)base_addr;
+
+	dbg_log(1, "DDR Bank %d testing in progress...", base_addr);
+	for (i = 0; i < length; i++)
+		*ptr++ = CHECK_PATTERN;
+
+	ptr = (unsigned int *)base_addr;
+	for (i = 0; i < length; i++) {
+		unsigned int temp = *ptr++;
+		if (temp != CHECK_PATTERN)
+			break;
+	}
+
+	if (i == length) {
+		dbg_log(1, "done\n\r");
+		return 0;
+	} else {
+		dbg_log(1, "failed\n\r");
+		return -1;
+	}
+}
+
+void ddr_testing(unsigned int base_addr, unsigned int banknum)
+{
+	unsigned int bank;
+	int result;
+
+	dbg_log(1, "DDR Testing Start ... ...\n\r");
+	for (bank = 0; bank < banknum; bank++) {
+		result = ddr_bank_testing(base_addr);
+		if (result)
+			break;
+
+		base_addr += BANK_LENGTH;
+	}
+
+	dbg_log(1, "DDR Testing Result: ");
+	if (bank == banknum)
+		dbg_log(1, "Success\n\r");
+	else
+		dbg_log(1, "Failure\n\r");
+}
+#endif

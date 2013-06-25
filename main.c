@@ -37,6 +37,7 @@
 #include "flash.h"
 #include "string.h"
 #include "onewire_info.h"
+#include "arch/at91_uart.h"
 
 extern int load_kernel(struct image_info *img_info);
 

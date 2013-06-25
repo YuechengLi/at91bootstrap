@@ -41,4 +41,8 @@ extern int ddram_initialize(unsigned int base_address,
 		unsigned int ram_address,
 		struct ddramc_register *ddramc_config);
 
+#if 0
+extern void ddr_testing(unsigned int base_addr, unsigned int banknum);
+#endif
+
 #endif /* #ifndef __DDRAMC_H__ */

@@ -45,7 +45,8 @@ void die()
 
 void lowlevel_clock_init()
 {
-#if defined(AT91SAM9X5) || defined(AT91SAM9N12) || defined(SAMA5D3X) 
+#if defined(AT91SAM9X5) || defined(AT91SAM9N12) || defined(SAMA5D3X) \
+	|| defined(SAMA5D4X)
 	unsigned long tmp;
 
 	/* Enable external crystal */
@@ -54,7 +55,7 @@ void lowlevel_clock_init()
 		write_pmc(PMC_MOR,
 			(0x37 << 16) 
 			| AT91C_CKGR_MOSCXTEN 
-			| (0x40 << 8) 
+			| (0x40 << 8)
 			| AT91C_CKGR_MOSCSEL);
 
 		/* Wait until Main Oscillator is stable */
@@ -106,7 +107,8 @@ void pmc_init_pll(unsigned int pmc_pllicpr)
 
 int pmc_cfg_plla(unsigned int pmc_pllar, unsigned int timeout)
 {
-#if defined(AT91SAM9X5) || defined(AT91SAM9N12) || defined(SAMA5D3X)
+#if defined(AT91SAM9X5) || defined(AT91SAM9N12) || defined(SAMA5D3X) \
+	|| defined(SAMA5D4X)
 	write_pmc(PMC_PLLAR, 0);
 	write_pmc(PMC_PLLAR, pmc_pllar);
 	//while ((timeout--) && !(read_pmc(PMC_SR) & AT91C_PMC_LOCKA))
