@@ -92,17 +92,16 @@ static void ddramc_reg_config(struct ddramc_register *ddramc_config)
 
 #if defined(CONFIG_BUS_SPEED_133MHZ)
 	/*
-	 * The DDR2-SDRAM device requires a refresh every 15.625 us or 7.81 us.
-	 * With a 133 MHz frequency, the refresh timer count register must to be
-	 * set with (15.625 x 133 MHz) ~ 2084 i.e. 0x824
-	 * or (7.81 x 133 MHz) ~ 1040 i.e. 0x410.
+	 * For MT47H128M16, The refresh period is 64ms(commercial)
+	 * or 32ms (industrial and automotive), and its Refresh count = 8K
+	 * ((32ms) / 8K) * 132MHz = 516(0x204)
 	 */
-	ddramc_config->rtr = 0x411;     /* Refresh timer: 7.8125us */
+	ddramc_config->rtr = 0x204;
 
 	/* One clock cycle @ 133 MHz = 7.5 ns */
 	ddramc_config->t0pr = (AT91C_DDRC2_TRAS_6       /* 6 * 7.5 = 45 ns */
 			| AT91C_DDRC2_TRCD_2            /* 2 * 7.5 = 22.5 ns */
-			| AT91C_DDRC2_TWR_2             /* 2 * 7.5 = 15   ns */
+			| AT91C_DDRC2_TWR_3             /* 3 * 7.5 = 22.5 ns */
 			| AT91C_DDRC2_TRC_8             /* 8 * 7.5 = 75   ns */
 			| AT91C_DDRC2_TRP_2             /* 2 * 7.5 = 15   ns */
 			| AT91C_DDRC2_TRRD_2            /* 2 * 7.5 = 15   ns */
@@ -122,10 +121,11 @@ static void ddramc_reg_config(struct ddramc_register *ddramc_config)
 
 #elif defined(CONFIG_BUS_SPEED_166MHZ)
 	/*
-	 * The DDR2-SDRAM device requires a refresh of all rows every 64ms.
-	 * ((64ms) / 8192) * 166MHz = 1296 i.e. 0x510
+	 * For MT47H128M16, The refresh period is 64ms(commercial)
+	 * or 32ms (industrial and automotive), and its Refresh count = 8K
+	 * ((32ms) / 8K) * 166MHz = 648(0x288)
 	 */
-	ddramc_config->rtr = 0x500;
+	ddramc_config->rtr = 0x288;
 
 	/* One clock cycle @ 166 MHz = 6.0 ns */
 	ddramc_config->t0pr = (AT91C_DDRC2_TRAS_8	/* 8 * 6 = 48 ns */
@@ -137,8 +137,8 @@ static void ddramc_reg_config(struct ddramc_register *ddramc_config)
 			| AT91C_DDRC2_TWTR_2		/* 2 clock cycles*/
 			| AT91C_DDRC2_TMRD_2);		/* 2 clock cycles at least */
 
-	ddramc_config->t1pr = (AT91C_DDRC2_TXP_3	/* 3 * 6 = 18ns, 2 clock cycles a least */
-			| AT91C_DDRC2_TXSRD_202		/* 202 clock cycles: Exit self refresh delay to Read command */
+	ddramc_config->t1pr = (AT91C_DDRC2_TXP_2	/* 2 * 6 = 12ns, 2 clock cycles a least */
+			| AT91C_DDRC2_TXSRD_200		/* 200 clock cycles: Exit self refresh delay to Read command */
 			| AT91C_DDRC2_TXSNR_35		/* 35 * 6 = 210 ns*/
 			| AT91C_DDRC2_TRFC_31);		/* 31 * 6 = 186 ns */
 
