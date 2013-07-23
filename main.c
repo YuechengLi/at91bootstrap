@@ -28,7 +28,7 @@
 #include "common.h"
 #include "hardware.h"
 #include "board.h"
-#include "dbgu.h"
+#include "console.h"
 #include "debug.h"
 #include "slowclk.h"
 #include "dataflash.h"
@@ -69,12 +69,12 @@ static void display_banner (void)
 	char *version = "AT91Bootstrap";
 	char *ver_num = " "AT91BOOTSTRAP_VERSION" ("COMPILE_TIME")";
 
-	dbgu_print("\n\r");
-	dbgu_print("\n\r");
-	dbgu_print(version);
-	dbgu_print(ver_num);
-	dbgu_print("\n\r");
-	dbgu_print("\n\r");
+	console_print("\n\r");
+	console_print("\n\r");
+	console_print(version);
+	console_print(ver_num);
+	console_print("\n\r");
+	console_print("\n\r");
 }
 
 int main(void)
@@ -85,7 +85,6 @@ int main(void)
 
 	char filename[FILENAME_BUF_LEN];
 	char of_filename[FILENAME_BUF_LEN];
-
 	memset(&image, 0, sizeof(image));
 	memset(filename, 0, FILENAME_BUF_LEN);
 	memset(of_filename, 0, FILENAME_BUF_LEN);
@@ -141,17 +140,17 @@ int main(void)
 	ret = (*load_image)(&image);
 
 	if (media_str)
-		dbgu_print(media_str);
+		console_print(media_str);
 
 	if (ret == 0){
-		dbgu_print("Done to load image\n\r");
+		console_print("Done to load image\n\r");
 	}
 	if (ret == -1) {
-		dbgu_print("Failed to load image\n\r");
+		console_print("Failed to load image\n\r");
 		while(1);
 	}
 	if (ret == -2) {
-		dbgu_print("Success to recovery\n\r");
+		console_print("Success to recovery\n\r");
 		while (1);
 	}
 

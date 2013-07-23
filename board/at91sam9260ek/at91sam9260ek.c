@@ -38,7 +38,7 @@
 #include "spi.h"
 #include "gpio.h"
 #include "pmc.h"
-#include "dbgu.h"
+#include "console.h"
 #include "debug.h"
 #include "sdramc.h"
 #include "timer.h"
@@ -58,8 +58,7 @@ static void initialize_dbgu(void)
 	writel(((0x01 << 14) | (0x01 << 15)), AT91C_BASE_PIOB + PIO_PDR(0));
 
 	pmc_peri_clock(AT91C_ID_PIOB);
-
-	dbgu_init(BAUDRATE(MASTER_CLOCK, 115200));
+	console_init(AT91C_BASE_DBGU, BAUDRATE(MASTER_CLOCK, 115200));
 }
 
 #ifdef CONFIG_SDRAM

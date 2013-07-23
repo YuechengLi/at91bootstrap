@@ -36,7 +36,7 @@
 #include "spi.h"
 #include "gpio.h"
 #include "pmc.h"
-#include "dbgu.h"
+#include "console.h"
 #include "debug.h"
 #include "sdramc.h"
 #include "psram.h"
@@ -247,8 +247,7 @@ static void at91_dbgu_hw_init(void)
 static void initialize_dbgu(void)
 {
 	at91_dbgu_hw_init();
-
-	dbgu_init(BAUDRATE(MASTER_CLOCK, 115200));
+	console_init(AT91C_BASE_DBGU, BAUDRATE(MASTER_CLOCK, 115200));
 }
 
 #ifdef CONFIG_SDRAM
