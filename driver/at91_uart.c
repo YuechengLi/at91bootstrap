@@ -1,7 +1,7 @@
 /* ----------------------------------------------------------------------------
  *         ATMEL Microcontroller Software Support
  * ----------------------------------------------------------------------------
- * Copyright (c) 2006, Atmel Corporation
+ * Copyright (c) 2010, Atmel Corporation
 
  * All rights reserved.
  *
@@ -25,15 +25,72 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef __DBGU_H__
-#define __DBGU_H__
+#include "hardware.h"
+#include "arch/at91_uart.h"
 
-#define BAUDRATE(mck, baud) \
-	(((((mck) * 10) / ((baud) * 16)) % 10) >= 5) ? \
-	(mck / (baud * 16) + 1) : ((mck) / (baud * 16))
+static unsigned int uart_base_addr;
 
-extern void dbgu_init(unsigned int);
-extern void dbgu_print(const char *ptr);
-extern char dbgu_getc(void);
+static inline void write_uart(unsigned int offset, const unsigned int value)
+{
+	writel(value, offset + uart_base_addr);
+}
 
-#endif /* #ifndef __DBGU_H__ */
+static inline unsigned int read_uart(unsigned int offset)
+{
+	return readl(offset + uart_base_addr);
+}
+
+static int uart_init(unsigned int base_addr, unsigned int baudrate)
+{
+	/* Disable interrupts */
+	write_uart(US_IDR, -1);
+
+	/* Reset the receiver and transmitter */
+	write_uart(US_CR, AT91C_US_RSTRX | AT91C_US_RSTTX
+			| AT91C_US_RXDIS | AT91C_US_TXDIS);
+
+	/* Configure the baudrate */
+	write_uart(US_BRGR, baudrate);
+
+	/* Set the mode register */
+	if (base_addr == AT91C_BASE_DBGU) {
+		write_uart(US_MR, AT91C_US_PAR_NO);
+	} else {
+		write_uart(US_MR, AT91C_US_USART_MODE_NORMAL
+			   | AT91C_US_USCLKS_MCK
+			   | AT91C_US_CHRL_8_BIT
+			   | AT91C_US_PAR_NO
+			   | AT91C_US_NBSTOP_1_BIT);
+	}
+
+	/* Enable RX and Tx */
+	write_uart(US_CR, AT91C_US_RXEN | AT91C_US_TXEN);
+
+	return 0;
+}
+
+static void uart_print(const char *str)
+{
+	int i = 0;
+
+	while (str[i] != '\0') {
+		while (!(read_uart(US_CSR) & AT91C_US_TXRDY))
+			;
+		write_uart(US_THR, str[i]);
+		i++;
+	}
+}
+
+int console_init(unsigned int base_addr, unsigned int baudrate)
+{
+	uart_base_addr = base_addr;
+
+	uart_init(base_addr, baudrate);
+
+	return 0;
+}
+
+void console_print(const char *str)
+{
+	uart_print(str);
+}
