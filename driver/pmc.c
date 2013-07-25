@@ -153,3 +153,16 @@ int pmc_cfg_pck(unsigned char x, unsigned int clk_sel, unsigned int prescaler)
 
 	return 0;
 }
+
+void pmc_peri_clock(unsigned int peri_id)
+{
+	if (peri_id >= 32)
+		write_pmc(PMC_PCER1, (1 << (peri_id % 32)));
+	else
+		write_pmc(PMC_PCER, (1 << peri_id));
+}
+
+void pmc_sys_clock(unsigned int clock_id)
+{
+	 write_pmc(PMC_SCER, clock_id);
+}

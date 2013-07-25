@@ -59,7 +59,7 @@ static void at91_dbgu_hw_init(void)
 
 	/* Configure the dbgu pins */
 	pio_configure(dbgu_pins);
-	writel((1 << AT91C_ID_PIOB), (PMC_PCER + AT91C_BASE_PMC));
+	pmc_peri_clock(AT91C_ID_PIOB);
 }
 
 static void initialize_dbgu(void)
@@ -110,7 +110,7 @@ static void ddramc_init(void)
 	ddramc_reg_config(&ddramc_reg);
 
 	/* ENABLE DDR2 clock */ 
-	writel(AT91C_PMC_DDR, AT91C_BASE_PMC + PMC_SCER);
+	pmc_sys_clock(AT91C_PMC_DDR);
 
 	/* Chip select 1 is for DDR2/SDRAM */
 	csa = readl(AT91C_BASE_CCFG + CCFG_EBICSA);
@@ -132,7 +132,7 @@ static void recovery_buttons_hw_init(void)
 		{(char *)0, 0, 0, PIO_DEFAULT, PIO_PERIPH_A},
 	};
 
-	writel((1 << AT91C_ID_PIOB), PMC_PCER + AT91C_BASE_PMC);
+	pmc_peri_clock(AT91C_ID_PIOB);
 	pio_configure(recovery_button_pins);
 }
 #endif /* #if defined(CONFIG_NANDFLASH_RECOVERY) || defined(CONFIG_DATAFLASH_RECOVERY) */
@@ -150,7 +150,7 @@ static int ek_special_hw_init(void)
 	};
 
 	pio_configure(wm9711_pins);
-	writel((1 << AT91C_ID_PIOD_E), PMC_PCER + AT91C_BASE_PMC);
+	pmc_peri_clock(AT91C_ID_PIOD_E);
 
 	/*
 	 * Disable pull-up on:
@@ -227,10 +227,10 @@ void at91_spi0_hw_init(void)
 		{(char *)0, 0, 0, PIO_DEFAULT, PIO_PERIPH_A},
 	};
 
-	writel((1 << AT91C_ID_PIOB), (PMC_PCER + AT91C_BASE_PMC));
+	pmc_peri_clock(AT91C_ID_PIOB);
 	pio_configure(spi0_pins);
 
-	writel((1 << AT91C_ID_SPI0), (PMC_PCER + AT91C_BASE_PMC));
+	pmc_peri_clock(AT91C_ID_SPI0);
 }
 #endif /* #ifdef CONFIG_DATAFLASH */
 
@@ -253,11 +253,11 @@ void at91_mci0_hw_init(void)
 	};
 
 	/* Configure the PIO controller */
-	writel((1 << AT91C_ID_PIOA), (PMC_PCER + AT91C_BASE_PMC));
+	pmc_peri_clock(AT91C_ID_PIOA);
 	pio_configure(mci_pins);
 
 	/* Enable the clock */
-	writel((1 << AT91C_ID_MCI0), (PMC_PCER + AT91C_BASE_PMC));
+	pmc_peri_clock(AT91C_ID_MCI0);
 
 	/* Set of name function pointer */
 	sdcard_set_of_name = &sdcard_set_of_name_board;
@@ -308,7 +308,7 @@ void nandflash_hw_init(void)
 		AT91C_BASE_SMC + SMC_CTRL3);
 
 	/* Configure the PIO controll */
-	writel((1 << AT91C_ID_PIOC), (PMC_PCER + AT91C_BASE_PMC));
+	pmc_peri_clock(AT91C_ID_PIOC);
 	pio_configure(nand_pins);
 
 }

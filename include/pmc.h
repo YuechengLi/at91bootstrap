@@ -35,5 +35,7 @@ extern int pmc_cfg_mck(unsigned int pmc_mckr, unsigned int timeout);
 extern int pmc_cfg_pck(unsigned char x,
 			unsigned int clk_sel,
 			unsigned int prescaler);
+extern void pmc_peri_clock(unsigned int peri_id);
+extern void pmc_sys_clock(unsigned int clock_id);
 
 #endif	/* #ifndef __PMC_H__ */
