@@ -61,7 +61,7 @@ static void at91_dbgu_hw_init(void)
 	/* Configure the dbgu pins */
 	pio_configure(dbgu_pins);
 
-	writel((1 << AT91C_ID_PIOA), (PMC_PCER + AT91C_BASE_PMC));
+	pmc_peri_clock(AT91C_ID_PIOA);
 }
 
 static void initialize_dbgu(void)
@@ -98,7 +98,7 @@ static void sdramc_hw_init(void)
 	/* Configure the sdramc pins */
 	pio_configure(sdramc_pins);
 
-	writel((1 << AT91C_ID_PIOB), (PMC_PCER + AT91C_BASE_PMC));
+	pmc_peri_clock(AT91C_ID_PIOB);
 }
 
 static void sdramc_init(void)
@@ -183,7 +183,8 @@ static void recovery_buttons_hw_init(void)
 		{(char *)0, 0, 0, PIO_DEFAULT, PIO_PERIPH_A},
 	};
 
-	writel((1 << AT91C_ID_PIOB), PMC_PCER + AT91C_BASE_PMC);
+	pmc_peri_clock(AT91C_ID_PIOB);
+
 	pio_configure(recovery_button_pins);
 }
 #endif /* #if defined(CONFIG_NANDFLASH_RECOVERY) || defined(CONFIG_DATAFLASH_RECOVERY) */
@@ -253,10 +254,10 @@ void at91_spi0_hw_init(void)
 
 	/* Configure the spi0 pins */
 	pio_configure(spi0_pins);
-	writel((1 << AT91C_ID_PIOA), (PMC_PCER + AT91C_BASE_PMC));
+	pmc_peri_clock(AT91C_ID_PIOA);
 
 	/* Enable the spi0 clock */
-	writel((1 << AT91C_ID_SPI), (PMC_PCER + AT91C_BASE_PMC));
+	pmc_peri_clock(AT91C_ID_SPI);
 }
 #endif /* #ifdef CONFIG_DATAFLASH */
 
@@ -275,11 +276,11 @@ void at91_mci0_hw_init(void)
 	};
 
 	/* Configure the PIO controller */
-	writel((1 << AT91C_ID_PIOA), (PMC_PCER + AT91C_BASE_PMC));
+	pmc_peri_clock(AT91C_ID_PIOA);
 	pio_configure(mci_pins);
 
 	/* Enable the clock */
-	writel((1 << AT91C_ID_MCI), (PMC_PCER + AT91C_BASE_PMC));
+	pmc_peri_clock(AT91C_ID_MCI);
 }
 #endif /* #ifdef CONFIG_SDCARD */
 
@@ -329,7 +330,7 @@ void nandflash_hw_init(void)
 
 	/* Configure the NANDFlash pins */
 	pio_configure(nand_pins);
-	writel((1 << AT91C_ID_PIOB), PMC_PCER + AT91C_BASE_PMC);
+	pmc_peri_clock(AT91C_ID_PIOB);
 }
 
 void nandflash_config_buswidth(unsigned char busw)

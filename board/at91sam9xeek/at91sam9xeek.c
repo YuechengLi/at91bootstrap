@@ -60,8 +60,7 @@ static void at91_dbgu_hw_init(void)
 
 	/* Configure the dbgu pins */
 	pio_configure(dbgu_pins);
-
-	writel((1 << AT91C_ID_PIOB), (PMC_PCER + AT91C_BASE_PMC));
+	pmc_peri_clock(AT91C_ID_PIOB);
 }
 
 static void initialize_dbgu(void)
@@ -98,8 +97,7 @@ static void sdramc_hw_init(void)
 
 	/* Configure the sdramc pins */
 	pio_configure(sdramc_pins);
-
-	writel((1 << AT91C_ID_PIOC), (PMC_PCER + AT91C_BASE_PMC));
+	pmc_peri_clock(AT91C_ID_PIOC);
 }
 
 static void sdramc_init(void)
@@ -190,10 +188,11 @@ void at91_spi0_hw_init(void)
 	/* Configure the spi0 pins */
 	pio_configure(spi0_pins);
 
-	writel(((1 << AT91C_ID_PIOA) | (1 << AT91C_ID_PIOC)), (PMC_PCER + AT91C_BASE_PMC));
+	pmc_peri_clock(AT91C_ID_PIOA);
+	pmc_peri_clock(AT91C_ID_PIOC);
 
 	/* Enable the spi0 clock */
-	writel((1 << AT91C_ID_SPI0), (PMC_PCER + AT91C_BASE_PMC));
+	pmc_peri_clock(AT91C_ID_SPI0);
 }
 #endif /* #ifdef CONFIG_DATAFLASH */
 
@@ -240,7 +239,7 @@ void nandflash_hw_init(void)
 	/* Configure the NANDFlash pins */
 	pio_configure(nand_pins);
 
-	writel((1 << AT91C_ID_PIOC), PMC_PCER + AT91C_BASE_PMC);
+	pmc_peri_clock(AT91C_ID_PIOC);
 }
 
 void nandflash_config_buswidth(unsigned char busw)
