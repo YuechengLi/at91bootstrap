@@ -145,6 +145,8 @@
 #define AT91_BASE_SYS		AT91C_BASE_SYS
 #define AT91_SMC		(AT91C_BASE_SMC0 - AT91_BASE_SYS)
 
+#define AT91C_NUM_PIO		5
+
 /*
  * SoC specific defines
  */
