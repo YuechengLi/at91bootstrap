@@ -18,8 +18,8 @@ endif
 BINDIR:=$(TOPDIR)/binaries
 
 DATE := $(shell date)
-VERSION := 3.5.4
-REVISION :=
+VERSION := 3.5.5
+REVISION := rc1
 SCMINFO := $(shell ($(TOPDIR)/host-utilities/setlocalversion $(TOPDIR)))
 
 noconfig_targets:= menuconfig defconfig $(CONFIG) oldconfig
