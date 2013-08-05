@@ -148,6 +148,8 @@
 #define AT91_PMERRLOC           (AT91C_BASE_PMERRLOC    - AT91_BASE_SYS)
 #define AT91_SMC                (AT91C_BASE_SMC         - AT91_BASE_SYS)
 
+#define AT91C_NUM_PIO		4
+
 /*
  * SoC specific defines
  */
