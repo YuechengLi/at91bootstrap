@@ -37,6 +37,7 @@
 #include "flash.h"
 #include "string.h"
 #include "onewire_info.h"
+#include "tz_utils.h"
 #include "arch/at91_uart.h"
 
 extern int load_kernel(struct image_info *img_info);
@@ -134,7 +135,7 @@ int main(void)
 
 #ifdef CONFIG_LOAD_ONE_WIRE
 	/* Load one wire informaion */
-	load_1wire_info();
+/*	load_1wire_info(); */
 #endif
 	init_loadfunction();
 
@@ -157,6 +158,10 @@ int main(void)
 
 #ifdef CONFIG_SCLK
 	slowclk_switch_osc32();
+#endif
+
+#ifdef CONFIG_TRUSTZONE_SUPPORT
+	switch_normal_world();
 #endif
 
 	return JUMP_ADDR;
