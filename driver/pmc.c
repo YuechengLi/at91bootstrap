@@ -45,8 +45,53 @@ void die()
 
 void lowlevel_clock_init()
 {
-#if defined(AT91SAM9X5) || defined(AT91SAM9N12) || defined(SAMA5D3X) \
-	|| defined(SAMA5D4X)
+#if defined(SAMA5D4X)
+	unsigned long tmp;
+	unsigned int times;
+
+	/*
+	 * Enable Main Crystal Oscillator
+	 * tST_max = 2ms
+	 * Startup Time: 32768 * 2ms / 8 = 8
+	 */
+	tmp = read_pmc(PMC_MOR);
+	tmp &= (~AT91C_CKGR_MOSCXTST);
+	tmp &= (~AT91C_CKGR_KEY);
+	tmp |= AT91C_CKGR_MOSCXTEN;
+	tmp |= AT91_CKGR_MOSCXTST_SET(8);
+	tmp |= AT91C_CKGR_PASSWD;
+	write_pmc(PMC_MOR, tmp);
+
+	times = 1000;
+	while ((times--) && (!(read_pmc(PMC_SR) & AT91C_PMC_MOSCXTS)))
+		;
+
+	/* Switch to external crystal if needed */
+	tmp = read_pmc(PMC_MOR);
+	tmp &= (~AT91C_CKGR_MOSCXTBY);
+	tmp &= (~AT91C_CKGR_KEY);
+	tmp |= AT91C_CKGR_PASSWD;
+	write_pmc(PMC_MOR, tmp);
+
+	tmp = read_pmc(PMC_MOR);
+	tmp |= AT91C_CKGR_MOSCSEL;
+	tmp &= (~AT91C_CKGR_KEY);
+	tmp |= AT91C_CKGR_PASSWD;
+	write_pmc(PMC_MOR, tmp);
+
+	times = 1000;
+	while ((times--) && (!(read_pmc(PMC_SR) & AT91C_PMC_MOSCSELS)))
+		;
+
+	tmp = read_pmc(PMC_MCKR);
+	tmp &= ~AT91C_PMC_CSS;
+	tmp |= AT91C_PMC_CSS_MAIN_CLK;
+	write_pmc(PMC_MCKR, tmp);
+
+	times = 1000;
+	while ((times--) && (!(read_pmc(PMC_SR) & AT91C_PMC_MCKRDY)))
+		;
+#elif defined(AT91SAM9X5) || defined(AT91SAM9N12) || defined(SAMA5D3X)
 	unsigned long tmp;
 
 	/* Enable external crystal */
@@ -107,8 +152,14 @@ void pmc_init_pll(unsigned int pmc_pllicpr)
 
 int pmc_cfg_plla(unsigned int pmc_pllar, unsigned int timeout)
 {
-#if defined(AT91SAM9X5) || defined(AT91SAM9N12) || defined(SAMA5D3X) \
-	|| defined(SAMA5D4X)
+#if defined(SAMA5D4X)
+	write_pmc(PMC_PLLAR, pmc_pllar);
+	while ((timeout--) && !(read_pmc(PMC_SR) & AT91C_PMC_LOCKA))
+		;
+
+	return 0;
+
+#elif defined(AT91SAM9X5) || defined(AT91SAM9N12) || defined(SAMA5D3X)
 	write_pmc(PMC_PLLAR, 0);
 	write_pmc(PMC_PLLAR, pmc_pllar);
 	//while ((timeout--) && !(read_pmc(PMC_SR) & AT91C_PMC_LOCKA))
@@ -141,10 +192,72 @@ int pmc_cfg_pllutmi(unsigned int pmc_pllutmi, unsigned int timeout)
 
 int pmc_cfg_mck(unsigned int pmc_mckr, unsigned int timeout)
 {
+#if defined(SAMA5D4X)
+	unsigned int tmp;
+	unsigned int times;
+
+	tmp = read_pmc(PMC_MCKR);
+	tmp &= (~AT91C_PMC_CSS);
+	tmp |= (pmc_mckr & AT91C_PMC_CSS);
+	write_pmc(PMC_MCKR, tmp);
+
+	times = timeout;
+	while ((times--) && (!(read_pmc(PMC_SR) & AT91C_PMC_MCKRDY)))
+		;
+
+	tmp = read_pmc(PMC_MCKR);
+	tmp &= (~AT91C_PMC_MDIV);
+	tmp |= (pmc_mckr & AT91C_PMC_MDIV);
+	write_pmc(PMC_MCKR, tmp);
+
+	times = timeout;
+	while ((times--) && (!(read_pmc(PMC_SR) & AT91C_PMC_MCKRDY)))
+		;
+
+	tmp = read_pmc(PMC_MCKR);
+	tmp &= (~AT91C_PMC_PLLADIV2);
+	tmp |= (pmc_mckr & AT91C_PMC_PLLADIV2);
+	write_pmc(PMC_MCKR, tmp);
+
+	times = timeout;
+	while ((times--) && (!(read_pmc(PMC_SR) & AT91C_PMC_MCKRDY)))
+		;
+
+	tmp = read_pmc(PMC_MCKR);
+	tmp &= (~AT91C_PMC_PRES);
+	tmp |= (pmc_mckr & AT91C_PMC_PRES);
+	write_pmc(PMC_MCKR, tmp);
+
+	times = timeout;
+	while ((times--) && (!(read_pmc(PMC_SR) & AT91C_PMC_MCKRDY)))
+		;
+
+	return 0;
+
+#else
+
 	write_pmc(PMC_MCKR, pmc_mckr);
-	while (!(read_pmc(PMC_SR) & AT91C_PMC_MCKRDY)) ;
+	while ((timeout-- ) && (!(read_pmc(PMC_SR) & AT91C_PMC_MCKRDY)))
+		;
 
 	return (timeout) ? 0 : (-1);
+#endif
+}
+
+int pmc_cfg_h32mxdiv(unsigned int pmc_mckr, unsigned int timeout)
+{
+	unsigned int tmp;
+	unsigned int times = timeout;
+
+	tmp = read_pmc(PMC_MCKR);
+	tmp &= (~AT91C_PMC_H32MXDIV);
+	tmp |= (pmc_mckr & AT91C_PMC_H32MXDIV);
+	write_pmc(PMC_MCKR, tmp);
+
+	while ((times--) && (!(read_pmc(PMC_SR) & AT91C_PMC_MCKRDY)))
+		;
+
+	return 0;
 }
 
 int pmc_cfg_pck(unsigned char x, unsigned int clk_sel, unsigned int prescaler)

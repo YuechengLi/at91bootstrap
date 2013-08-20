@@ -98,7 +98,9 @@
 #define AT91C_CKGR_WAITMODE	(0x1UL <<  2)
 #define AT91C_CKGR_MOSCRCEN	(0x1UL <<  3)
 #define AT91C_CKGR_MOSCXTST	(0xFFUL <<  8)
+#define 	AT91_CKGR_MOSCXTST_SET(value)	(value <<  8)
 #define AT91C_CKGR_KEY		(0xFFUL << 16)
+#define		AT91C_CKGR_PASSWD	(0x37UL << 16)
 #define AT91C_CKGR_MOSCSEL	(0x1UL << 24)
 #define AT91C_CKGR_CFDEN	(0x1UL << 25)
 
