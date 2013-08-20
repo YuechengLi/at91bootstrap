@@ -506,14 +506,11 @@ void hw_init(void)
 	/* not needed for SAMA5D4 */
 	pmc_init_pll(0);
 
-	/* Configure PCK */
-	pmc_cfg_mck(BOARD_PRESCALER_MAIN_CLOCK, PLL_LOCK_TIMEOUT);
-
 	/* Switch MCK on PLLA output */
 	pmc_cfg_mck(BOARD_PRESCALER_PLLA, PLL_LOCK_TIMEOUT);
 
 	/* Setup AHB 32-bit Matrix Divisor */
-	pmc_cfg_mck(BOARD_H32MX, PLL_LOCK_TIMEOUT);
+	pmc_cfg_h32mxdiv(BOARD_H32MX, PLL_LOCK_TIMEOUT);
 
 	/* Enable External Reset */
 	writel(AT91C_RSTC_KEY_UNLOCK | AT91C_RSTC_URSTEN,
