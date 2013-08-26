@@ -123,10 +123,17 @@ monitor_smc_handler:
 //	MOV	r12, #0
 
 	/* restore mon_lr to NWd return point */
-	led_d8_on
-	led_d9_on
 
 	ldr	lr, [r0, #NWD_PC_OFF]
+
+	ldr	r2, =NWD_BOOT_ADDR
+	cmp	lr, r2
+	bne	2f
+	led_d8_on
+	b	1f
+2:
+	led_d9_on
+1:
 	movs	pc, lr
 
 	.end

@@ -161,7 +161,7 @@ int main(void)
 #endif
 
 #ifdef CONFIG_TRUSTZONE_SUPPORT
-	switch_normal_world();
+//	switch_normal_world();
 #endif
 
 	return JUMP_ADDR;
