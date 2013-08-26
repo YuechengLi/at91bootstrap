@@ -45,7 +45,63 @@ void die()
 
 void lowlevel_clock_init()
 {
-#if defined(AT91SAM9X5) || defined(AT91SAM9N12) || defined(SAMA5D3X) 
+#if defined(SAMA5D3X)
+	unsigned long tmp;
+	unsigned int times;
+
+	/*
+	 * Enable Main Crystal Oscillator
+	 * tST_max = 2ms
+	 * Startup Time: 32768 * 2ms / 8 = 8
+	 */
+	tmp = read_pmc(PMC_MOR);
+	tmp &= (~AT91C_CKGR_MOSCXTST);
+	tmp &= (~AT91C_CKGR_KEY);
+	tmp |= AT91C_CKGR_MOSCXTEN;
+	tmp |= AT91_CKGR_MOSCXTST_SET(8);
+	tmp |= AT91C_CKGR_PASSWD;
+	write_pmc(PMC_MOR, tmp);
+
+	times = 1000;
+	while ((times--) && (!(read_pmc(PMC_SR) & AT91C_PMC_MOSCXTS)))
+		;
+
+	/* Switch to external crystal if needed */
+	tmp = read_pmc(PMC_MOR);
+	tmp &= (~AT91C_CKGR_MOSCXTBY);
+	tmp &= (~AT91C_CKGR_KEY);
+	tmp |= AT91C_CKGR_PASSWD;
+	write_pmc(PMC_MOR, tmp);
+
+	tmp = read_pmc(PMC_MOR);
+	tmp |= AT91C_CKGR_MOSCSEL;
+	tmp &= (~AT91C_CKGR_KEY);
+	tmp |= AT91C_CKGR_PASSWD;
+	write_pmc(PMC_MOR, tmp);
+
+	times = 1000;
+	while ((times--) && (!(read_pmc(PMC_SR) & AT91C_PMC_MOSCSELS)))
+		;
+
+	/* Disable the 12MHz RC oscillator */
+	tmp = read_pmc(PMC_MOR);
+	tmp &= (~AT91C_CKGR_MOSCRCEN);
+	tmp &= (~AT91C_CKGR_KEY);
+	tmp |= AT91C_CKGR_PASSWD;
+	write_pmc(PMC_MOR, tmp);
+
+	/* Switch to external crystal if needed */
+	tmp = read_pmc(PMC_MCKR);
+	if ((tmp & AT91C_PMC_CSS) != AT91C_PMC_CSS_MAIN_CLK) {
+		tmp &= ~AT91C_PMC_CSS;
+		tmp |= AT91C_PMC_CSS_MAIN_CLK;
+		write_pmc(PMC_MCKR, tmp);
+		times = 1000;
+		while ((times--) && (!(read_pmc(PMC_SR) & AT91C_PMC_MCKRDY)))
+			;
+	}
+
+#elif defined(AT91SAM9X5) || defined(AT91SAM9N12)
 	unsigned long tmp;
 
 	/* Enable external crystal */
