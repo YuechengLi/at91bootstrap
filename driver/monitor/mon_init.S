@@ -86,8 +86,7 @@ monitor_init:
 	str	r1, [r0, #NWD_CPSR_OFF]
 
 	/* Set initial NWd PC value */
-	ldr	r2, =NWD_BOOT_ADDR
-	ldr	r1, [r2]
+	ldr	r1, =NWD_BOOT_ADDR
 	str	r1, [r0, #NWD_PC_OFF]
 
 	/* Switch back to SVC mode */
