@@ -6,19 +6,16 @@ SECTIONS
         . = ALIGN(4);
 	.text : { 
 		_stext = .;
-		*(.text)
-		*(.rodata)                 /* read-only data (constants) */
-		*(.rodata*)
+		*(EXCLUDE_FILE (*mon_*.o) .text)
+		*(EXCLUDE_FILE (*mon_*.o) .rodata)                 /* read-only data (constants) */
+		*(EXCLUDE_FILE (*mon_*.o) .rodata*)
 		. = ALIGN(4);
-		*(.glue_7)
+		*(EXCLUDE_FILE (*mon_*.o) .glue_7)
 		. = ALIGN(4);		
-		*(.eh_frame)
+		*(EXCLUDE_FILE (*mon_*.o) .eh_frame)
 		. = ALIGN(4);
  		_etext = . ;
 	}
-
-	/* collect all initialized .data sections */
-	/* .data : AT ( ADDR (.text) + SIZEOF (.text) SIZEOF (.ARM.*) {  */
 
 	. = ALIGN(4);
 	.dummy : {
@@ -27,8 +24,8 @@ SECTIONS
 
 	.data : AT (LOADADDR(.dummy)) {
 		_sdata = .;
-		*(.vectors)
-		*(.data)
+		*(EXCLUDE_FILE (*mon_*.o) .vectors)
+		*(EXCLUDE_FILE (*mon_*.o) .data)
 		_edata = .;
 	}
 
@@ -36,9 +33,22 @@ SECTIONS
 	.bss (NOLOAD) : { 
 		. = ALIGN(4);
 		_sbss = .;
-		*(.bss)
+		*(EXCLUDE_FILE (*mon_*.o) .bss)
 		_ebss = .;
+	}
+
+	. = ALIGN(4);
+	.mon_dummy : {
+		_emon_dummy = .;
+	}
+
+	. = ADDR(.text) + 0x8000;
+	.mon_text : AT (_emon_dummy) {
+		_smon_text = .;
+		*mon_vectors.o		/* First input */
+		*mon_init.o
+		*mon_switch.o
+		_emon_text = .;
 	}
 }
 end = .;  /* define a global symbol marking the end of application */
-

@@ -540,8 +540,8 @@ void hw_init(void)
 	hw_init_hook();
 #endif
 
-	pio_configure(led_pins);
 	pmc_peri_clock(AT91C_ID_PIOE);
+	pio_configure(led_pins);
 }
 #endif /* #ifdef CONFIG_HW_INIT */
 

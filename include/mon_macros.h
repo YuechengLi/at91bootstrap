@@ -101,10 +101,10 @@
  * Standard definitions of Non-Secure Access Control register configuration
  *--------------------------------------------------------------------------
  */
-#define NSACR_BIT_CP	0x03FFF		/* Bit 0-13 */
-#define NSACR_BIT_CL	0x10000		/* Bit 16 */
-#define NSACR_BIT_TL	0x20000		/* Bit 17 */
-#define NSACR_BIT_DMA	0x40000		/* Bit 18 */
+#define NSACR_BIT_CP		0x00C00		/* Bit 10-11 */
+#define NSACR_BIT_NSD32DIS	0x04000		/* Bit 14 */
+#define NSACR_BIT_NSASEDIS	0x08000		/* Bit 15 */
+#define NSACR_BIT_SMP		0x40000		/* Bit 18 */
 
 /*
  *---------------------------------------------------------------------------
@@ -141,7 +141,8 @@
  */
 #define INITIAL_SWD_CPSR	0x1D3
 
-#define MON_STACK_BASE		(TOP_OF_MEMORY - 0x400)
+//#define MON_STACK_BASE		(TOP_OF_MEMORY - 0x400)
+#define MON_STACK_BASE		0x220000
 #define NWD_DATA_BASE		(MON_STACK_BASE - 0x100)
 
 #define NWD_BOOT_ADDR		JUMP_ADDR

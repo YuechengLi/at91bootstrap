@@ -44,13 +44,22 @@
 	str	r0, [r1, #PIO_CODR]
 	.endm
 
-#define NSACR_BITS  (NSACR_BIT_CL | NSACR_BIT_CP | NSACR_BIT_DMA)
+#define NSACR_CLR_BITS  (NSACR_BIT_NSD32DIS | NSACR_BIT_NSASEDIS)
+#define NSACR_SET_BITS  (NSACR_BIT_CP | NSACR_BIT_SMP)
 
 monitor_init:
+	/* Switch to SYS mode */
+	mrs	r0, cpsr
+	bic	r0, r0, #0x1f
+	orr	r0, r0, #Mode_SYS
+	msr	cpsr_c, r0
+
 	/* Configure Non-Secure Access control register */
 	mrc	p15, 0, r0, c1, c1, 2	/* Read NSACR Register */
-	/* Allow NS access DMA and Co-processor registers 0-13 */
-	ldr	r1, =NSACR_BITS
+	/* Allow NS access VFP/NEON and Co-processor registers 10-11 */
+	ldr	r1, =NSACR_CLR_BITS
+	bic	r0, r0, r1
+	ldr	r1, =NSACR_SET_BITS
 	orr	r0, r0, r1
 	mcr	p15, 0, r0, c1, c1, 2
 
