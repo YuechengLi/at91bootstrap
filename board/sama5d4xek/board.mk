@@ -12,7 +12,7 @@ CPPFLAGS += \
 	-mcpu=cortex-a5
 
 ASFLAGS += \
-	-DCONFIG_SAMA5D4XEK
+	-DCONFIG_SAMA5D4XEK \
 	-mcpu=cortex-a5
 endif
 

@@ -27,6 +27,7 @@
  */
 
 #include <hardware.h>
+#include <mon_macros.h>
 
 .section start
 	.text
@@ -78,7 +79,21 @@ reset_vector:
 
 /* Init the stack */
 _init_stack:
-	ldr     sp,=TOP_OF_MEMORY
+	ldr	sp,=SVC_STACK_BASE
+
+	/* now SYS stack */
+	mrs	r0, cpsr
+	bic	r0, r0, #0x1f
+	orr	r0, r0, #Mode_SYS
+	msr	cpsr_c, r0
+
+	ldr	sp,=SYS_STACK_BASE
+
+	/* come back to SVC */
+	mrs	r0, cpsr
+	bic	r0, r0, #0x1f
+	orr	r0, r0, #Mode_SVC
+	msr	cpsr_c, r0
 
 #ifdef CONFIG_FLASH
 /*

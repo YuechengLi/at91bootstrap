@@ -170,7 +170,7 @@ include	fs/src/fat.mk
 SRCS:= $(COBJS-y:.o=.c)
 OBJS:= $(SOBJS-y) $(COBJS-y)
 INCL=board/$(BOARD)
-GC_SECTIONS=--gc-sections
+GC_SECTIONS=--gc-sections --print-gc-sections
 
 CPPFLAGS=-ffunction-sections -g -Os -Wall \
 	-fno-stack-protector \

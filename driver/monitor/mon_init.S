@@ -48,12 +48,6 @@
 #define NSACR_SET_BITS  (NSACR_BIT_CP | NSACR_BIT_SMP)
 
 monitor_init:
-	/* Switch to SYS mode */
-	mrs	r0, cpsr
-	bic	r0, r0, #0x1f
-	orr	r0, r0, #Mode_SYS
-	msr	cpsr_c, r0
-
 	/* Configure Non-Secure Access control register */
 	mrc	p15, 0, r0, c1, c1, 2	/* Read NSACR Register */
 	/* Allow NS access VFP/NEON and Co-processor registers 10-11 */
@@ -65,8 +59,6 @@ monitor_init:
 
 	/* Switch to MON mode */
 	mrs	r0, cpsr
-
-	/* Clear Mode bits first before setting it to monitor mode */
 	bic	r0, r0, #0x1f
 	orr	r0, r0, #Mode_MON
 	msr	cpsr_c, r0
@@ -88,7 +80,7 @@ monitor_init:
 	mcr	p15, 0, r0, c1, c1, 0
 
 	/* Set NWd initial CPSR and PC (NWd boot entry address) */
-	ldr	r0, =NWD_DATA_BASE
+	ldr	r0, =MON_DATA_BASE
 
 	/* Set initial NWd CPSR state value */
 	ldr	r1, =INITIAL_NWD_CPSR

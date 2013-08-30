@@ -27,39 +27,48 @@
  */
 /*
 ;------------------------------------------------------------------------------
-; TZST MONITOR Area is used by the monitor to save and restore
-; several critical registers.
-; As mentioned in the SMC protocol r0-r7, r12 registers are corruptbile
-; registers and r8-r11 and lr, sp and cpsr needs to be properly saved and
-; restored.
-; NWd Call to SWd function
+; MON_DATA_BASE area is used by the monitor to save and restore
+; all resources affected by the context switching.
+; - All general purpose ARM registers
+; - Any coprocessor registers, such as NEON or VFP
+;   (not needed in our case as we are not dealing with floating point in SWd)
+; - Any world-dependant processor configuration state in CP15
+;   (TODO: what does it cover?)
+;
+; Note: we consider that there is no IRQ nor FIQ management in SWd.
+;
+; r0-r7, r12 registers are considered as corruptbile
+; r8-r11 and lr, sp and cpsr needs to be properly saved and restored
+; NWd Call to SWd function:
 ;      Save    -> r8-r11, svc_lr and svc_sp, cpsr
-;      Restore -> svc_lr, svc_sp, and cpsr(SVC mode with interrupt disabled).
+;      Restore -> svc_lr, svc_sp, and cpsr
 ; SWd return after completing service function execution:
-;      Save    -> svc_lr, svc_sp, and cpsr(SVC mode with interrupt disabled).
+;      Save    -> svc_lr, svc_sp, and cpsr
 ;      Restore -> r8-r11, svc_lr and svc_sp, cpsr
 ;------------------------------------------------------------------------------
 */
 #ifndef __MON_MACROS_H__
 #define __MON_MACROS_H__
 
-/* NWd non-corrputible registers fields offsets from the Monitor data area */
-#define NWD_PC_OFF	4
-#define NWD_CPSR_OFF	8
+/* NWd non-corruptible registers fields offsets from the MON_DATA_BASE area */
+#define NWD_PC_OFF	 0
+#define NWD_CPSR_OFF	 4
+#define NWD_SVC_SP_OFF	 8
+#define NWD_SVC_LR_OFF	12
+#define NWD_R8_OFF	16
+#define NWD_R9_OFF	20
+#define NWD_R10_OFF	24
+#define NWD_R11_OFF	28
+#define NWD_R12_OFF     32
+#define NWD_DB_END_OFF	NWD_R12_OFF
 
-#if 0
-#define NWD_R8_OFF	12
-#define NWD_R9_OFF	16
-#define NWD_R10_OFF	20
-#define NWD_R11_OFF	24
-#define NWD_R12_OFF	30
-
-/* SWd critical registers fields offsets from the Monitor data area to execute
-   sevice functions in SVC mode which uses SWd SVC stack. */
-#define SWD_PC_OFF	4
-#define SWD_CPSR_OFF	8
-#define SWD_SVC_SP_OFF	12
-#endif
+/*
+ * SWd critical registers fields offsets from the MON_DATA_BASE area
+ * to execute sevice functions in SVC mode which uses SWd SVC stack.
+ */
+#define SWD_PC_OFF	(NWD_DB_END_OFF + 4)
+#define SWD_CPSR_OFF	(NWD_DB_END_OFF + 8)
+#define SWD_SVC_SP_OFF	(NWD_DB_END_OFF + 12)
 
 /*
  * Secure Configuration Register
@@ -79,7 +88,8 @@
 #define Mode_UND	0x1B
 #define Mode_SYS	0x1F
 
-/* ----------------------------------------------------------------------------
+/*
+ *----------------------------------------------------------------------------
  * Standard definitions of interrupt (I & F) flags in PSRs
  *-----------------------------------------------------------------------------
  */
@@ -117,34 +127,40 @@
  *----------------------------------------------------------------------------
  * M[4:0] = SVC
  * T[5]   = ARM state
- * I[6]  = FIQ Disabled
- * F[7]  = IRQ Disabled
- * E[9]  = Imprecise Aborts Enabled
- * A[8]  = Data Endianess Disabled
- * J[24] = Jazelle state Disabled
+ * I[6]   = FIQ Disabled
+ * F[7]   = IRQ Disabled
+ * A[8]   = Asynchronous Aborts Enabled
+ * E[9]   = Data Endianess Little
+ * J[24]  = Jazelle state Disabled
  * All status flags NZCVQ to reset value
  *----------------------------------------------------------------------------
  */
-#define INITIAL_NWD_CPSR	0x1D3
+#define INITIAL_NWD_CPSR	0xD3
 
 /*
  *----------------------------------------------------------------------------
  * M[4:0] = SVC
  * T[5]   = ARM state
- * I [6]  = FIQ Disabled
- * F [7]  = IRQ Disabled
- * E [9]  = Imprecise Aborts Enabled
- * A [8]  = Data Endianess Disabled
- * J [24] = Jazelle state Disabled
+ * I[6]   = FIQ Disabled
+ * F[7]   = IRQ Disabled
+ * A[8]   = Asynchronous Aborts Disabled
+ * E[9]   = Data Endianess Little
+ * J[24]  = Jazelle state Disabled
  * All status flags NZCVQ to reset value
  *----------------------------------------------------------------------------
  */
 #define INITIAL_SWD_CPSR	0x1D3
 
-//#define MON_STACK_BASE		(TOP_OF_MEMORY - 0x400)
-#define MON_STACK_BASE		0x220000
-#define NWD_DATA_BASE		(MON_STACK_BASE - 0x100)
+/* Stacks configuration */
+#define STACK_SIZE		0x400
+#define MON_DATA_BASE_SIZE	STACK_SIZE /* can be optimized */
 
+#define MON_STACK_BASE		TOP_OF_MEMORY
+#define MON_DATA_BASE		(MON_STACK_BASE - STACK_SIZE)
+#define SVC_STACK_BASE		(MON_DATA_BASE - MON_DATA_BASE_SIZE)
+#define SYS_STACK_BASE		(SVC_STACK_BASE - STACK_SIZE)
+
+/* Subsequent application boot address (from configuration) */
 #define NWD_BOOT_ADDR		JUMP_ADDR
 
 #endif /* #ifndef __MON_MACROS_H__ */

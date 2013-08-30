@@ -78,7 +78,7 @@ monitor_smc_handler:
 	mcr	p15, 0, r0, c1, c1, 0
 
 	/* Restore NWd non-corruptible registers */
-	ldr	r0, =NWD_DATA_BASE
+	ldr	r0, =MON_DATA_BASE
 
 	/* Restore NWd cpsr in monitor spsr such that it returns to NWd
 	 * by restoring spsr to NWd
