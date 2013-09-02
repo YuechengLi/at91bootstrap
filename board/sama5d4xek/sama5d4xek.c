@@ -455,7 +455,7 @@ static unsigned int security_ps_peri_id[] = {
 static int matrix_config_periheral(void)
 {
 	unsigned int *peri_id = security_ps_peri_id;
-	unsigned int array_size = sizeof(security_ps_peri_id);
+	unsigned int array_size = sizeof(security_ps_peri_id) / sizeof(unsigned int);
 	int ret;
 
 	ret = matrix_configure_peri_security(peri_id, array_size);
@@ -518,6 +518,9 @@ void hw_init(void)
 
 	/* Initialize the matrix */
 	matrix_init();
+
+	/* initialize the dbgu */
+	initialize_console();
 
 	/* initialize the dbgu */
 	initialize_console();

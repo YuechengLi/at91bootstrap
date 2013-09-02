@@ -28,6 +28,7 @@
 #include "common.h"
 #include "hardware.h"
 #include "arch/tz_matrix.h"
+#include "debug.h"
 
 #define MATRIX_AXIMX	1
 #define MATRIX_H64MX	2
@@ -315,7 +316,7 @@ int matrix_configure_peri_security(unsigned int *peri_id_array,
 	unsigned int base;
 	unsigned int h32mx_spselr[3], h64mx_spselr[3];
 	unsigned int spselr;
-	unsigned int n;
+	unsigned int n, bit;
 
 	if ((peri_id_array == NULL) || (size == 0))
 		return -1;
@@ -338,19 +339,27 @@ int matrix_configure_peri_security(unsigned int *peri_id_array,
 
 		peri_id = *peri_id_p;
 		n = peri_id / 32;
+		bit = (0x01 << (peri_id % 32));
 		if (periperal_sec->matrix == MATRIX_H32MX) {
+			h32mx_spselr[n] |= bit;
 			base = AT91C_BASE_MATRIX32;
 			spselr = h32mx_spselr[n];
 		} else {
+			h64mx_spselr[n] |= bit;
 			base = AT91C_BASE_MATRIX64;
 			spselr = h64mx_spselr[n];
 		}
 
-		spselr |= peri_id % 32;
-
 		matrix_write(base, MATRIX_SPSELR(n), spselr);
 
 		peri_id_p++;
+	}
+
+	for (i = 0; i < 3; i++) {
+		h32mx_spselr[i] = matrix_read(AT91C_BASE_MATRIX32,
+						MATRIX_SPSELR(i));
+		h64mx_spselr[i] = matrix_read(AT91C_BASE_MATRIX64,
+						MATRIX_SPSELR(i));
 	}
 
 	return 0;
