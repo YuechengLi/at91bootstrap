@@ -74,66 +74,51 @@ monitor_smc_handler:
 	 *  register.
 	 */
 	mrc	p15, 0, r0, c1, c1, 0	/* read SCR */
-	eor	r0, r0, #NS_BIT		/* Extract current SCR->NS bit */
-	mcr	p15, 0, r0, c1, c1, 0
+	ands	r1, r0, #NS_BIT
+	/*
+	 * If NS bit is set then it is a call from NWd
+	 * Otherwise it is a return from SWd
+	 */
+	BEQ	swd_to_nwd
 
-	/* Restore NWd non-corruptible registers */
+nwd_to_swd:
+	bic	r0, r0, #NS_BIT
+	MCR	p15, 0, r0, c1, c1, 0
+	/* ~~~ We are in SWd from now on ~~~ */
+
+	/* - Implement the NWd --> SWd sequence as described in mon_macro.h */
+	/*   - Save NWd registers */
 	ldr	r0, =MON_DATA_BASE
+	/*     - monitor lr is NWd pc */
+	str	lr,  [r0, #NWD_PC_OFF]
+	/*     - monitor spsr is NWd cpsr */
+	mrs	r1, spsr
+	str	r1,  [r0, #NWD_CPSR_OFF]
+	/*     - r8-r11 */
+	str	r8,  [r0, #NWD_R8_OFF]
+	str	r9,  [r0, #NWD_R9_OFF]
+	str	r10, [r0, #NWD_R10_OFF]
+	str	r11, [r0, #NWD_R11_OFF]
+	/*     - sp & lr */
+	cps	#Mode_SVC
+	str	sp, [r0, #NWD_SVC_SP_OFF]
+	str	lr, [r0, #NWD_SVC_LR_OFF]
+	/*   - Restore SWd registers */
+	/*     - sp */
+	ldr	sp, [r0, #SWD_SVC_SP_OFF]
+	cps	#Mode_MON
 
-	/* Restore NWd cpsr in monitor spsr such that it returns to NWd
-	 * by restoring spsr to NWd
-	 */
-	ldr	r1, [r0, #NWD_CPSR_OFF]
+	/*     - lr */
+	ldr	lr, [r0, #SWD_PC_OFF]
 
-	/*
-	 * Note: The monitor spsr is cloberred here which is SWd cpsr. This is
-	 * not of a issue as of now since interrupts are not enabled in the
-	 * SWd during entire operation. In future if interrupts are supported
-	 * in the SWd then the SWd's cpsr (which is in mon_spsr has to be saved
-	 * and restored properly.
-	 */
-	msr	spsr_cxsf, r1
+	/* Restore corrupted registers */
+	ldmia	sp!, {r0-r3}
 
-	/* Restore NWd r8-r11 registers */
-//	LDR	r8, [r0, #NWD_R8_OFF]
-//	LDR	r9, [r0, #NWD_R9_OFF]
-//	LDR	r10, [r0, #NWD_R10_OFF]
-//	LDR	r11, [r0, #NWD_R11_OFF]
+	/* Call service manager (svc_mgr_*) that further executes service function */
+	/* (take cpsr from database as well) */
+	rfe	lr
 
-	/* The following pop is not necessary here since these registers are
-	 * not used further. However to adjust the stack pointer as used
-	 * earlier for the scratch registers the pop is being used here.
-	 */
-	//ldmia		sp!, {r0-r3}
-
-	/*
-	 * Zero out r1-r7 and r12 registers to ensure that no information is
-	 * leaked out from the SWd
-	 * r8-r11 are non-corruptible registers. Therefore, r8-r11 registers
-	 * values are not touched here. They are restored to the NWd's actual
-	 * values above using RESTORE_NWD_SAVED_REGS
-	 */
-//	MOV	r1, #0
-//	MOV	r2, #0
-//	MOV	r3, #0
-//	MOV	r4, #0
-//	MOV	r5, #0
-//	MOV	r6, #0
-//	MOV	r7, #0
-//	MOV	r12, #0
-
-	/* restore mon_lr to NWd return point */
-
-	ldr	lr, [r0, #NWD_PC_OFF]
-
-	ldr	r2, =NWD_BOOT_ADDR
-	cmp	lr, r2
-	bne	2f
-	led_d8_on
-	b	1f
-2:
-	led_d9_on
-1:
-	movs	pc, lr
+swd_to_nwd:
+	/* TODO */
 
 	.end

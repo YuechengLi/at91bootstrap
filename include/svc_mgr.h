@@ -26,28 +26,20 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.section monitor_handler_sec
-	.text
-	.align
+#ifndef __SVC_MGR_H__
+#define __SVC_MGR_H__
 
-	.extern svc_mgr_main
-	.global svc_mgr_veneer
+/* A structure which can hold the contents of the registers r0-r7 */
+struct smc_args_t
+{
+	unsigned int	r0;
+	unsigned int	r1;
+	unsigned int	r2;
+	unsigned int	r3;
+	unsigned int	r4;
+	unsigned int	r5;
+	unsigned int	r6;
+	unsigned int	r7;
+};
 
-svc_mgr_veneer:
-	/* Push registers onto the stack */
-	stmdb	sp!, {r0-r7}
-	/* r0 should point to the argument structure */
-	mov	r0, sp
-
-	/* Call the C code SMC handler */
-	bl	svc_mgr_main
-
-	/* Restore the stack pointer to reset value */
-	add	sp, sp, #(8*4)
-
-	/* Return to Normal World */
-	smc	#0
-
-	bx	lr
-
-	.end
+#endif

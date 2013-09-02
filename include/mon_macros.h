@@ -25,28 +25,29 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 /*
-;------------------------------------------------------------------------------
-; MON_DATA_BASE area is used by the monitor to save and restore
-; all resources affected by the context switching.
-; - All general purpose ARM registers
-; - Any coprocessor registers, such as NEON or VFP
-;   (not needed in our case as we are not dealing with floating point in SWd)
-; - Any world-dependant processor configuration state in CP15
-;   (TODO: what does it cover?)
-;
-; Note: we consider that there is no IRQ nor FIQ management in SWd.
-;
-; r0-r7, r12 registers are considered as corruptbile
-; r8-r11 and lr, sp and cpsr needs to be properly saved and restored
-; NWd Call to SWd function:
-;      Save    -> r8-r11, svc_lr and svc_sp, cpsr
-;      Restore -> svc_lr, svc_sp, and cpsr
-; SWd return after completing service function execution:
-;      Save    -> svc_lr, svc_sp, and cpsr
-;      Restore -> r8-r11, svc_lr and svc_sp, cpsr
-;------------------------------------------------------------------------------
-*/
+ *------------------------------------------------------------------------------
+ * MON_DATA_BASE area is used by the monitor to save and restore
+ * all resources affected by the context switching.
+ * - All general purpose ARM registers
+ * - Any coprocessor registers, such as NEON or VFP
+ *   (not needed in our case as we are not dealing with floating point in SWd)
+ * - Any world-dependant processor configuration state in CP15
+ *   (TODO: what does it cover?)
+ *
+ * Note: we consider that there is no IRQ nor FIQ management in SWd.
+ *
+ * r0-r7, r12 registers are considered as corruptbile
+ * r8-r11 and lr, sp and cpsr needs to be properly saved and restored
+ * NWd call to SWd function:
+ *      Save    -> r8-r11, svc_lr and svc_sp, cpsr
+ *      Restore -> svc_sp, and cpsr
+ * SWd return after completing service function execution:
+ *      Save    -> svc_lr, svc_sp, and cpsr
+ *      Restore -> r8-r11, svc_lr and svc_sp, cpsr
+ *------------------------------------------------------------------------------
+ */
 #ifndef __MON_MACROS_H__
 #define __MON_MACROS_H__
 
@@ -59,12 +60,11 @@
 #define NWD_R9_OFF	20
 #define NWD_R10_OFF	24
 #define NWD_R11_OFF	28
-#define NWD_R12_OFF     32
-#define NWD_DB_END_OFF	NWD_R12_OFF
+#define NWD_DB_END_OFF	NWD_R11_OFF
 
 /*
  * SWd critical registers fields offsets from the MON_DATA_BASE area
- * to execute sevice functions in SVC mode which uses SWd SVC stack.
+ * to execute sevice functions in SVC mode which uses SWd SVC stack
  */
 #define SWD_PC_OFF	(NWD_DB_END_OFF + 4)
 #define SWD_CPSR_OFF	(NWD_DB_END_OFF + 8)
@@ -98,7 +98,7 @@
 
 /*
  *-----------------------------------------------------------------------------
- * Standard definitions of SCR IRQ and FIQ bits(Secure Configuration Register)
+ * Standard definitions of SCR IRQ and FIQ bits (Secure Configuration Register)
  *-----------------------------------------------------------------------------
  */
 #define SCR_FIQ_BIT	0x04	/* SCR[1](FIQ) bit on an FIQ exception */
@@ -155,9 +155,11 @@
 #define STACK_SIZE		0x400
 #define MON_DATA_BASE_SIZE	STACK_SIZE /* can be optimized */
 
-#define MON_STACK_BASE		TOP_OF_MEMORY
-#define MON_DATA_BASE		(MON_STACK_BASE - STACK_SIZE)
-#define SVC_STACK_BASE		(MON_DATA_BASE - MON_DATA_BASE_SIZE)
+/* Monitor data base area is ascending */
+#define MON_DATA_BASE		(TOP_OF_MEMORY - MON_DATA_BASE_SIZE)
+/* Stacks are descending */
+#define MON_STACK_BASE		MON_DATA_BASE
+#define SVC_STACK_BASE		(MON_STACK_BASE - STACK_SIZE)
 #define SYS_STACK_BASE		(SVC_STACK_BASE - STACK_SIZE)
 
 /* Subsequent application boot address (from configuration) */

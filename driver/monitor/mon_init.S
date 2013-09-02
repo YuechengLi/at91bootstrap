@@ -34,6 +34,7 @@
 
 	.global monitor_init
 	.extern monitor_vectors
+	.extern svc_mgr_veneer
 
 #define	PIOE_BASE_ADDR		0xfc06d000
 
@@ -65,7 +66,6 @@ monitor_init:
 
 	/* set the monitor stack */
 	ldr	sp, =MON_STACK_BASE
-	bic	sp, sp, #0x7
 
 	/* set the monitor vector base */
 	ldr	r2, =monitor_vectors
@@ -82,13 +82,16 @@ monitor_init:
 	/* Set NWd initial CPSR and PC (NWd boot entry address) */
 	ldr	r0, =MON_DATA_BASE
 
-	/* Set initial NWd CPSR state value */
 	ldr	r1, =INITIAL_NWD_CPSR
 	str	r1, [r0, #NWD_CPSR_OFF]
-
-	/* Set initial NWd PC value */
 	ldr	r1, =NWD_BOOT_ADDR
 	str	r1, [r0, #NWD_PC_OFF]
+
+	/* Set SWd initial CPSR and PC (NWd boot entry address) */
+	ldr	r1, =INITIAL_SWD_CPSR
+	str	r1, [r0, #SWD_CPSR_OFF]
+	ldr	r1, =svc_mgr_veneer
+	str	r1, [r0, #SWD_PC_OFF]
 
 	/* Switch back to SVC mode */
 	mrs	r0, cpsr
