@@ -28,7 +28,6 @@
 #include "common.h"
 #include "hardware.h"
 #include "arch/tz_matrix.h"
-#include "debug.h"
 
 #define MATRIX_AXIMX	1
 #define MATRIX_H64MX	2
@@ -306,27 +305,44 @@ static struct peri_security *get_peri_security(unsigned int peri_id)
 			NULL : (struct peri_security *)&peri_security_array[i];
 }
 
+static int matrix_set_peri_security(unsigned int matrix, unsigned peri_id)
+{
+	unsigned int base;
+	unsigned int spselr;
+	unsigned int idx;
+	unsigned int bit;
+
+	idx = peri_id / 32;
+	if (idx > 3)
+		return -1;
+
+	bit = (0x01 << (peri_id % 32));
+	if (matrix == MATRIX_H32MX)
+		base = AT91C_BASE_MATRIX32;
+	else if (matrix == MATRIX_H64MX)
+		base = AT91C_BASE_MATRIX64;
+	else
+		return -1;
+
+	spselr = matrix_read(base, MATRIX_SPSELR(idx));
+	spselr |= bit;
+	matrix_write(base, MATRIX_SPSELR(idx), spselr);
+
+	return 0;
+}
+
 int matrix_configure_peri_security(unsigned int *peri_id_array,
 					unsigned int size)
 {
 	unsigned int i;
 	unsigned int *peri_id_p;
+	unsigned int matrix;
 	unsigned int peri_id;
 	struct peri_security *periperal_sec;
-	unsigned int base;
-	unsigned int h32mx_spselr[3], h64mx_spselr[3];
-	unsigned int spselr;
-	unsigned int n, bit;
+	int ret;
 
 	if ((peri_id_array == NULL) || (size == 0))
 		return -1;
-
-	for (i = 0; i < 3; i++) {
-		h32mx_spselr[i] = matrix_read(AT91C_BASE_MATRIX32,
-						MATRIX_SPSELR(i));
-		h64mx_spselr[i] = matrix_read(AT91C_BASE_MATRIX64,
-						MATRIX_SPSELR(i));
-	}
 
 	peri_id_p = peri_id_array;
 	for (i = 0; i < size; i++) {
@@ -337,29 +353,13 @@ int matrix_configure_peri_security(unsigned int *peri_id_array,
 		if (periperal_sec->security_type != SECURITY_TYPE_PS)
 			return -1;
 
+		matrix = periperal_sec->matrix;
 		peri_id = *peri_id_p;
-		n = peri_id / 32;
-		bit = (0x01 << (peri_id % 32));
-		if (periperal_sec->matrix == MATRIX_H32MX) {
-			h32mx_spselr[n] |= bit;
-			base = AT91C_BASE_MATRIX32;
-			spselr = h32mx_spselr[n];
-		} else {
-			h64mx_spselr[n] |= bit;
-			base = AT91C_BASE_MATRIX64;
-			spselr = h64mx_spselr[n];
-		}
-
-		matrix_write(base, MATRIX_SPSELR(n), spselr);
+		ret = matrix_set_peri_security(matrix, peri_id);
+		if (ret)
+			return -1;
 
 		peri_id_p++;
-	}
-
-	for (i = 0; i < 3; i++) {
-		h32mx_spselr[i] = matrix_read(AT91C_BASE_MATRIX32,
-						MATRIX_SPSELR(i));
-		h64mx_spselr[i] = matrix_read(AT91C_BASE_MATRIX64,
-						MATRIX_SPSELR(i));
 	}
 
 	return 0;

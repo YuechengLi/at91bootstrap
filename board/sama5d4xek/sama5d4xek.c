@@ -522,9 +522,6 @@ void hw_init(void)
 	/* initialize the dbgu */
 	initialize_console();
 
-	/* initialize the dbgu */
-	initialize_console();
-
 	/* Init timer */
 	timer_init();
 
