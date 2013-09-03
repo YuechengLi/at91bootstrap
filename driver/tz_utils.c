@@ -29,32 +29,16 @@
 #include "mon.h"
 #include "debug.h"
 
-void SWd_CPSR_EnableAsyncAbort(void)
-{
-	asm("cpsie A\n"
-	"bx lr");
-}
-
-void smc_enter_normal_world(void)
+void enter_normal_world(void)
 {
 	asm("smc #0");
-}
-
-void prepare_normal_world(unsigned int NWd_base_addr)
-{
-	int i;
-	unsigned int *addr = (unsigned int *)NWd_base_addr;
-
-	/* 8 while(true) loops to stop cpu */
-	for (i = 0 ; i < 8; i++)
-		*addr++ = 0xeafffffe;
 }
 
 void switch_normal_world(void)
 {
 	monitor_init();
 
-	dbg_log(1, "TrustZone: Enter Normal World\n\r");
+	dbg_log(1, "Enter Normal World, Run at %d\n\r", NWD_BOOT_ADDR);
 
-	smc_enter_normal_world();
+	enter_normal_world();
 }

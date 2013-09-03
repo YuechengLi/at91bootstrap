@@ -26,7 +26,7 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.section monitor_vector_sec
+.section monitors
 	 .text
 	 .align 8
 
@@ -37,7 +37,7 @@
  *-----------------------------------------------------------------------------
  * Monitor exception vector table
  *      Most of these exceptions does not do anything other than branching to
- *      itself except SMC vector. The SMC vector jumps to SMC handler which
+ *      itself except smc vector. The SMC vector jumps to smc handler which
  *      takes care of proper switching from NWd to SWd and from SWd to NWd.
  * -----------------------------------------------------------------------------
  */

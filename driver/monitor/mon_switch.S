@@ -26,43 +26,12 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include <mon_macros.h>
-#include "arch/at91_pio.h"
 
-.section monitor_handler_sec
+.section monitors
 	.text
 	.align
 
 	.global monitor_smc_handler
-
-#define	PIOE_BASE_ADDR		0xfc06d000
-
-	.macro  led_d8_on
-	mov	r1, #0x01
-	mov 	r0, r1, lsl #28
-	ldr	r1,  =(PIOE_BASE_ADDR)
-	str	r0, [r1, #PIO_CODR]
-	.endm
-
-	.macro  led_d8_off
-	mov	r1, #0x01
-	mov 	r0, r1, lsl #28
-	ldr	r1,  =(PIOE_BASE_ADDR)
-	str	r0, [r1, #PIO_SODR]
-	.endm
-
-	.macro  led_d9_on
-	mov	r1, #0x01
-	mov 	r0, r1, lsl #9
-	ldr	r1,  =(PIOE_BASE_ADDR)
-	str	r0, [r1, #PIO_SODR]
-	.endm
-
-	.macro  led_d9_off
-	mov	r1, #0x01
-	mov 	r0, r1, lsl #9
-	ldr	r1,  =(PIOE_BASE_ADDR)
-	str	r0, [r1, #PIO_CODR]
-	.endm
 
 monitor_smc_handler:
 	/* Save some workable registers */
@@ -79,11 +48,11 @@ monitor_smc_handler:
 	 * If NS bit is set then it is a call from NWd
 	 * Otherwise it is a return from SWd
 	 */
-	BEQ	swd_to_nwd
+	beq	swd_to_nwd
 
 nwd_to_swd:
 	bic	r0, r0, #NS_BIT
-	MCR	p15, 0, r0, c1, c1, 0
+	mcr	p15, 0, r0, c1, c1, 0
 	/* ~~~ We are in SWd from now on ~~~ */
 
 	/* - Implement the NWd --> SWd sequence as described in mon_macro.h */
@@ -116,9 +85,59 @@ nwd_to_swd:
 
 	/* Call service manager (svc_mgr_*) that further executes service function */
 	/* (take cpsr from database as well) */
-	rfe	lr
+       clrex
+
+       movs	pc, lr
 
 swd_to_nwd:
-	/* TODO */
+	/* - Implement the SWd -->NSWd sequence as described in mon_macro.h */
+	ldr	r0, =MON_DATA_BASE
+
+	/*   - Save SWd sp registers */
+	cps	#Mode_SVC
+	str	sp,  [r0, #SWD_SVC_SP_OFF]
+
+	/* - Restrore SVC sp & lr */
+	ldr	sp, [r0, #NWD_SVC_SP_OFF]
+	ldr	lr, [r0, #NWD_SVC_LR_OFF]
+	cps	#Mode_MON
+
+	/* Switch to NWd */
+	mrc	p15, 0, r0, c1, c1, 0
+	orr	r0, r0, #1
+	mcr	p15, 0, r0, c1, c1, 0
+	/* ~~~ We are in NWd from now on ~~~ */
+
+	/* Restore NWd other registers */
+	ldr	r0, =MON_DATA_BASE
+
+       /* Restore NWd cpsr in monitor spsr */
+	ldr	r1, [r0, #NWD_CPSR_OFF]
+	msr	spsr_cxsf, r1
+
+	ldr	lr, [r0, #NWD_PC_OFF]
+
+	/* - r8-r11*/
+	ldr	r8, [r0, #NWD_R8_OFF]
+	ldr	r9, [r0, #NWD_R9_OFF]
+	ldr	r10, [r0, #NWD_R10_OFF]
+	ldr	r11, [r0, #NWD_R11_OFF]
+
+	/* to adjust the stack pointer */
+	ldmia	sp!, {r0-r3}
+
+	/* Zero out r1-r7 and r12 registers */
+	mov	r1, #0
+	mov	r2, #0
+	mov	r3, #0
+	mov	r4, #0
+	mov	r5, #0
+	mov	r6, #0
+	mov	r7, #0
+	mov	r12, #0
+
+	clrex
+
+	movs	pc, lr
 
 	.end

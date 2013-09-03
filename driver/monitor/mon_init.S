@@ -26,24 +26,14 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include <mon_macros.h>
-#include "arch/at91_pio.h"
 
-.section monitor_init_sec
+.section monitors
 	.text
 	.align
 
 	.global monitor_init
 	.extern monitor_vectors
 	.extern svc_mgr_veneer
-
-#define	PIOE_BASE_ADDR		0xfc06d000
-
-	.macro  led_d8_on
-	mov	r1, #0x01
-	mov 	r0, r1, lsl #28
-	ldr	r1,  =(PIOE_BASE_ADDR)
-	str	r0, [r1, #PIO_CODR]
-	.endm
 
 #define NSACR_CLR_BITS  (NSACR_BIT_NSD32DIS | NSACR_BIT_NSASEDIS)
 #define NSACR_SET_BITS  (NSACR_BIT_CP | NSACR_BIT_SMP)
@@ -70,14 +60,6 @@ monitor_init:
 	/* set the monitor vector base */
 	ldr	r2, =monitor_vectors
 	mcr	p15, 0, r2, c12, c0, 1
-
-        /* Configure SCR
-         * Non secure parameters for tests only
-	 */
-	mrc	p15, 0, r0, c1, c1, 0
-	ldr	r1, =(SCR_AW_BIT)
-	orr	r0, r0, r1
-	mcr	p15, 0, r0, c1, c1, 0
 
 	/* Set NWd initial CPSR and PC (NWd boot entry address) */
 	ldr	r0, =MON_DATA_BASE
