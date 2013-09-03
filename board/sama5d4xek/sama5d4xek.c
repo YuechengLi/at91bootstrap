@@ -534,7 +534,7 @@ void hw_init(void)
 	ddramc_init();
 #endif
 	/* load one wire information */
-/*	one_wire_hw_init(); */
+	one_wire_hw_init();
 
 #ifdef CONFIG_USER_HW_INIT
 	hw_init_hook();

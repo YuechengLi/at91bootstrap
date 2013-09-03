@@ -135,7 +135,7 @@ int main(void)
 
 #ifdef CONFIG_LOAD_ONE_WIRE
 	/* Load one wire informaion */
-/*	load_1wire_info(); */
+	load_1wire_info();
 #endif
 	init_loadfunction();
 
