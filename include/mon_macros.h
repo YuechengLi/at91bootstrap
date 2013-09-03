@@ -160,7 +160,6 @@
 /* Stacks are descending */
 #define MON_STACK_BASE		MON_DATA_BASE
 #define SVC_STACK_BASE		(MON_STACK_BASE - STACK_SIZE)
-#define SYS_STACK_BASE		(SVC_STACK_BASE - STACK_SIZE)
 
 /* Subsequent application boot address (from configuration) */
 #define NWD_BOOT_ADDR		JUMP_ADDR
