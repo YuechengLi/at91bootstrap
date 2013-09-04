@@ -216,24 +216,24 @@ static void one_wire_hw_init(void)
 
 static int matrix_configure_slave(void)
 {
-	unsigned int i;
+	unsigned int ddr_port;
 	unsigned int ssr_setting, sasplit_setting, srtop_setting;
 
-	/* Bridge from M64MX to AXIMX */
-	matrix_configure_slave_security(AT91C_BASE_MATRIX64,
-					H64MX_SLAVE_BRIDGE_TO_AXIMX,
-					0xffffffff,
-					0xffffffff,
-					0xffffffff);
+	/*
+	 * Matrix 0 (H64MX)
+	 */
 
-	/* H64MX Peripheral Bridge: Not Security */
+	/* 1: H64MX Peripheral Bridge: Not Security */
+	srtop_setting = 0xffffffff;
+	sasplit_setting = 0xffffffff;
+	ssr_setting = 0xffffffff;
 	matrix_configure_slave_security(AT91C_BASE_MATRIX64,
 					H64MX_SLAVE_PERI_BRIDGE,
-					0xffffffff,
-					0xffffffff,
-					0xffffffff);
+					srtop_setting,
+					sasplit_setting,
+					ssr_setting);
 
-	/* Video Decoder 128K: Not Security */
+	/* 2: Video Decoder 128K: Not Security */
 	srtop_setting = MATRIX_SRTOP(0, MATRIX_SRTOP_VALUE_128K);
 	sasplit_setting = MATRIX_SASPLIT(0, MATRIX_SASPLIT_VALUE_128K);
 	ssr_setting = (MATRIX_LANSECH_NS(0)
@@ -245,37 +245,34 @@ static int matrix_configure_slave(void)
 					sasplit_setting,
 					ssr_setting);
 
-	/* DDR2 Port1 ~ 7: Not-Security */
-	srtop_setting = MATRIX_SRTOP(0, MATRIX_SRTOP_VALUE_64M);
-	sasplit_setting = (MATRIX_SASPLIT(0, MATRIX_SASPLIT_VALUE_64M)
-				| MATRIX_SASPLIT(1, MATRIX_SASPLIT_VALUE_64M)
-				| MATRIX_SASPLIT(2, MATRIX_SASPLIT_VALUE_64M)
-				| MATRIX_SASPLIT(3, MATRIX_SASPLIT_VALUE_64M)
-				| MATRIX_SASPLIT(4, MATRIX_SASPLIT_VALUE_64M)
-				| MATRIX_SASPLIT(5, MATRIX_SASPLIT_VALUE_64M)
-				| MATRIX_SASPLIT(6, MATRIX_SASPLIT_VALUE_64M)
-				| MATRIX_SASPLIT(7, MATRIX_SASPLIT_VALUE_64M));
-	ssr_setting = (MATRIX_LANSECH_NS(0) | MATRIX_LANSECH_NS(1)
-				| MATRIX_LANSECH_NS(2) | MATRIX_LANSECH_NS(3)
-				| MATRIX_LANSECH_NS(4) | MATRIX_LANSECH_NS(5)
-				| MATRIX_LANSECH_NS(5) | MATRIX_LANSECH_NS(7)
-				| MATRIX_RDNSECH_NS(0) | MATRIX_RDNSECH_NS(1)
-				| MATRIX_RDNSECH_NS(2) | MATRIX_RDNSECH_NS(3)
-				| MATRIX_RDNSECH_NS(4) | MATRIX_RDNSECH_NS(5)
-				| MATRIX_RDNSECH_NS(6) | MATRIX_RDNSECH_NS(7)
-				| MATRIX_WRNSECH_NS(0) | MATRIX_WRNSECH_NS(1)
-				| MATRIX_WRNSECH_NS(2) | MATRIX_WRNSECH_NS(3)
-				| MATRIX_WRNSECH_NS(4) | MATRIX_WRNSECH_NS(5)
-				| MATRIX_WRNSECH_NS(6) | MATRIX_WRNSECH_NS(7));
-	for (i = 1; i < 8; i++) {
+	/* 3 ~ 10 DDR2 Port1 ~ 7: Not-Security */
+	srtop_setting = MATRIX_SRTOP(0, MATRIX_SRTOP_VALUE_128M);
+	sasplit_setting = (MATRIX_SASPLIT(0, MATRIX_SASPLIT_VALUE_128M)
+				| MATRIX_SASPLIT(1, MATRIX_SASPLIT_VALUE_128M)
+				| MATRIX_SASPLIT(2, MATRIX_SASPLIT_VALUE_128M)
+				| MATRIX_SASPLIT(3, MATRIX_SASPLIT_VALUE_128M));
+	ssr_setting = (MATRIX_LANSECH_NS(0)
+			| MATRIX_LANSECH_NS(1)
+			| MATRIX_LANSECH_NS(2)
+			| MATRIX_LANSECH_NS(3)
+			| MATRIX_RDNSECH_NS(0)
+			| MATRIX_RDNSECH_NS(1)
+			| MATRIX_RDNSECH_NS(2)
+			| MATRIX_RDNSECH_NS(3)
+			| MATRIX_WRNSECH_NS(0)
+			| MATRIX_WRNSECH_NS(1)
+			| MATRIX_WRNSECH_NS(2)
+			| MATRIX_WRNSECH_NS(3));
+	/* DDR port 0 not used from NWd */
+	for (ddr_port = 1; ddr_port < 8; ddr_port++) {
 		matrix_configure_slave_security(AT91C_BASE_MATRIX64,
-					(H64MX_SLAVE_DDR2_PORT_0 + i),
+					(H64MX_SLAVE_DDR2_PORT_0 + ddr_port),
 					srtop_setting,
 					sasplit_setting,
 					ssr_setting);
 	}
 
-	/* Internal SRAM 128K: Not-Security */
+	/* 11: Internal SRAM 128K: Not-Security */
 	srtop_setting = MATRIX_SRTOP(0, MATRIX_SRTOP_VALUE_128K);
 	sasplit_setting = MATRIX_SASPLIT(0, MATRIX_SASPLIT_VALUE_128K);
 	ssr_setting = (MATRIX_LANSECH_NS(0)
@@ -287,92 +284,31 @@ static int matrix_configure_slave(void)
 					sasplit_setting,
 					ssr_setting);
 
-	/* Bridge from H64MX to H32MX: Not-Security */
+	/* 12:  Bridge from H64MX to H32MX: Not-Security */
+	srtop_setting = 0xffffffff;
+	sasplit_setting = 0xffffffff;
+	ssr_setting = 0xffffffff;
 	matrix_configure_slave_security(AT91C_BASE_MATRIX64,
 					H64MX_SLAVE_BRIDGE_TO_H32MX,
-					0xffffffff,
-					0xffffffff,
-					0xffffffff);
+					srtop_setting,
+					sasplit_setting,
+					ssr_setting);
 
-	/* Bridge from H32MX to H64MX */
-	matrix_configure_slave_security(AT91C_BASE_MATRIX32,
-					H32MX_BRIDGE_TO_H64MX,
-					0xffffffff,
-					0xffffffff,
-					0xffffffff);
+	/*
+	 * Matrix 1 (H32MX)
+	 */
 
-	/* H32MX Peripheral Bridge 0 */
-	matrix_configure_slave_security(AT91C_BASE_MATRIX32,
-					H32MX_PERI_BRIDGE_0,
-					0xffffffff,
-					0xffffffff,
-					0xffffffff);
-
-	/* H32MX Peripheral Bridge 1 */
-	matrix_configure_slave_security(AT91C_BASE_MATRIX32,
-					H32MX_PERI_BRIDGE_1,
-					0xffffffff,
-					0xffffffff,
-					0xffffffff);
-
-	/* External Bus Interface: Not-Security */
-	srtop_setting = (MATRIX_SRTOP(0, MATRIX_SRTOP_VALUE_8M)
-			| MATRIX_SRTOP(1, MATRIX_SRTOP_VALUE_8M)
-			| MATRIX_SRTOP(2, MATRIX_SRTOP_VALUE_8M)
-			| MATRIX_SRTOP(3, MATRIX_SRTOP_VALUE_8M)
-			| MATRIX_SRTOP(4, MATRIX_SRTOP_VALUE_8M)
-			| MATRIX_SRTOP(5, MATRIX_SRTOP_VALUE_8M)
-			| MATRIX_SRTOP(6, MATRIX_SRTOP_VALUE_8M)
-			| MATRIX_SRTOP(7, MATRIX_SRTOP_VALUE_8M));
-
-	sasplit_setting = (MATRIX_SASPLIT(0, MATRIX_SASPLIT_VALUE_8M)
-			| MATRIX_SASPLIT(1, MATRIX_SASPLIT_VALUE_8M)
-			| MATRIX_SASPLIT(2, MATRIX_SASPLIT_VALUE_8M)
-			| MATRIX_SASPLIT(3, MATRIX_SASPLIT_VALUE_8M)
-			| MATRIX_SASPLIT(4, MATRIX_SASPLIT_VALUE_8M)
-			| MATRIX_SASPLIT(5, MATRIX_SASPLIT_VALUE_8M)
-			| MATRIX_SASPLIT(6, MATRIX_SASPLIT_VALUE_8M)
-			| MATRIX_SASPLIT(7, MATRIX_SASPLIT_VALUE_8M));
-
-	ssr_setting = (MATRIX_LANSECH_NS(0) | MATRIX_LANSECH_NS(1)
-			| MATRIX_LANSECH_NS(2) | MATRIX_LANSECH_NS(3)
-			| MATRIX_LANSECH_NS(4) | MATRIX_LANSECH_NS(5)
-			| MATRIX_LANSECH_NS(6) | MATRIX_LANSECH_NS(7)
-			| MATRIX_RDNSECH_NS(0) | MATRIX_RDNSECH_NS(1)
-			| MATRIX_RDNSECH_NS(2) | MATRIX_RDNSECH_NS(3)
-			| MATRIX_RDNSECH_NS(4) | MATRIX_RDNSECH_NS(5)
-			| MATRIX_RDNSECH_NS(6) | MATRIX_RDNSECH_NS(7)
-			| MATRIX_WRNSECH_NS(0) | MATRIX_WRNSECH_NS(1)
-			| MATRIX_WRNSECH_NS(2) | MATRIX_WRNSECH_NS(3)
-			| MATRIX_WRNSECH_NS(4) | MATRIX_WRNSECH_NS(5)
-			| MATRIX_WRNSECH_NS(6) | MATRIX_WRNSECH_NS(7));
-
+	/* 3: External Bus Interface: Not-Security */
+	srtop_setting = 0xffffffff;
+	sasplit_setting = 0xffffffff;
+	ssr_setting = 0xffffffff;
 	matrix_configure_slave_security(AT91C_BASE_MATRIX32,
 					H32MX_EXTERNAL_EBI,
 					srtop_setting,
 					sasplit_setting,
 					ssr_setting);
 
-#if 0
-	/* NFC command registers (256M): Not-Security */
-	srtop_setting = MATRIX_SRTOP(0, MATRIX_SRTOP_VALUE_64M);
-	sasplit_setting = (MATRIX_SASPLIT(0, MATRIX_SASPLIT_VALUE_64M)
-			| MATRIX_SASPLIT(1, MATRIX_SASPLIT_VALUE_64M)
-			| MATRIX_SASPLIT(2, MATRIX_SASPLIT_VALUE_64M)
-			| MATRIX_SASPLIT(3, MATRIX_SASPLIT_VALUE_64M));
-	ssr_setting = (MATRIX_LANSECH_NS(0) | MATRIX_LANSECH_NS(1)
-			| MATRIX_LANSECH_NS(2) | MATRIX_LANSECH_NS(3)
-			| MATRIX_RDNSECH_NS(0) | MATRIX_RDNSECH_NS(1)
-			| MATRIX_RDNSECH_NS(2) | MATRIX_RDNSECH_NS(3)
-			| MATRIX_WRNSECH_NS(0) | MATRIX_WRNSECH_NS(1)
-			| MATRIX_WRNSECH_NS(1) | MATRIX_WRNSECH_NS(3));
-	matrix_configure_slave_security(AT91C_BASE_MATRIX32,
-					H32MX_NFC_CMD_REG,
-					srtop_setting,
-					ssr_setting,
-					ssr_setting);
-#endif
-	/* NFC SRAM (4K): Not-Security */
+	/* 4: NFC SRAM (4K): Not-Security */
 	srtop_setting = MATRIX_SRTOP(0, MATRIX_SRTOP_VALUE_4K);
 	sasplit_setting = MATRIX_SASPLIT(0, MATRIX_SASPLIT_VALUE_4K);
 	ssr_setting = (MATRIX_LANSECH_NS(0)
@@ -384,25 +320,17 @@ static int matrix_configure_slave(void)
 					sasplit_setting,
 					ssr_setting);
 
-	/* UDPHS RAM(1M), UHP OHCI (1M), UHP EHCI (1M): Not-Security */
-	srtop_setting = (MATRIX_SRTOP(0, MATRIX_SRTOP_VALUE_1M)
-			| MATRIX_SRTOP(1, MATRIX_SRTOP_VALUE_1M)
-			| MATRIX_SRTOP(2, MATRIX_SRTOP_VALUE_1M));
-	sasplit_setting = (MATRIX_SASPLIT(0, MATRIX_SASPLIT_VALUE_1M)
-			| MATRIX_SASPLIT(1, MATRIX_SASPLIT_VALUE_1M)
-			| MATRIX_SASPLIT(2, MATRIX_SASPLIT_VALUE_1M));
-	ssr_setting = (MATRIX_LANSECH_NS(0) | MATRIX_LANSECH_NS(1)
-			| MATRIX_LANSECH_NS(2) | MATRIX_RDNSECH_NS(0)
-			| MATRIX_RDNSECH_NS(1) | MATRIX_RDNSECH_NS(2)
-			| MATRIX_WRNSECH_NS(0) | MATRIX_WRNSECH_NS(1)
-			| MATRIX_WRNSECH_NS(2));
+	/* 5: DPHS RAM(1M), UHP OHCI (1M), UHP EHCI (1M): Not-Security */
+	srtop_setting = 0xffffffff;
+	sasplit_setting = 0xffffffff;
+	ssr_setting = 0xffffffff;
 	matrix_configure_slave_security(AT91C_BASE_MATRIX32,
 					H32MX_USB,
 					srtop_setting,
 					sasplit_setting,
 					ssr_setting);
 
-	/* Soft Modem (1M): Not-Security */
+	/* 6: Soft Modem (1M): Not-Security */
 	srtop_setting = MATRIX_SRTOP(0, MATRIX_SRTOP_VALUE_1M);
 	sasplit_setting = MATRIX_SASPLIT(0, MATRIX_SASPLIT_VALUE_1M);
 	ssr_setting = (MATRIX_LANSECH_NS(0)
