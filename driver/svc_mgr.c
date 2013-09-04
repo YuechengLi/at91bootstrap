@@ -26,30 +26,71 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include "svc_mgr.h"
+#include "arch/at91_pmc.h"
+#include "pmc.h"
+#include "matrix.h"
+#include "l2cc.h"
 #include "debug.h"
 
 /*
- * svc_mgr_main - C entry point of the secure world when a SMC is processed in Normal World
+ * svc_mgr_main - C entry point of the secure world when a SMC is processed
+ * in the Normal World
  */
-int svc_mgr_main(struct smc_args_t const * args)
+int svc_mgr_main(struct smc_args_t const *args)
 {
+	int ret = 0;
+
 	dbg_log(1, "--> svc_mgr_main\n\r");
 
-#if 0
 	switch (args->r0) {
+	case 0x24:
+		if (args->r1 == PMC_PLLAR
+			|| args->r1 == PMC_MCKR)
+			ret = pmc_read_reg(args->r1);
+		else
+			ret = -1;
+		break;
+
+	case 0x25:
+		if (is_peripheral_secure(args->r1))
+			ret = -1;
+		else
+			ret = pmc_periph_clk(args->r1, args->r2);
+		break;
+
+	case 0x26:
+		if (is_sys_clk_secure(args->r1))
+			ret = -1;
+		else
+			ret = pmc_sys_clk(args->r1, args->r2);
+		break;
+
+	case 0x27:
+		if (is_usb_hs_secure())
+			ret = -1;
+		else
+			ret = pmc_uckr_clk(args->r1);
+		break;
+
+	case 0x28:
+		if (is_usb_host_secure())
+			ret = -1;
+		else
+			ret = pmc_usb_setup();
+		break;
+
 	case 0x42:
 		l2cache_init();
 		break;
+
 	default:
 		dbg_log(1, "svc mgr error: SMC ID (%d) not defined\n\r",
 							args->r0);
+		ret = -1;
 		break;
 	}
-#endif
-	dbg_log(1, "svc mgr error: SMC ID (%d) not defined\n\r",
-						args->r0);
 
 	dbg_log(1, "<-- svc_mgr_main\n\r");
 
-	return 0;
+	return ret;
 }

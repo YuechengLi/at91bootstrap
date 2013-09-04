@@ -1,8 +1,8 @@
 /* ----------------------------------------------------------------------------
  *         ATMEL Microcontroller Software Support
  * ----------------------------------------------------------------------------
- * Copyright (c) 2006, Atmel Corporation
-
+ * Copyright (c) 2013, Atmel Corporation
+ *
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,25 +25,9 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef __PMC_H__
-#define __PMC_H__
+#ifndef __L2CC_H__
+#define __L2CC_H__
 
-extern void pmc_init_pll(unsigned int pmc_pllicpr);
-extern int pmc_cfg_plla(unsigned int pmc_pllar, unsigned int timeout);
-extern int pmc_cfg_pllb(unsigned int pmc_pllbr, unsigned int timeout);
-extern int pmc_cfg_mck(unsigned int pmc_mckr, unsigned int timeout);
-extern int pmc_cfg_pck(unsigned char x,
-			unsigned int clk_sel,
-			unsigned int prescaler);
-extern int pmc_cfg_h32mxdiv(unsigned int pmc_mckr, unsigned int timeout);
-extern void pmc_peri_clock(unsigned int peri_id);
-extern void pmc_sys_clock(unsigned int clock_id);
+void l2cache_init(void);
 
-extern unsigned int pmc_read_reg(unsigned int reg_offset);
-extern int pmc_periph_clk(unsigned int periph_id, unsigned int is_on);
-extern unsigned int sys_mask_to_per_id(unsigned int sys_mask);
-extern int pmc_sys_clk(unsigned int sys_clock_mask, unsigned int is_on);
-extern int pmc_uckr_clk(unsigned int is_on);
-extern unsigned int pmc_usb_setup(void);
-
-#endif	/* #ifndef __PMC_H__ */
+#endif
