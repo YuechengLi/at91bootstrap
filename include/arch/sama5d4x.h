@@ -99,8 +99,9 @@
 #define AT91C_ID_AIC		65	/* Advanced Interrupt Controller */
 #define AT91C_ID_SAIC		66	/* SAIC */
 #define AT91C_ID_L2CC		67	/* L2 Cache Controller */
+#define AT91C_ID_PMC		68	/* Power Management Controller */
 
-#define AT91C_ID_COUNTS		(AT91C_ID_L2CC + 1)
+#define AT91C_ID_COUNTS		(AT91C_ID_PMC + 1)
 /*
  * User Peripherals physical base addresses.
  */

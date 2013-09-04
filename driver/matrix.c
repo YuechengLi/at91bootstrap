@@ -47,8 +47,116 @@ struct peri_security {
 static const struct peri_security peri_security_array[] = {
 	/* SAIC */
 	{
-		.peri_id = AT91C_ID_SAIC,
+		.peri_id = AT91C_ID_FIQ,
 		.matrix = MATRIX_H32MX,
+		.security_type = SECURITY_TYPE_AS,
+	},
+	/* SYS */
+	{
+		.peri_id = AT91C_ID_SYS,
+		.matrix = MATRIX_H32MX,
+		.security_type = SECURITY_TYPE_AS,
+	},
+	/* ARM */
+	{
+		.peri_id = AT91C_ID_ARM,
+		.matrix = MATRIX_H64MX,
+		.security_type = SECURITY_TYPE_AS,
+	},
+	/* PIT */
+	{
+		.peri_id = AT91C_ID_PIT,
+		.matrix = MATRIX_H32MX,
+		.security_type = SECURITY_TYPE_AS,
+	},
+	/* WDT */
+	{
+		.peri_id = AT91C_ID_WDT,
+		.matrix = MATRIX_H32MX,
+		.security_type = SECURITY_TYPE_AS,
+	},
+	/* PIOD */
+	{
+		.peri_id = AT91C_ID_PIOD,
+		.matrix = MATRIX_H32MX,
+		.security_type = SECURITY_TYPE_AS,
+	},
+	/* USART0 */
+	{
+		.peri_id = AT91C_ID_USART0,
+		.matrix = MATRIX_H32MX,
+		.security_type = SECURITY_TYPE_AS,
+	},
+	/* USART1 */
+	{
+		.peri_id = AT91C_ID_USART1,
+		.matrix = MATRIX_H32MX,
+		.security_type = SECURITY_TYPE_AS,
+	},
+	/* XDMAC0 */
+	{
+		.peri_id = AT91C_ID_XDMAC0,
+		.matrix = MATRIX_H64MX,
+		.security_type = SECURITY_TYPE_AS,
+	},
+	/* ICM */
+	{
+		.peri_id = AT91C_ID_ICM,
+		.matrix = MATRIX_H32MX,
+		.security_type = SECURITY_TYPE_AS,
+	},
+	/* PKCC */
+	{
+		.peri_id = AT91C_ID_PKCC,
+		.matrix = MATRIX_H64MX,
+		.security_type = SECURITY_TYPE_AS,
+	},
+	/* SCI */
+	{
+		.peri_id = AT91C_ID_SCI,
+		.matrix = MATRIX_H32MX,
+		.security_type = SECURITY_TYPE_AS,
+	},
+	/* AES */
+	{
+		.peri_id = AT91C_ID_AES,
+		.matrix = MATRIX_H32MX,
+		.security_type = SECURITY_TYPE_AS,
+	},
+	/* AESB */
+	{
+		.peri_id = AT91C_ID_AESB,
+		.matrix = MATRIX_H64MX,
+		.security_type = SECURITY_TYPE_AS,
+	},
+	/* TDES */
+	{
+		.peri_id = AT91C_ID_TDES,
+		.matrix = MATRIX_H32MX,
+		.security_type = SECURITY_TYPE_AS,
+	},
+	/* SHA */
+	{
+		.peri_id = AT91C_ID_SHA,
+		.matrix = MATRIX_H32MX,
+		.security_type = SECURITY_TYPE_AS,
+	},
+	/* MPDDRC */
+	{
+		.peri_id = AT91C_ID_MPDDRC,
+		.matrix = MATRIX_H64MX,
+		.security_type = SECURITY_TYPE_AS,
+	},
+	/* MATRIX1 */
+	{
+		.peri_id = AT91C_ID_MATRIX1,
+		.matrix = MATRIX_H32MX,
+		.security_type = SECURITY_TYPE_AS,
+	},
+	/* MATRIX0 */
+	{
+		.peri_id = AT91C_ID_MATRIX0,
+		.matrix = MATRIX_H64MX,
 		.security_type = SECURITY_TYPE_AS,
 	},
 	/* VDEC */
@@ -56,6 +164,24 @@ static const struct peri_security peri_security_array[] = {
 		.peri_id = AT91C_ID_VDEC,
 		.matrix = MATRIX_H64MX,
 		.security_type = SECURITY_TYPE_PS,
+	},
+	/* SECUMOD */
+	{
+		.peri_id = AT91C_ID_SECUMOD,
+		.matrix = MATRIX_H32MX,
+		.security_type = SECURITY_TYPE_AS,
+	},
+	/* MSADCC */
+	{
+		.peri_id = AT91C_ID_MSADCC,
+		.matrix = MATRIX_H32MX,
+		.security_type = SECURITY_TYPE_AS,
+	},
+	/* HSMC */
+	{
+		.peri_id = AT91C_ID_HSMC,
+		.matrix = MATRIX_H32MX,
+		.security_type = SECURITY_TYPE_AS,
 	},
 	/* PIOA*/
 	{
@@ -72,12 +198,6 @@ static const struct peri_security peri_security_array[] = {
 	/* PIOC*/
 	{
 		.peri_id = AT91C_ID_PIOC,
-		.matrix = MATRIX_H32MX,
-		.security_type = SECURITY_TYPE_PS,
-	},
-	/* PIOE*/
-	{
-		.peri_id = AT91C_ID_PIOE,
 		.matrix = MATRIX_H32MX,
 		.security_type = SECURITY_TYPE_PS,
 	},
@@ -228,7 +348,7 @@ static const struct peri_security peri_security_array[] = {
 	/* XDMAC1 */
 	{
 		.peri_id = AT91C_ID_XDMAC1,
-		.matrix = MATRIX_H32MX,
+		.matrix = MATRIX_H64MX,
 		.security_type = SECURITY_TYPE_NS,
 	},
 	/* LCDC */
@@ -254,6 +374,78 @@ static const struct peri_security peri_security_array[] = {
 		.peri_id = AT91C_ID_GMAC,
 		.matrix = MATRIX_H32MX,
 		.security_type = SECURITY_TYPE_PS,
+	},
+	/* IRQ */
+	{
+		.peri_id = AT91C_ID_IRQ,
+		.matrix = MATRIX_H32MX,
+		.security_type = SECURITY_TYPE_NS,
+	},
+	/* SFC */
+	{
+		.peri_id = AT91C_ID_SFC,
+		.matrix = MATRIX_H32MX,
+		.security_type = SECURITY_TYPE_AS,
+	},
+	/* SECURAM */
+	{
+		.peri_id = AT91C_ID_SECURAM,
+		.matrix = MATRIX_H32MX,
+		.security_type = SECURITY_TYPE_AS,
+	},
+	/* CTB */
+	{
+		.peri_id = AT91C_ID_CTB,
+		.matrix = MATRIX_H32MX,
+		.security_type = SECURITY_TYPE_AS,
+	},
+	/* SMD */
+	{
+		.peri_id = AT91C_ID_SMD,
+		.matrix = MATRIX_H32MX,
+		.security_type = SECURITY_TYPE_PS,
+	},
+	/* TWI3 */
+	{
+		.peri_id = AT91C_ID_TWI3,
+		.matrix = MATRIX_H32MX,
+		.security_type = SECURITY_TYPE_PS,
+	},
+	/* CATB */
+	{
+		.peri_id = AT91C_ID_CATB,
+		.matrix = MATRIX_H32MX,
+		.security_type = SECURITY_TYPE_AS,
+	},
+	/* SFR */
+	{
+		.peri_id = AT91C_ID_SFR,
+		.matrix = MATRIX_H32MX,
+		.security_type = SECURITY_TYPE_AS,
+	},
+	/* AIC */
+	{
+		.peri_id = AT91C_ID_AIC,
+		.matrix = MATRIX_H32MX,
+		.security_type = SECURITY_TYPE_NS,
+	},
+	/* SAIC */
+	{
+		.peri_id = AT91C_ID_SAIC,
+		.matrix = MATRIX_H32MX,
+		.security_type = SECURITY_TYPE_AS,
+	},
+	/* L2CC */
+	{
+		.peri_id = AT91C_ID_L2CC,
+		.matrix = MATRIX_H64MX,
+		.security_type = SECURITY_TYPE_AS,
+	},
+	/* PMC */
+	{
+		.peri_id = AT91C_ID_PMC,
+		.matrix = MATRIX_H64MX,
+		.security_type = SECURITY_TYPE_AS,
 	},
 };
 
