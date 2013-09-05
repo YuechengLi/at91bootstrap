@@ -40,7 +40,7 @@ int svc_mgr_main(struct smc_args_t const *args)
 {
 	int ret = 0;
 
-	dbg_log(1, "--> svc_mgr_main\n\r");
+//	dbg_log(1, "--> svc_mgr_main\n\r");
 
 	switch (args->r0) {
 	case 0x24:
@@ -90,7 +90,7 @@ int svc_mgr_main(struct smc_args_t const *args)
 		break;
 	}
 
-	dbg_log(1, "<-- svc_mgr_main\n\r");
+//	dbg_log(1, "<-- svc_mgr_main\n\r");
 
 	return ret;
 }
