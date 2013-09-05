@@ -27,7 +27,7 @@
  */
 #include <mon_macros.h>
 
-.section monitors
+.section monitor
 	.text
 	.align
 
@@ -60,6 +60,14 @@ monitor_init:
 	/* set the monitor vector base */
 	ldr	r2, =monitor_vectors
 	mcr	p15, 0, r2, c12, c0, 1
+
+	/* Configure SCR
+	 * Non secure parameters for tests only
+	 */
+	mrc	p15, 0, r0, c1, c1, 0
+	ldr	r1, =(SCR_AW_BIT)
+	orr	r0, r0, r1
+	mcr	p15, 0, r0, c1, c1, 0
 
 	/* Set NWd initial CPSR and PC (NWd boot entry address) */
 	ldr	r0, =MON_DATA_BASE

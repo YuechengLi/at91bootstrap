@@ -27,7 +27,7 @@
  */
 #include <mon_macros.h>
 
-.section monitors
+.section monitor
 	.text
 	.align
 
@@ -77,20 +77,18 @@ nwd_to_swd:
 	ldr	sp, [r0, #SWD_SVC_SP_OFF]
 	cps	#Mode_MON
 
-	/*     - lr */
-	ldr	lr, [r0, #SWD_PC_OFF]
+	/*     - lr pointer */
+	add	lr, r0, #SWD_PC_OFF
 
 	/* Restore corrupted registers */
 	ldmia	sp!, {r0-r3}
 
 	/* Call service manager (svc_mgr_*) that further executes service function */
 	/* (take cpsr from database as well) */
-       clrex
-
-       movs	pc, lr
+	rfe	lr
 
 swd_to_nwd:
-	/* - Implement the SWd -->NSWd sequence as described in mon_macro.h */
+	/* - Implement the SWd -->NWd sequence as described in mon_macro.h */
 	ldr	r0, =MON_DATA_BASE
 
 	/*   - Save SWd sp registers */
@@ -103,19 +101,19 @@ swd_to_nwd:
 	cps	#Mode_MON
 
 	/* Switch to NWd */
-	mrc	p15, 0, r0, c1, c1, 0
-	orr	r0, r0, #1
-	mcr	p15, 0, r0, c1, c1, 0
+	mrc	p15, 0, r1, c1, c1, 0
+	orr	r1, r1, #NS_BIT
+	mcr	p15, 0, r1, c1, c1, 0
 	/* ~~~ We are in NWd from now on ~~~ */
 
-	/* Restore NWd other registers */
-	ldr	r0, =MON_DATA_BASE
-
-       /* Restore NWd cpsr in monitor spsr */
+	/* Restore NWd cpsr in monitor spsr such that
+	 * it returns to NWd by restoring spsr to NWd
+	 */
 	ldr	r1, [r0, #NWD_CPSR_OFF]
 	msr	spsr_cxsf, r1
 
-	ldr	lr, [r0, #NWD_PC_OFF]
+	/*     - lr pointer */
+	add	lr, r0, #NWD_PC_OFF
 
 	/* - r8-r11*/
 	ldr	r8, [r0, #NWD_R8_OFF]
@@ -123,7 +121,7 @@ swd_to_nwd:
 	ldr	r10, [r0, #NWD_R10_OFF]
 	ldr	r11, [r0, #NWD_R11_OFF]
 
-	/* to adjust the stack pointer */
+	/* Only to adjust the stack pointer */
 	ldmia	sp!, {r0-r3}
 
 	/* Zero out r1-r7 and r12 registers */
@@ -136,8 +134,8 @@ swd_to_nwd:
 	mov	r7, #0
 	mov	r12, #0
 
-	clrex
-
-	movs	pc, lr
+	/* Restore mon_lr to NWd return point */
+	/* (take cpsr from database as well) */
+	rfe	lr
 
 	.end

@@ -26,7 +26,7 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.section monitors
+.section monitor
 	 .text
 	 .align 8
 

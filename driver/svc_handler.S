@@ -26,7 +26,7 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.section monitor_handler_sec
+.section svc_mgr
 	.text
 	.align
 
