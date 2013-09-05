@@ -34,7 +34,7 @@
 
 /*
  * svc_mgr_main - C entry point of the secure world when a SMC is processed
- * in the Normal World
+ * in Normal World
  */
 int svc_mgr_main(struct smc_args_t const *args)
 {

@@ -26,7 +26,7 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include "hardware.h"
-#include "arch/sama5_l2cc.h"
+#include "arch/lp310_l2cc.h"
 
 static inline void write_l2cc(unsigned int offset, const unsigned int value)
 {
