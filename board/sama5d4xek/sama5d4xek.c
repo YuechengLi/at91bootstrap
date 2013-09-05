@@ -223,7 +223,7 @@ static int matrix_configure_slave(void)
 	 * Matrix 0 (H64MX)
 	 */
 
-	/* 1: H64MX Peripheral Bridge: Not Security */
+	/* 1: H64MX Peripheral Bridge: Non-Secure */
 	srtop_setting = 0xffffffff;
 	sasplit_setting = 0xffffffff;
 	ssr_setting = 0xffffffff;
@@ -233,7 +233,7 @@ static int matrix_configure_slave(void)
 					sasplit_setting,
 					ssr_setting);
 
-	/* 2: Video Decoder 128K: Not Security */
+	/* 2: Video Decoder 128K: Non-Secure */
 	srtop_setting = MATRIX_SRTOP(0, MATRIX_SRTOP_VALUE_128K);
 	sasplit_setting = MATRIX_SASPLIT(0, MATRIX_SASPLIT_VALUE_128K);
 	ssr_setting = (MATRIX_LANSECH_NS(0)
@@ -245,7 +245,7 @@ static int matrix_configure_slave(void)
 					sasplit_setting,
 					ssr_setting);
 
-	/* 3 ~ 10 DDR2 Port1 ~ 7: Not-Security */
+	/* 4 ~ 10 DDR2 Port1 ~ 7: Non-Secure */
 	srtop_setting = MATRIX_SRTOP(0, MATRIX_SRTOP_VALUE_128M);
 	sasplit_setting = (MATRIX_SASPLIT(0, MATRIX_SASPLIT_VALUE_128M)
 				| MATRIX_SASPLIT(1, MATRIX_SASPLIT_VALUE_128M)
@@ -272,19 +272,25 @@ static int matrix_configure_slave(void)
 					ssr_setting);
 	}
 
-	/* 11: Internal SRAM 128K: Not-Security */
+	/* 11: Internal SRAM 128K
+	 * TOP0 is set to 128K
+	 * SPLIT0 is set to 64K
+	 * LANSECH0 is set to 0, the low area of region 0 is the Securable one
+	 * RDNSECH0 is set to 0, region 0 Securable area is secured for reads.
+	 * WRNSECH0 is set to 0, region 0 Securable area is secured for writes
+	 */
 	srtop_setting = MATRIX_SRTOP(0, MATRIX_SRTOP_VALUE_128K);
-	sasplit_setting = MATRIX_SASPLIT(0, MATRIX_SASPLIT_VALUE_128K);
-	ssr_setting = (MATRIX_LANSECH_NS(0)
-			| MATRIX_RDNSECH_NS(0)
-			| MATRIX_WRNSECH_NS(0));
+	sasplit_setting = MATRIX_SASPLIT(0, MATRIX_SASPLIT_VALUE_64K);
+	ssr_setting = (MATRIX_LANSECH_S(0)
+			| MATRIX_RDNSECH_S(0)
+			| MATRIX_WRNSECH_S(0));
 	matrix_configure_slave_security(AT91C_BASE_MATRIX64,
 					H64MX_SLAVE_INTERNAL_SRAM,
 					srtop_setting,
 					sasplit_setting,
 					ssr_setting);
 
-	/* 12:  Bridge from H64MX to H32MX: Not-Security */
+	/* 12:  Bridge from H64MX to H32MX: Non-Secure */
 	srtop_setting = 0xffffffff;
 	sasplit_setting = 0xffffffff;
 	ssr_setting = 0xffffffff;
@@ -298,7 +304,7 @@ static int matrix_configure_slave(void)
 	 * Matrix 1 (H32MX)
 	 */
 
-	/* 3: External Bus Interface: Not-Security */
+	/* 3: External Bus Interface: Non-Secure */
 	srtop_setting = 0xffffffff;
 	sasplit_setting = 0xffffffff;
 	ssr_setting = 0xffffffff;
@@ -308,7 +314,7 @@ static int matrix_configure_slave(void)
 					sasplit_setting,
 					ssr_setting);
 
-	/* 4: NFC SRAM (4K): Not-Security */
+	/* 4: NFC SRAM (4K): Non-Secure */
 	srtop_setting = MATRIX_SRTOP(0, MATRIX_SRTOP_VALUE_4K);
 	sasplit_setting = MATRIX_SASPLIT(0, MATRIX_SASPLIT_VALUE_4K);
 	ssr_setting = (MATRIX_LANSECH_NS(0)
@@ -320,7 +326,7 @@ static int matrix_configure_slave(void)
 					sasplit_setting,
 					ssr_setting);
 
-	/* 5: DPHS RAM(1M), UHP OHCI (1M), UHP EHCI (1M): Not-Security */
+	/* 5: DPHS RAM(1M), UHP OHCI (1M), UHP EHCI (1M): Non-Secure */
 	srtop_setting = 0xffffffff;
 	sasplit_setting = 0xffffffff;
 	ssr_setting = 0xffffffff;
@@ -330,7 +336,7 @@ static int matrix_configure_slave(void)
 					sasplit_setting,
 					ssr_setting);
 
-	/* 6: Soft Modem (1M): Not-Security */
+	/* 6: Soft Modem (1M): Non-Secure */
 	srtop_setting = MATRIX_SRTOP(0, MATRIX_SRTOP_VALUE_1M);
 	sasplit_setting = MATRIX_SASPLIT(0, MATRIX_SASPLIT_VALUE_1M);
 	ssr_setting = (MATRIX_LANSECH_NS(0)
