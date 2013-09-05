@@ -94,7 +94,7 @@
  */
 #define CPSR_I_BIT	0x80	/* when I bit is set, IRQ is disabled */
 #define CPSR_F_BIT	0x40	/* when F bit is set, FIQ is disabled */
-#define CPSR_A_BIT	0x100	/* when A bit is set, data abort is disabled */
+#define CPSR_A_BIT	0x100	/* when A bit is set, asynchronous abort is disabled */
 
 /*
  *-----------------------------------------------------------------------------
