@@ -83,6 +83,12 @@ nwd_to_swd:
 	/* Restore corrupted registers */
 	ldmia	sp!, {r0-r3}
 
+	/*
+	 * As ARM ARM is saying: On a context switch, software must
+	 * take care of clearing the local Exclusive Monitor
+	 */
+	clrex
+
 	/* Call service manager (svc_mgr_*) that further executes service function */
 	/* (take cpsr from database as well) */
 	rfe	lr
@@ -95,7 +101,7 @@ swd_to_nwd:
 	cps	#Mode_SVC
 	str	sp,  [r0, #SWD_SVC_SP_OFF]
 
-	/* - Restrore SVC sp & lr */
+	/*   - Restrore SVC sp & lr */
 	ldr	sp, [r0, #NWD_SVC_SP_OFF]
 	ldr	lr, [r0, #NWD_SVC_LR_OFF]
 	cps	#Mode_MON
@@ -106,7 +112,8 @@ swd_to_nwd:
 	mcr	p15, 0, r1, c1, c1, 0
 	/* ~~~ We are in NWd from now on ~~~ */
 
-	/* Restore NWd cpsr in monitor spsr such that
+	/*
+	 * Restore NWd cpsr in monitor spsr such that
 	 * it returns to NWd by restoring spsr to NWd
 	 */
 	ldr	r1, [r0, #NWD_CPSR_OFF]
@@ -115,7 +122,7 @@ swd_to_nwd:
 	/*     - lr pointer */
 	add	lr, r0, #NWD_PC_OFF
 
-	/* - r8-r11*/
+	/*     - r8-r11*/
 	ldr	r8, [r0, #NWD_R8_OFF]
 	ldr	r9, [r0, #NWD_R9_OFF]
 	ldr	r10, [r0, #NWD_R10_OFF]
@@ -133,6 +140,12 @@ swd_to_nwd:
 	mov	r6, #0
 	mov	r7, #0
 	mov	r12, #0
+
+	/*
+	 * As ARM ARM is saying: On a context switch, software must
+	 * take care of clearing the local Exclusive Monitor
+	 */
+	clrex
 
 	/* Restore mon_lr to NWd return point */
 	/* (take cpsr from database as well) */

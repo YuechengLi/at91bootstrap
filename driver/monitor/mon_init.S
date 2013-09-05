@@ -61,8 +61,9 @@ monitor_init:
 	ldr	r2, =monitor_vectors
 	mcr	p15, 0, r2, c12, c0, 1
 
-	/* Configure SCR
-	 * Non secure parameters for tests only
+	/*
+	 * Configure SCR so that A bit in the CPSR
+	 * can be modified when in the Non-secure state
 	 */
 	mrc	p15, 0, r0, c1, c1, 0
 	ldr	r1, =(SCR_AW_BIT)
