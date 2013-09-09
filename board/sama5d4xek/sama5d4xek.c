@@ -57,8 +57,8 @@ static void at91_uart_hw_init(void)
 		{(char *)0, 0, 0, PIO_DEFAULT, PIO_PERIPH_A},
 	};
 
-	pio_configure(uart_pins);
 	pmc_peri_clock(AT91C_ID_PIOE);
+	pio_configure(uart_pins);
 	pmc_peri_clock(AT91C_ID_USART3);
 }
 
