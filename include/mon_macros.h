@@ -152,8 +152,8 @@
 #define INITIAL_SWD_CPSR	0x1D3
 
 /* Stacks configuration */
-#define STACK_SIZE		0x400
-#define MON_DATA_BASE_SIZE	STACK_SIZE /* can be optimized */
+#define STACK_SIZE		0x800
+#define MON_DATA_BASE_SIZE	0x40
 
 /* Monitor data base area is ascending */
 #define MON_DATA_BASE		(TOP_OF_MEMORY - MON_DATA_BASE_SIZE)
