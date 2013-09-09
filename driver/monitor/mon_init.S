@@ -78,7 +78,7 @@ monitor_init:
 	ldr	r1, =NWD_BOOT_ADDR
 	str	r1, [r0, #NWD_PC_OFF]
 
-	/* Set SWd initial CPSR and PC (NWd boot entry address) */
+	/* Set SWd initial CPSR and PC (SWd handler) */
 	ldr	r1, =INITIAL_SWD_CPSR
 	str	r1, [r0, #SWD_CPSR_OFF]
 	ldr	r1, =svc_mgr_veneer
