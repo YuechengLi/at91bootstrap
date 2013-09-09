@@ -78,6 +78,14 @@ monitor_init:
 	ldr	r1, =NWD_BOOT_ADDR
 	str	r1, [r0, #NWD_PC_OFF]
 
+	/* DEBUG */
+#if 0
+	/* fill NWd boot address with while(true) loops */
+	ldr	r2, =0xeafffffe
+	str	r2, [r1]
+	str	r2, [r1, #4]
+#endif
+
 	/* Set SWd initial CPSR and PC (SWd handler) */
 	ldr	r1, =INITIAL_SWD_CPSR
 	str	r1, [r0, #SWD_CPSR_OFF]
