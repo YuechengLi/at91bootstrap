@@ -39,6 +39,7 @@
 int svc_mgr_main(struct smc_args_t const *args)
 {
 	int ret = 0;
+	unsigned int silent = 1;
 
 //	dbg_log(1, "--> svc_mgr_main\n\r");
 
@@ -54,6 +55,11 @@ int svc_mgr_main(struct smc_args_t const *args)
 	case 0x25:
 		if (is_peripheral_secure(args->r1))
 			ret = -1;
+		else if (is_switching_clock_forbiden(args->r1, args->r2, &silent))
+			if (silent)
+				ret = 0;
+			else
+				ret = -1;
 		else
 			ret = pmc_periph_clk(args->r1, args->r2);
 		break;

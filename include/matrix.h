@@ -42,5 +42,6 @@ extern int is_peripheral_secure(unsigned int periph_id);
 extern int is_sys_clk_secure(unsigned int sys_mask);
 extern int is_usb_hs_secure(void);
 extern int is_usb_host_secure(void);
+extern int is_switching_clock_forbiden(unsigned int periph_id, unsigned int is_on, unsigned int *silent);
 
 #endif /* #ifndef __MATRIX_H__ */

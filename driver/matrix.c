@@ -616,3 +616,15 @@ int is_usb_host_secure(void)
 {
 	return is_peripheral_secure(AT91C_ID_UHPHS);
 }
+
+int is_switching_clock_forbiden(unsigned int periph_id, unsigned int is_on, unsigned int *silent)
+{
+	/* disable console clock : forbiden */
+	if ((periph_id == AT91C_ID_USART3) && (is_on == 0)) {
+		/* keep it silent */
+		*silent = 1;
+		return 1;
+	} else {
+		return 0;
+	}
+}
