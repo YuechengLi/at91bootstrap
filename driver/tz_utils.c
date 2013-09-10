@@ -40,7 +40,7 @@ void dacr_init(void)
 
 void enter_normal_world(void)
 {
-	asm("smc #0");
+	asm volatile ("smc #0");
 }
 
 void switch_normal_world(void)
