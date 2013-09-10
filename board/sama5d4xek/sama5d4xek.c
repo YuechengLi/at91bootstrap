@@ -47,6 +47,7 @@
 #include "arch/tz_matrix.h"
 #include "arch/at91_sfr.h"
 #include "matrix.h"
+#include "tz_utils.h"
 #include "sama5d4xek.h"
 
 void matrix_read_slave_security(void);
@@ -490,6 +491,9 @@ void hw_init(void)
 	/* Enable External Reset */
 	writel(AT91C_RSTC_KEY_UNLOCK | AT91C_RSTC_URSTEN,
 					AT91C_BASE_RSTC + RSTC_RMR);
+
+	/* Program the DACR to allow client access to *all* domains */
+	dacr_init();
 
 	/* Initialize the matrix */
 	matrix_init();

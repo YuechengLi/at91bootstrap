@@ -29,6 +29,15 @@
 #include "mon.h"
 #include "debug.h"
 
+void dacr_init(void)
+{
+	asm volatile (
+		"mcr p15, 0, %0, c3, c0, 0\n\t"
+		"isb"
+		:
+		: "r" (0x55555555));
+}
+
 void enter_normal_world(void)
 {
 	asm("smc #0");
