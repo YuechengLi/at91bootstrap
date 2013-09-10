@@ -492,6 +492,8 @@ void hw_init(void)
 	writel(AT91C_RSTC_KEY_UNLOCK | AT91C_RSTC_URSTEN,
 					AT91C_BASE_RSTC + RSTC_RMR);
 
+	cpacr_init();
+
 	/* Program the DACR to allow client access to *all* domains */
 	dacr_init();
 

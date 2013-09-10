@@ -38,6 +38,19 @@ void dacr_init(void)
 		: "r" (0x55555555));
 }
 
+/* Enable access to CP 10 & 11 */
+void cpacr_init(void)
+{
+	asm volatile (
+		"mrc     p15, 0, r0, c1, c0, 2\n\t"
+		"orr     r0, r0, %0\n\t"
+		"mcr     p15, 0, r0, c1, c0, 2\n\t"
+		"isb"
+		:
+		: "r" (0xf << 20)
+		: "r0" );
+}
+
 void enter_normal_world(void)
 {
 	asm volatile ("smc #0");
