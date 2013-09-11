@@ -48,6 +48,12 @@ int division(unsigned int dividend,
 		return 0;
 	}
 
+	if (dividend == divisor) {
+		*quotient = 1;
+		*remainder = 0;
+		return 0;
+	}
+
 	while (dividend > divisor) {
 		for (shift = 0, divisor_shift = divisor;
 			dividend >= divisor_shift;
