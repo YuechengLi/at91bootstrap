@@ -29,6 +29,7 @@
 #include "hardware.h"
 #include "pmc.h"
 #include "arch/tz_matrix.h"
+#include "debug.h"
 
 #define MATRIX_AXIMX	1
 #define MATRIX_H64MX	2
@@ -479,11 +480,51 @@ void matrix_configure_slave_security(unsigned int matrix_base,
 				unsigned int srsplit_setting,
 				unsigned int ssr_setting)
 {
-
 	matrix_write(matrix_base, MATRIX_SSR(slave), ssr_setting);
 	matrix_write(matrix_base, MATRIX_SRTSR(slave), srtop_setting);
 	matrix_write(matrix_base, MATRIX_SASSR(slave), srsplit_setting);
 }
+
+void matrix_read_slave_security(void)
+{
+	unsigned int matrix_base;
+	unsigned int slave;
+
+	dbg_log(1, "\n\r\n\rMATRIX64:\n\r");
+	matrix_base = AT91C_BASE_MATRIX64;
+	for (slave = 0; slave < 13; slave++) {
+		dbg_log(1, "MATRIX_SRTSR%d: %d, MATRIX_SASSR%d: %d, MATRIX_SSR%d: %d\n\r",
+			slave, matrix_read(matrix_base, MATRIX_SRTSR(slave)),
+			slave, matrix_read(matrix_base, MATRIX_SASSR(slave)),
+			slave, matrix_read(matrix_base, MATRIX_SSR(slave)));
+	}
+
+	dbg_log(1, "\n\r\n\rMATRIX32:\n\r");
+	matrix_base = AT91C_BASE_MATRIX32;
+	for (slave = 0; slave < 7; slave++) {
+		dbg_log(1, "MATRIX_SRTSR%d: %d, MATRIX_SASSR%d: %d, MATRIX_SSR%d: %d\n\r",
+			slave, matrix_read(matrix_base, MATRIX_SRTSR(slave)),
+			slave, matrix_read(matrix_base, MATRIX_SASSR(slave)),
+			slave, matrix_read(matrix_base, MATRIX_SSR(slave)));
+	}
+}
+
+void matrix_read_periperal_security(void)
+{
+	unsigned int i;
+
+	unsigned int matrix_base = AT91C_BASE_MATRIX32;
+	dbg_log(1, "\n\r\n\rMATRIX32\n\r");
+	for (i = 0; i < 3; i++)
+		dbg_log(1, "MATRIX_SPSELR(%d): %d \n\r", i, matrix_read(matrix_base, MATRIX_SPSELR(i)));
+
+	matrix_base = AT91C_BASE_MATRIX64;
+	dbg_log(1, "\n\r\n\r_MATRIX64\n\r");
+	for (i = 0; i < 3; i++)
+		dbg_log(1, "MATRIX_SPSELR(%d): %d \n\r", i, matrix_read(matrix_base, MATRIX_SPSELR(i)));
+
+}
+
 
 static struct peri_security *get_peri_security(unsigned int peri_id)
 {
