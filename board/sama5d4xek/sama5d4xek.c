@@ -495,7 +495,7 @@ void hw_init(void)
 	cpacr_init();
 
 	/* Program the DACR to allow client access to *all* domains */
-	dacr_init();
+	dacr_swd_init();
 
 	/* Initialize the matrix */
 	matrix_init();

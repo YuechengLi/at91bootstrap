@@ -29,7 +29,7 @@
 #include "mon.h"
 #include "debug.h"
 
-void dacr_init(void)
+void dacr_swd_init(void)
 {
 	asm volatile (
 		"mcr p15, 0, %0, c3, c0, 0\n\t"
