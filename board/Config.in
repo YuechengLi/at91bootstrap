@@ -196,6 +196,7 @@ config CONFIG_SAMA5D3XEK
 
 config CONFIG_SAMA5D4XEK
 	bool "sama5d4xek"
+	select CONFIG_CPU_V7
 	select CONFIG_DDR2
 	select ALLOW_DATAFLASH
 	select ALLOW_NANDFLASH
@@ -462,3 +463,7 @@ config CONFIG_BUS_SPEED_170MHZ
 	depends on CONFIG_CPU_CLK_510MHZ
 
 endchoice
+
+config CONFIG_CPU_V7
+	bool
+	default n
