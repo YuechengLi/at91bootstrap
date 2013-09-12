@@ -162,6 +162,8 @@ int main(void)
 
 #ifdef CONFIG_TRUSTZONE_SUPPORT
 	switch_normal_world();
+
+	/* point never reached with TZ support */
 #endif
 
 	return JUMP_ADDR;
