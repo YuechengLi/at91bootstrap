@@ -485,6 +485,7 @@ void matrix_configure_slave_security(unsigned int matrix_base,
 	matrix_write(matrix_base, MATRIX_SASSR(slave), srsplit_setting);
 }
 
+#if defined(CONFIG_DEBUG_VERY_LOUD)
 void matrix_read_slave_security(void)
 {
 	unsigned int matrix_base;
@@ -524,6 +525,10 @@ void matrix_read_periperal_security(void)
 		dbg_log(1, "MATRIX_SPSELR(%d): %d \n\r", i, matrix_read(matrix_base, MATRIX_SPSELR(i)));
 
 }
+#else
+void matrix_read_slave_security(void) {}
+void matrix_read_periperal_security(void) {}
+#endif
 
 
 static struct peri_security *get_peri_security(unsigned int peri_id)
