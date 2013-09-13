@@ -129,13 +129,13 @@
  * T[5]   = ARM state
  * I[6]   = FIQ Disabled
  * F[7]   = IRQ Disabled
- * A[8]   = Asynchronous Aborts Disabled
+ * A[8]   = Asynchronous Aborts Enabled
  * E[9]   = Data Endianess Little
  * J[24]  = Jazelle state Disabled
  * All status flags NZCVQ to reset value
  *----------------------------------------------------------------------------
  */
-#define INITIAL_NWD_CPSR	0x1D3
+#define INITIAL_NWD_CPSR	0xD3
 
 /*
  *----------------------------------------------------------------------------
