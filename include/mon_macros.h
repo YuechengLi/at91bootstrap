@@ -51,15 +51,19 @@
 #define __MON_MACROS_H__
 
 /* NWd non-corruptible registers fields offsets from the MON_DATA_BASE area */
-#define NWD_PC_OFF	 0
-#define NWD_CPSR_OFF	 4
-#define NWD_SVC_SP_OFF	 8
-#define NWD_SVC_LR_OFF	12
-#define NWD_R8_OFF	16
-#define NWD_R9_OFF	20
-#define NWD_R10_OFF	24
-#define NWD_R11_OFF	28
-#define NWD_DB_END_OFF	NWD_R11_OFF
+#define NWD_PC_OFF		0
+#define NWD_CPSR_OFF		(NWD_PC_OFF		+ 4)
+#define NWD_SVC_SP_OFF		(NWD_CPSR_OFF		+ 4)
+#define NWD_SVC_LR_OFF		(NWD_SVC_SP_OFF		+ 4)
+#define NWD_R012_VALID_OFF	(NWD_SVC_LR_OFF		+ 4)
+#define NWD_R0_OFF		(NWD_R012_VALID_OFF	+ 4)
+#define NWD_R1_OFF		(NWD_R0_OFF		+ 4)
+#define NWD_R2_OFF		(NWD_R1_OFF		+ 4)
+#define NWD_R8_OFF		(NWD_R2_OFF		+ 4)
+#define NWD_R9_OFF		(NWD_R8_OFF		+ 4)
+#define NWD_R10_OFF		(NWD_R9_OFF		+ 4)
+#define NWD_R11_OFF		(NWD_R10_OFF		+ 4)
+#define NWD_DB_END_OFF		NWD_R11_OFF
 
 /*
  * SWd critical registers fields offsets from the MON_DATA_BASE area
@@ -163,5 +167,8 @@
 
 /* Subsequent application boot address (from configuration) */
 #define NWD_BOOT_ADDR		JUMP_ADDR
+
+/* Mon Data Area NWd R0, R2, R3 valid flag */
+#define DB_R012_VALID	0x01
 
 #endif /* #ifndef __MON_MACROS_H__ */
