@@ -377,7 +377,6 @@ static int matrix_configure_slave(void)
 					sasplit_setting,
 					ssr_setting);
 
-#if 0
 	/* 6: Soft Modem (1M): Non-Secure */
 	srtop_setting = 0xffffffff;
 	sasplit_setting = 0xffffffff;
@@ -387,7 +386,6 @@ static int matrix_configure_slave(void)
 					srtop_setting,
 					sasplit_setting,
 					ssr_setting);
-#endif
 	return 0;
 }
 
@@ -408,6 +406,7 @@ static unsigned int security_ps_peri_id[] = {
 	AT91C_ID_LCDC,
 	AT91C_ID_GMAC,
 	AT91C_ID_SPI1,
+	AT91C_ID_SMD,
 };
 
 static int matrix_config_periheral(void)
