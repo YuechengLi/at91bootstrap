@@ -444,12 +444,6 @@ static int matrix_init(void)
 #ifdef CONFIG_HW_INIT
 void hw_init(void)
 {
-	const struct pio_desc led_pins[] = {
-		{"D8", AT91C_PIN_PE(28), 1, PIO_DEFAULT, PIO_OUTPUT},
-		{"D9", AT91C_PIN_PE(9), 0, PIO_DEFAULT, PIO_OUTPUT},
-		{(char *)0, 0, 0, PIO_DEFAULT, PIO_PERIPH_A},
-	};
-
 	/* Disable watchdog */
 	at91_disable_wdt();
 
@@ -505,9 +499,6 @@ void hw_init(void)
 #ifdef CONFIG_USER_HW_INIT
 	hw_init_hook();
 #endif
-
-	pmc_peri_clock(AT91C_ID_PIOE);
-	pio_configure(led_pins);
 }
 #endif /* #ifdef CONFIG_HW_INIT */
 
