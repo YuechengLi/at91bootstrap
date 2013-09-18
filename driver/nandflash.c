@@ -39,10 +39,6 @@
 #include "timer.h"
 #include "div.h"
 
-#if defined(SAMA5D4X)
-#define	NO_GALOIS_TABLE_IN_ROM
-#endif
-
 static struct nand_chip nand_ids[] = {
 	/* Samsung K9F2G08U0M 256MB */
 	{0xecda, 0x800, 0x20000, 0x800, 0x40, 0x0},
