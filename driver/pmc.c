@@ -27,6 +27,7 @@
  */
 #include "hardware.h"
 #include "arch/at91_pmc.h"
+#include "rstc.h"
 
 static inline void write_pmc(unsigned int offset, const unsigned int value)
 {
@@ -42,6 +43,9 @@ void lowlevel_clock_init()
 {
 	unsigned long tmp;
 	unsigned int times;
+
+	/* First reset all: processor, peripheral and extern reset */
+	rstc_reset_all();
 
 #if defined(AT91SAM9X5) || defined(AT91SAM9N12) || defined(SAMA5D3X)
 	/*

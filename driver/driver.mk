@@ -13,6 +13,7 @@ COBJS-y				+= $(DRIVERS_SRC)/pmc.o
 COBJS-y				+= $(DRIVERS_SRC)/at91_pit.o
 COBJS-y				+= $(DRIVERS_SRC)/at91_wdt.o
 COBJS-y				+= $(DRIVERS_SRC)/at91_usart.o
+COBJS-y				+= $(DRIVERS_SRC)/at91_rstc.o
 
 COBJS-$(CONFIG_USER_HW_INIT)	+= $(DRIVERS_SRC)/hw_init_hook.o
 
