@@ -270,6 +270,9 @@ static int of_get_node_offset(void *blob, char *name, int *offset)
 			return -1;
 
 		nodename = (char *)of_dt_struct_offset(blob,(nodeoffset + 4));
+		if (!(strlen(nodename) % 4))
+			nextoffset += 4;
+
 		if ((memcmp(nodename, name, namelen) == 0)
 			&& (nodename[namelen] == '\0'))
 			break;
