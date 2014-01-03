@@ -631,3 +631,56 @@ int fixup_memory_node(void *blob,
 
 	return 0;
 }
+
+static int update_audio_codec_property(void *blob, int nodeoffset)
+{
+	int property_offset;
+	unsigned int phandle, offset;
+	unsigned int *plen;
+	unsigned int length;
+	int ret;
+
+	ret = of_get_property_offset_by_name(blob, nodeoffset,
+			"atmel,audio-codec-before-revD", &property_offset);
+	if (ret) {
+		dbg_info("WARNIG: DT: can't get property: atmel,audio-codec-before-revD\n");
+		return 0;
+	}
+
+	plen = (unsigned int *)of_dt_struct_offset(blob, (property_offset + 4));
+	length = swap_uint32(*plen);
+	phandle = of_dt_struct_offset(blob, (property_offset + 12));
+
+	ret = of_get_property_offset_by_name(blob, nodeoffset,
+				"atmel,audio-codec", &property_offset);
+	if (ret) {
+		dbg_info("DT: failed to get property atmel,audio-codec\n");
+		return ret;
+	}
+
+	offset = of_dt_struct_offset(blob, property_offset + 12);
+
+	memcpy((unsigned char *)offset, (unsigned char *)phandle, length);
+
+	return 0;
+}
+
+int fixup_sound_node(void *blob)
+{
+	int nodeoffset;
+	int ret;
+
+	ret = of_get_node_offset(blob, "sound", &nodeoffset);
+	if (ret) {
+		dbg_info("WARNING: DT: can't get sound node offset\n");
+		return 0;
+	}
+
+	ret = update_audio_codec_property(blob, nodeoffset);
+	if (ret) {
+		dbg_info("DT: failed to update audio codec property\n");
+		return ret;
+	}
+
+	return 0;
+}

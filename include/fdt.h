@@ -34,4 +34,6 @@ extern int fixup_chosen_node(void *blob, char *bootargs);
 extern int fixup_memory_node(void *blob,
 				unsigned int *mem_bank,
 				unsigned int *mem_size);
+extern int fixup_sound_node(void *blob);
+
 #endif /* #ifndef __FDT_H__ */
