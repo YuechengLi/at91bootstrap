@@ -58,6 +58,8 @@ extern unsigned int get_cm_vendor();
 extern unsigned int get_dm_sn(void);
 extern unsigned int get_sys_sn();
 extern unsigned int get_sys_rev();
+extern char get_ek_rev(void);
+extern unsigned int get_ek_sn(void);
 
 extern void load_1wire_info();
 
