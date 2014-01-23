@@ -70,6 +70,7 @@
 
 /* -------- PMC_SCER : (PMC Offset: 0x0) System Clock Enable Register --------*/ 
 #define AT91C_PMC_DDR		(0x1UL <<  2)
+#define AT91C_PMC_SMDCK		(0x1UL <<  4)
 #define AT91C_PMC_UHP		(0x1UL <<  6)
 #define AT91C_PMC_UDP		(0x1UL <<  7)
 #define AT91C_PMC_PCK0		(0x1UL <<  8)
@@ -179,6 +180,7 @@
 #define 	AT91C_PMC_SMDS_SMD_PLLA		(0x0UL)
 #define 	AT91C_PMC_SMDS_SMD_PLLB		(0x1UL)
 #define AT91C_PMC_SMDDIV	(0x1FUL <<  8)
+#define AT91C_PMC_SMDDIV_(x)	((x & 0x1F) << 8)
 
 /* -------- PMC_PCKR : (PMC Offset: 0x40) Programmable Clock Register --------*/ 
 #define AT91C_PMC_SLCKMCK	(0x1UL <<  8)
