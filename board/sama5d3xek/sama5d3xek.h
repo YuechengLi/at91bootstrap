@@ -234,4 +234,6 @@ extern void at91_spi0_hw_init(void);
 
 extern void at91_mci0_hw_init(void);
 
+extern void sama5d3xek_ex_devices_low_power(void);
+
 #endif /* #ifndef __SAMA5EK_H__ */

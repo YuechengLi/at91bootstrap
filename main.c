@@ -137,6 +137,11 @@ int main(void)
 	/* Load one wire informaion */
 	load_1wire_info();
 #endif
+
+#ifdef CONFIG_SAMA5D3XEK
+	sama5d3xek_ex_devices_low_power();
+#endif
+
 	init_loadfunction();
 
 	ret = (*load_image)(&image);

@@ -39,3 +39,7 @@ COBJS-$(CONFIG_LOAD_LINUX)	+= $(DRIVERS_SRC)/load_kernel.o
 COBJS-$(CONFIG_LOAD_ANDROID)	+= $(DRIVERS_SRC)/load_kernel.o
 
 COBJS-$(CONFIG_LOAD_ONE_WIRE)	+= $(DRIVERS_SRC)/ds24xx.o
+
+COBJS-y += $(DRIVERS_SRC)/at91_twi.o
+COBJS-y += $(DRIVERS_SRC)/twi_devices.o
+COBJS-y += $(DRIVERS_SRC)/macb.o

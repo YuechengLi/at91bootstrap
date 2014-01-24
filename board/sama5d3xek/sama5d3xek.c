@@ -38,6 +38,9 @@
 #include "watchdog.h"
 #include "string.h"
 #include "onewire_info.h"
+#include "macb.h"
+#include "twi.h"
+#include "twi_devices.h"
 
 #include "arch/at91_pmc.h"
 #include "arch/at91_rstc.h"
@@ -577,17 +580,159 @@ static void at91_low_power_workaround(void)
 	at91_disable_smd_clock();
 }
 
-static void HDMI_Qt1070_workaround(void)
+static void SiI9022_hw_reset(void)
 {
-	/* For the HDMI and QT1070 shar the irq line
-	 * if the HDMI does not initialize, the irq line is pulled down by HDMI,
+	/* 
+	 * For the SiI9022 and QT1070 share the irq line
+	 * if the SiI9022 does not initialize,
+	 * the irq line is pulled down by SiI9022,
 	 * so, the irq line can not used by QT1070
 	 */
 	pio_set_gpio_output(AT91C_PIN_PC(31), 1);
-	udelay(33000);
 	pio_set_gpio_output(AT91C_PIN_PC(31), 0);
-	udelay(33000);
+	udelay(500);
 	pio_set_gpio_output(AT91C_PIN_PC(31), 1);
+}
+
+static void emac_hw_init(void)
+{
+	const struct pio_desc macb_pins[] = {
+		{"EMDC",	AT91C_PIN_PC(8), 0, PIO_DEFAULT, PIO_PERIPH_A},
+		{"EMDIO",	AT91C_PIN_PC(9), 0, PIO_DEFAULT, PIO_PERIPH_A},
+		{(char *)0, 0, 0, PIO_DEFAULT, PIO_PERIPH_A},
+	};
+
+	pio_configure(macb_pins);
+	pmc_enable_periph_clock(AT91C_ID_PIOC);
+	pmc_enable_periph_clock(AT91C_ID_EMAC);
+}
+
+static int ksz8051_power_down_mode(void)
+{
+	struct mii_bus macb_mii_bus;
+
+	macb_mii_bus.name = "ksz8051";
+	macb_mii_bus.reg_base = (void *)AT91C_BASE_EMAC;
+	macb_mii_bus.phy_addr = 1;
+
+	emac_hw_init();
+
+	if (phy_power_down_mode(&macb_mii_bus)) {
+		dbg_info("%s: Failed to put power down mode\n",
+							macb_mii_bus.name);
+		return -1;
+	}
+
+	pmc_disable_periph_clock(AT91C_ID_EMAC);
+
+	return 0;
+}
+
+static void gmac_hw_init(void)
+{
+	const struct pio_desc macb_pins[] = {
+		{"GMDC",	AT91C_PIN_PB(16), 0, PIO_DEFAULT, PIO_PERIPH_A},
+		{"GMDIO",	AT91C_PIN_PB(17), 0, PIO_DEFAULT, PIO_PERIPH_A},
+		{(char *)0, 0, 0, PIO_DEFAULT, PIO_PERIPH_A},
+	};
+
+	pio_configure(macb_pins);
+	pmc_enable_periph_clock(AT91C_ID_PIOB);
+	pmc_enable_periph_clock(AT91C_ID_GMAC);
+}
+
+static int ksz9031_power_down_mode(void)
+{
+	struct mii_bus macb_mii_bus;
+
+	macb_mii_bus.name = "ksz9031";
+	macb_mii_bus.reg_base = (void *)AT91C_BASE_GMAC;
+	macb_mii_bus.phy_addr = 1;
+
+	gmac_hw_init();
+
+	if (phy_power_down_mode(&macb_mii_bus)) {
+		dbg_info("%s: Failed to put power down mode\n",
+							macb_mii_bus.name);
+		return -1;
+	}
+
+	pmc_disable_periph_clock(AT91C_ID_GMAC);
+
+	return 0;
+}
+
+#define TWI_CLOCK	400000
+
+static void at91_twi0_hw_init(void)
+{
+	const struct pio_desc twi0_pins[] = {
+		{"TWD0", AT91C_PIN_PA(30), 0, PIO_DEFAULT, PIO_PERIPH_A},
+		{"TWCK0", AT91C_PIN_PA(31), 0, PIO_DEFAULT, PIO_PERIPH_A},
+		{(char *)0, 0, 0, PIO_DEFAULT, PIO_PERIPH_A},
+	};
+
+	pio_configure(twi0_pins);
+	pmc_enable_periph_clock(AT91C_ID_PIOA);
+	pmc_enable_periph_clock(AT91C_ID_TWI0);
+}
+
+static void at91_twi1_hw_init(void)
+{
+	const struct pio_desc twi1_pins[] = {
+		{"TWD1", AT91C_PIN_PC(26), 0, PIO_DEFAULT, PIO_PERIPH_B},
+		{"TWCK1", AT91C_PIN_PC(27), 0, PIO_DEFAULT, PIO_PERIPH_B},
+		{(char *)0, 0, 0, PIO_DEFAULT, PIO_PERIPH_A},
+	};
+
+	pio_configure(twi1_pins);
+	pmc_enable_periph_clock(AT91C_ID_PIOC);
+	pmc_enable_periph_clock(AT91C_ID_TWI1);
+}
+
+static int twi_devices_low_power(void)
+{
+	unsigned char board_version;
+	int ret;
+
+	board_version = ((get_ek_sn() == BOARD_ID_SAMA5D3X_MB)
+					&& (get_ek_rev() < 'D')) ? 1 : 0;
+	if (board_version){
+		at91_twi_base = AT91C_BASE_TWI0;
+		at91_twi0_hw_init();
+	} else {
+		at91_twi_base = AT91C_BASE_TWI1;
+		at91_twi1_hw_init();
+	}
+
+	twi_configure_master_mode(TWI_CLOCK);
+
+	mdelay(100);
+
+	ret = SiI9022_enter_power_state_D3_Cold();
+	if (ret)
+		return -1;
+
+	ret = wm8904_enter_low_power();
+	if (ret)
+		return -1;
+
+	if (board_version)
+		pmc_disable_periph_clock(AT91C_ID_TWI0);
+	else
+		pmc_disable_periph_clock(AT91C_ID_TWI1);
+
+	return 0;
+}
+
+void sama5d3xek_ex_devices_low_power(void)
+{
+	twi_devices_low_power();
+
+	ksz8051_power_down_mode();
+	ksz9031_power_down_mode();
+
+	at91_w1_pins_setting();
 }
 
 #ifdef CONFIG_HW_INIT
@@ -638,7 +783,7 @@ void hw_init(void)
 	hw_init_hook();
 #endif
 
-	HDMI_Qt1070_workaround();
+	SiI9022_hw_reset();
 
 #if defined(CONFIG_NANDFLASH_RECOVERY) || defined(CONFIG_DATAFLASH_RECOVERY)
 	/* Init the recovery buttons pins */
