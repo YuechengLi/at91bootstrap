@@ -50,7 +50,7 @@ static inline unsigned pin_to_mask(unsigned pin)
 	return 1 << ((pin) % PIO_NUM_IO);
 }
 
-static int pio_set_a_periph(unsigned pin, int use_pullup)
+static int pio_set_a_periph(unsigned pin, int config)
 {
 	unsigned pio = pin_to_controller(pin);
 	unsigned mask = pin_to_mask(pin);
@@ -59,7 +59,8 @@ static int pio_set_a_periph(unsigned pin, int use_pullup)
 		return -1;
 
 	write_pio(PIO_IDR(pio), mask);
-	write_pio(use_pullup ? PIO_PPUER(pio) : PIO_PPUDR(pio), mask);
+	write_pio(((config & PIO_PULLUP) ? PIO_PPUER(pio) : PIO_PPUDR(pio)), mask);
+	write_pio(((config & PIO_PULLDOWN) ? PIO_PPDER(pio) : PIO_PPDDR(pio)), mask);
 #ifndef CONFIG_HAS_PIO3
 	write_pio(PIO_ASR(pio), mask);
 #else
@@ -70,7 +71,7 @@ static int pio_set_a_periph(unsigned pin, int use_pullup)
 	return 0;
 }
 
-static int pio_set_b_periph(unsigned pin, int use_pullup)
+static int pio_set_b_periph(unsigned pin, int config)
 {
 	unsigned pio = pin_to_controller(pin);
 	unsigned mask = pin_to_mask(pin);
@@ -79,7 +80,8 @@ static int pio_set_b_periph(unsigned pin, int use_pullup)
 		return -1;
 
 	write_pio(PIO_IDR(pio), mask);
-	write_pio((use_pullup ? PIO_PPUER(pio) : PIO_PPUDR(pio)), mask);
+	write_pio(((config & PIO_PULLUP) ? PIO_PPUER(pio) : PIO_PPUDR(pio)), mask);
+	write_pio(((config & PIO_PULLDOWN) ? PIO_PPDER(pio) : PIO_PPDDR(pio)), mask);
 #ifndef CONFIG_HAS_PIO3
 	write_pio(PIO_BSR(pio), mask);
 #else
@@ -90,7 +92,7 @@ static int pio_set_b_periph(unsigned pin, int use_pullup)
 	return 0;
 }
 
-int pio_set_gpio_input(unsigned pin, int use_pullup)
+int pio_set_gpio_input(unsigned pin, int config)
 {
 	unsigned pio = pin_to_controller(pin);
 	unsigned mask = pin_to_mask(pin);
@@ -99,7 +101,8 @@ int pio_set_gpio_input(unsigned pin, int use_pullup)
 		return -1;
 
 	write_pio(PIO_IDR(pio), mask);
-	write_pio((use_pullup ? PIO_PPUER(pio) : PIO_PPUDR(pio)), mask);
+	write_pio(((config & PIO_PULLUP) ? PIO_PPUER(pio) : PIO_PPUDR(pio)), mask);
+	write_pio(((config & PIO_PULLDOWN) ? PIO_PPDER(pio) : PIO_PPDDR(pio)), mask);
 	write_pio(PIO_ODR(pio), mask);
 	write_pio(PIO_PER(pio), mask);
 	return 0;
@@ -187,16 +190,16 @@ int pio_configure(const struct pio_desc *pio_desc)
 			return 0;
 		else if (pio_desc->type == PIO_PERIPH_A)
 			pio_set_a_periph(pio_desc->pin_num,
-			 	(pio_desc->attribute & PIO_PULLUP) ? 1 : 0);
+				(pio_desc->attribute & (PIO_PULLUP | PIO_PULLDOWN)));
 #if !(defined(at91sam9g10)&&defined(CONFIG_SDCARD))
 		else if (pio_desc->type == PIO_PERIPH_B)
 			pio_set_b_periph(pio_desc->pin_num,
-				(pio_desc->attribute & PIO_PULLUP) ? 1 : 0);
+				(pio_desc->attribute & (PIO_PULLUP | PIO_PULLDOWN)));
 		else if (pio_desc->type == PIO_INPUT) {
 			pio_set_deglitch(pio_desc->pin_num,
 				(pio_desc->attribute & PIO_DEGLITCH) ? 1 : 0);
 			pio_set_gpio_input(pio_desc->pin_num,
-				(pio_desc->attribute & PIO_PULLUP) ? 1 : 0);
+				(pio_desc->attribute & (PIO_PULLUP | PIO_PULLDOWN)));
 		} else if (pio_desc->type == PIO_OUTPUT) {
 			pio_set_multi_drive(pio_desc->pin_num,
 				(pio_desc->attribute & PIO_OPENDRAIN) ? 1 : 0);
