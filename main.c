@@ -140,6 +140,7 @@ int main(void)
 
 #ifdef CONFIG_SAMA5D3XEK
 	sama5d3xek_ex_devices_low_power();
+	sama5d3xek_print_clock_status();
 #endif
 
 	init_loadfunction();

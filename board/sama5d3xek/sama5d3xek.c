@@ -735,6 +735,17 @@ void sama5d3xek_ex_devices_low_power(void)
 	at91_w1_pins_setting();
 }
 
+void sama5d3xek_print_clock_status(void)
+{
+	dbg_info("++++++++++++++++++++++++++++++++++++++\n");
+	dbg_info("PMC System/Peripheral Clock Status:\n");
+	dbg_info("PMC_SCSR: %d\n", readl(PMC_SCSR + AT91C_BASE_PMC));
+	dbg_info("PMC_PCSR0: %d\n", readl(PMC_PCSR + AT91C_BASE_PMC));
+	dbg_info("PMC_PCSR1: %d\n", readl(PMC_PCSR1 + AT91C_BASE_PMC));
+	dbg_info("++++++++++++++++++++++++++++++++++++++\n");
+
+}
+
 #ifdef CONFIG_HW_INIT
 void hw_init(void)
 {
