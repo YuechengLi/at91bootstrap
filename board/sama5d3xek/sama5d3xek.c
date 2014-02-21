@@ -690,6 +690,18 @@ static void at91_twi1_hw_init(void)
 	pmc_enable_periph_clock(AT91C_ID_TWI1);
 }
 
+static int act8865_handles(void)
+{
+	at91_twi_base = AT91C_BASE_TWI1;
+	at91_twi1_hw_init();
+
+	twi_configure_master_mode(TWI_CLOCK);
+
+	act8865_set_vcc_1v2_1v25();
+
+	return 0;
+}
+
 static int twi_devices_low_power(void)
 {
 	unsigned char board_version;
@@ -717,10 +729,9 @@ static int twi_devices_low_power(void)
 	if (ret)
 		return -1;
 
+	pmc_disable_periph_clock(AT91C_ID_TWI1);
 	if (board_version)
 		pmc_disable_periph_clock(AT91C_ID_TWI0);
-	else
-		pmc_disable_periph_clock(AT91C_ID_TWI1);
 
 	return 0;
 }
@@ -793,6 +804,8 @@ void hw_init(void)
 #ifdef CONFIG_USER_HW_INIT
 	hw_init_hook();
 #endif
+
+	act8865_handles();
 
 	SiI9022_hw_reset();
 

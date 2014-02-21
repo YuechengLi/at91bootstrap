@@ -366,3 +366,104 @@ int wm8904_enter_low_power(void)
 
 	return 0;
 }
+
+/*---------------------------------------------------------------------*/
+
+/*
+ * ACT8865 Device Slave Address
+ */
+#define ACT8865_ADDR	0x5B
+
+/*
+ * ACT8865 Register Map
+ */
+#define SYS_0		0x00
+#define SYS_1		0x01
+
+/* DC/DC */
+#define REG1_0		0x20
+#define REG1_1		0x21
+#define REG1_2		0x22
+
+#define REG2_0		0x30
+#define REG2_1		0x31
+#define REG2_2		0x32
+
+#define REG3_0		0x40
+#define REG3_1		0x41
+#define REG3_2		0x42
+
+#define REG4_0		0x50
+#define REG4_1		0x51
+
+#define REG5_0		0x54
+#define REG5_1		0x55
+
+#define REG6_0		0x60
+#define REG6_1		0x61
+
+#define REG7_0		0x64
+#define REG7_1		0x65
+
+
+/*
+ * Voltage Code
+ */
+#define ACT8865_1V2	0x18
+#define ACT8865_1V25	0x19
+#define ACT8865_2V5	0x31
+#define ACT8865_3V3	0x39
+
+static int act8865_read(unsigned char reg_addr, unsigned char *data)
+{
+	int ret;
+
+	ret = twi_read(ACT8865_ADDR, reg_addr, 1, data, 1);
+	if (ret) {
+		dbg_log(1, "act8865: Failed to read\n\r");
+		return -1;
+	}
+
+	mdelay(50);
+
+	return 0;
+}
+
+static int act8865_write(unsigned char reg_addr, unsigned char data)
+{
+	int ret;
+
+	ret = twi_write(ACT8865_ADDR, reg_addr, 1, &data, 1);
+	if (ret) {
+		dbg_log(1, "act8865: Failed to write\n\r");
+		return -1;
+	}
+
+	mdelay(50);
+
+	return 0;
+}
+
+int act8865_set_vcc_1v2_1v25(void)
+{
+	unsigned char data = ACT8865_1V25;
+	int ret;
+
+	ret = act8865_write(REG2_0, data);
+	if (ret)
+		return -1;
+
+	data = 0;
+	ret = act8865_read(REG2_2, &data);
+	if (ret)
+		return -1;
+
+	data |= (0x01 << 7);
+	ret = act8865_write(REG2_2, data);
+	if (ret)
+		return -1;
+
+	dbg_info("act8865: The VCC_1V2(REG2) output 1250mV\n");
+
+	return 0;
+}
