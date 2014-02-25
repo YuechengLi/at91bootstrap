@@ -107,16 +107,6 @@ static int setup_dt_blob(void *blob)
 	if (ret)
 		return ret;
 
-	if (get_ek_sn() == BOARD_ID_SAMA5D3X_MB) {
-		unsigned int version = get_ek_rev();
-		if (version < 'D') {
-			dbg_info("SAMA5D3XEK Ver.%c, below the Ver.D, fixuping the dtb sound node\n", version);
-			ret = fixup_sound_node(blob);
-			if (ret)
-				return ret;
-		}
-	}
-
 	return 0;
 }
 
