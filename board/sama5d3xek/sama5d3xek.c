@@ -302,6 +302,20 @@ static void recovery_buttons_hw_init(void)
 }
 #endif /* #if defined(CONFIG_NANDFLASH_RECOVERY) || defined(CONFIG_DATAFLASH_RECOVERY) */
 
+static void at91_disable_smd_clock(void)
+{
+	/*
+	 * set pin DIBP to pull-up and DIBN to pull-down
+	 * to save power on VDDIOP0
+	 */
+	pmc_enable_system_clock(AT91C_PMC_SMDCK);
+	pm_set_smd_clock_divider(AT91C_PMC_SMDDIV);
+	pmc_enable_periph_clock(AT91C_ID_SMD);
+	writel(0xF, (0x0C + AT91C_BASE_SMD));
+	pmc_disable_periph_clock(AT91C_ID_SMD);
+	pmc_disable_system_clock(AT91C_PMC_SMDCK);
+}
+
 /*
  * Special setting for PM.
  * Since for the chips with no EMAC or GMAC, No actions is done to make
