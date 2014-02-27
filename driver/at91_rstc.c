@@ -39,6 +39,11 @@ static inline void rstc_reg_write(unsigned int offset, unsigned int value)
 	writel(value, AT91C_BASE_RSTC + offset);
 }
 
+static inline unsigned int rstc_reg_read(unsigned int offset)
+{
+	return readl(AT91C_BASE_RSTC + offset);
+}
+
 void rstc_reset_all(void)
 {
 	unsigned int timeout = 100000;
@@ -49,6 +54,8 @@ void rstc_reset_all(void)
 
 	/* assert the NRST pin and reset the processor and the peripherals */
 	rstc_reg_write(RSTC_RCR, (AT91C_RSTC_EXTRST | AT91C_RSTC_KEY));
+
+	while(rstc_reg_read(RSTC_RSR) & AT91C_RSTC_SRCMP);
 
 	while (--timeout)
 		;
