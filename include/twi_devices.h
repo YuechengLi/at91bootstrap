@@ -31,5 +31,6 @@
 extern int SiI9022_enter_power_state_D3_Cold(void);
 extern int wm8904_enter_low_power(void);
 extern int act8865_set_vcc_1v2_1v25(void);
+extern int act8865_set_power_saving_mode(void);
 
 #endif

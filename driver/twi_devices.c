@@ -25,6 +25,7 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+#include "common.h"
 #include "hardware.h"
 #include "twi.h"
 #include "timer.h"
@@ -414,6 +415,21 @@ int wm8904_enter_low_power(void)
 #define ACT8865_2V5	0x31
 #define ACT8865_3V3	0x39
 
+/*
+ * Field Definitions
+ */
+#define REG_MODE_BIT		(0x01 << 5)
+#define	REG_MODE_POWER_SAVING		(0x00 << 5)
+#define	REG_MODE_FIX_FREQ		(0x01 << 5)
+
+#define REG_ENABLE_BIT		(0x01 << 7)
+
+/*
+ * Definitions
+ */
+#define	ACT8865_MODE_FIX_FREQ		0x01
+#define	ACT8865_MODE_POWER_SAVING	0x02
+
 static int act8865_read(unsigned char reg_addr, unsigned char *data)
 {
 	int ret;
@@ -440,6 +456,46 @@ static int act8865_write(unsigned char reg_addr, unsigned char data)
 	}
 
 	mdelay(50);
+
+	return 0;
+}
+
+static int act8865_set_reg_mode(unsigned char mode_reg, unsigned mode)
+{
+	unsigned char value;
+	int ret;
+
+	value = 0;
+	ret = act8865_read(mode_reg, &value);
+	if (ret)
+		return -1;
+
+	value &= ~REG_MODE_BIT;
+	value |= (mode == ACT8865_MODE_FIX_FREQ) ? REG_MODE_FIX_FREQ : 0;
+
+	ret = act8865_write(mode_reg, value);
+	if (ret)
+		return -1;
+
+	return 0;
+}
+
+int act8865_set_power_saving_mode(void)
+{
+	unsigned char mode = ACT8865_MODE_POWER_SAVING;
+	unsigned char reg_list[] = {REG1_2, REG2_2, REG3_2};
+	unsigned char reg;
+	unsigned i;
+	int ret;
+
+	for (i = 0; i < ARRAY_SIZE(reg_list); i++) {
+		reg = reg_list[i];
+		ret = act8865_set_reg_mode(reg, mode);
+		if (ret)
+			dbg_info("ACT8865: Failed to set power saving mode\n");
+	}
+
+	dbg_info("ACT8865: Set REG1/REG2/REG3 power saving mode\n");
 
 	return 0;
 }

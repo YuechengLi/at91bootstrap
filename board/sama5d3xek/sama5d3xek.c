@@ -697,6 +697,8 @@ static int act8865_handles(void)
 
 	twi_configure_master_mode(TWI_CLOCK);
 
+	act8865_set_power_saving_mode();
+
 	act8865_set_vcc_1v2_1v25();
 
 	return 0;
