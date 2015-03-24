@@ -521,5 +521,23 @@ int act8865_set_vcc_1v2_1v25(void)
 
 	dbg_info("act8865: The VCC_1V2(REG2) output 1250mV\n");
 
+	data = ACT8865_3V3;
+
+	ret = act8865_write(REG4_0, data);
+	if (ret)
+		return -1;
+
+	data = 0;
+	ret = act8865_read(REG4_1, &data);
+	if (ret)
+		return -1;
+
+	data |= (0x01 << 7);
+	ret = act8865_write(REG4_1, data);
+	if (ret)
+		return -1;
+
+	dbg_info("act8865: The VDDANA(REG4) output 3300mV\n");
+
 	return 0;
 }
